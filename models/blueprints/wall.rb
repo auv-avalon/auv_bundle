@@ -1,4 +1,4 @@
-require 'models/blueprints/avalon'
+require 'models/blueprints/auv'
 require 'models/blueprints/localization'
 
 using_task_library 'auv_rel_pos_controller'

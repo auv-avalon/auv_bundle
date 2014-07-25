@@ -1,4 +1,4 @@
-require 'models/blueprints/avalon'
+require 'models/blueprints/auv'
 require 'models/blueprints/avalon_control'
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'uw_particle_localization'

@@ -1,4 +1,4 @@
-require 'models/blueprints/avalon'
+require 'models/blueprints/auv'
     
 Base::ControlLoop.declare 'WorldXYZRollPitchYaw', '/base/LinearAngular6DCommand'
 Base::ControlLoop.declare 'WorldZRollPitchYaw', '/base/LinearAngular6DCommand'

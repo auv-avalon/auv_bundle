@@ -1,4 +1,4 @@
-require 'models/blueprints/avalon'
+require 'models/blueprints/auv'
 
 class AvalonControl::FakeWriter
     attr_reader :options

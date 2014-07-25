@@ -1,7 +1,7 @@
 require 'rock/models/blueprints/control'
 require "models/blueprints/control"
 require "models/blueprints/localization"
-require "models/blueprints/avalon"
+require "models/blueprints/auv"
 using_task_library 'auv_control'
 module AuvCont
     #WORLD_TO_ALIGNED

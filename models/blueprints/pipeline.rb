@@ -1,5 +1,5 @@
 require 'models/blueprints/sensors'
-require 'models/blueprints/avalon'
+require 'models/blueprints/auv'
 require 'models/blueprints/localization.rb'
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'offshore_pipeline_detector'

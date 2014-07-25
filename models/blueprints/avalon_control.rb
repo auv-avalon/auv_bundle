@@ -1,5 +1,5 @@
 require "models/blueprints/control"
-require "models/blueprints/avalon"
+require "models/blueprints/auv"
 
 using_task_library "auv_rel_pos_controller"
 using_task_library "avalon_control"

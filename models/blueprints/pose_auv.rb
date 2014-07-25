@@ -1,7 +1,7 @@
 using_task_library "xsens_imu"
 using_task_library "fog_kvh"
 using_task_library "orientation_estimator"
-using_task_library "depth_reader"
+#using_task_library "depth_reader"
 using_task_library "uw_particle_localization"
 
 

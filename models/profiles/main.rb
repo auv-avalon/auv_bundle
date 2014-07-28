@@ -4,7 +4,7 @@ require "models/blueprints/wall"
 require "models/blueprints/buoy"
 require "models/blueprints/pipeline"
 require "models/blueprints/localization"
-require "models/blueprints/avalon_control"
+require "models/blueprints/auv_control"
 
 using_task_library 'controldev'
 using_task_library 'raw_control_command_converter'
@@ -26,6 +26,7 @@ module DFKI
             tag 'thruster_feedback',  ::Base::JointsStatusSrv 
             tag 'down_looking_camera',  ::Base::ImageProviderSrv
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
+            tag 'motion_model', ::Base::VelocitySrv
             
             
             ############### DEPRICATED ##########################
@@ -64,15 +65,10 @@ module DFKI
                     'controller' => AuvRelPosController::Task.with_conf('default','absolute_heading')
             )
 
-            define 'motion_model', Localization::DeadReckoning.use(
-                'hb' => thruster_feedback_tag,
-                'ori' => final_orientation_with_z_tag
-            )
-            
             define 'line_scanner', Pipeline::LineScanner.use(
                LineScanner::Task.with_conf('default'),
                'camera' => down_looking_camera_tag,
-               'motion_model' => motion_model_def
+               'motion_model' => motion_model_tag
             )
 
             define 'pipeline_detector', Pipeline::Detector.use(
@@ -91,7 +87,7 @@ module DFKI
             )
 
             define('drive_simple', ::Base::ControlLoop).use(
-                AvalonControl::JoystickCommandCmp.use(
+                AuvControl::JoystickCommandCmp.use(
                     "orientation_with_z" => final_orientation_with_z_tag,
                     "dist" => altimeter_tag
                 ), 
@@ -102,11 +98,11 @@ module DFKI
 
             define 'hough_detector', Localization::HoughDetector.use(
                 Base::OrientationSrv => final_orientation_with_z_tag,
-                'dead' => motion_model_def
+                'dead' => motion_model_tag
             )
 
             define 'localization', Localization::ParticleDetector.use(
-                motion_model_def,
+                motion_model_tag,
                 Base::OrientationWithZSrv => final_orientation_with_z_tag, 
                 'hough' => hough_detector_def,
                 'hb' => thruster_tag,
@@ -114,13 +110,12 @@ module DFKI
             )
 
             ################# Basic Movements #########################
-            define 'target_move', ::AvalonControl::SimplePosMove.use(
+            define 'target_move', ::AuvControl::SimplePosMove.use(
                 'controlled_system' => base_loop_def,
-                'pose' => localization_def,
-                'controller' => AvalonControl::RelFakeWriter
+                'pose' => localization_def
             )
 
-            define 'simple_move', ::AvalonControl::SimpleMove.use(
+            define 'simple_move', ::AuvControl::SimpleMove.use(
                 base_loop_def,
                 'reading' => final_orientation_with_z_tag
             )
@@ -128,7 +123,7 @@ module DFKI
 
             define 'wall_detector', Wall::Detector.use(
                 "orientation_with_z" => final_orientation_with_z_tag,
-                "dead_reckoning" => motion_model_def
+                "dead_reckoning" => motion_model_tag
             )
 
             define 'wall_right', Wall::Follower.use(
@@ -137,7 +132,7 @@ module DFKI
             )
 
             ################ HighLevelController ######################
-            define 'trajectory_move', ::AvalonControl::TrajectoryMove.use(
+            define 'trajectory_move', ::AuvControl::TrajectoryMove.use(
                 position_control_loop_def, 
                 localization_def, 
                 final_orientation_with_z_tag, 

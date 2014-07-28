@@ -1,5 +1,5 @@
 require 'models/blueprints/auv'
-require 'models/blueprints/avalon_control'
+require 'models/blueprints/auv_control'
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'uw_particle_localization'
 using_task_library 'sonar_feature_estimator'
@@ -14,9 +14,6 @@ module Localization
         output_port "orientation_drift", "sonar_wall_hough/PositionQuality"
     end
     
-    data_service_type 'DeadReckoningSrv' do
-	  output_port "position", "/base/samples/RigidBodyState"
-    end
 
     class ParticleDetector < Syskit::Composition
         add UwParticleLocalization::Task, :as => 'main'
@@ -83,19 +80,19 @@ module Localization
 	connect hb_child => main_child
 	
 	export main_child.pose_samples_port
-	provides DeadReckoningSrv, :as => 'pose'
+	provides Base::VelocitySrv, :as => 'pose'
     end
     
     class HoughDetector < Syskit::Composition
         add SonarWallHough::Task, as: 'main'
         add Base::SonarScanProviderSrv, as: 'sonar'
         add Base::OrientationSrv, as: 'ori'
-        add_optional Localization::DeadReckoning, as: 'dead'
+        add_optional Base::VelocitySrv, as: 'dead'
         add_optional UwParticleLocalization::OrientationCorrection, :as => 'correction'
 
         connect sonar_child => main_child
         connect ori_child => main_child
-        connect dead_child => main_child
+        connect dead_child => main_child.pose_samples_port
         connect main_child.position_quality_port => correction_child.orientation_offset_port
 
         export main_child.position_port, as: 'position'

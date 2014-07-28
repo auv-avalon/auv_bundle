@@ -3,7 +3,7 @@ require "models/blueprints/auv"
 
 using_task_library "auv_rel_pos_controller"
 using_task_library "avalon_control"
-using_task_library "depth_reader"
+using_task_library "auv_helper"
 using_task_library "controldev"
 using_task_library "raw_control_command_converter"
     
@@ -50,7 +50,7 @@ class Time
     end
 end
 
-module AvalonControl
+module AuvControl
 
     DELTA_YAW = 0.1
     DELTA_Z = 0.2
@@ -100,7 +100,7 @@ module AvalonControl
     class DepthFusionCmp < Syskit::Composition
         add ::Base::ZProviderSrv, :as => 'z'
         add ::Base::OrientationSrv, :as => 'ori'
-        add DepthReader::DepthAndOrientationFusion, :as => 'task'
+        add AuvHelper::DepthAndOrientationFusion, :as => 'task'
 	add Base::GroundDistanceSrv, :as => 'echo'
     
         connect z_child => task_child.depth_samples_port

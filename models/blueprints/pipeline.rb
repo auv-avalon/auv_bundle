@@ -22,7 +22,7 @@ module Pipeline
         add PipelineInspection::Inspection, :as => 'inspection'
         add Base::ImageProviderSrv, :as => 'camera'
         add OffshorePipelineDetector::Task, :as => 'offshore_pipeline_detector'
-        add Localization::DeadReckoningSrv, :as => 'motion_model'
+        add Base::VelocitySrv, :as => 'motion_model'
         add ::LineScanner::Task, :as => 'line_scan'
 
 

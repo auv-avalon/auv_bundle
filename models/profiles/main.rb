@@ -117,6 +117,7 @@ module DFKI
 
             ################# Basic Movements #########################
             define 'target_move', ::AuvControl::SimplePosMove.use(
+                'controller' => AvalonControl::RelFakeWriter, #TODO this should not needed see https://github.com/rock-core/tools-syskit/issues/16
                 'controlled_system' => base_loop_def,
                 'pose' => localization_def
             )

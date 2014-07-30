@@ -4,6 +4,7 @@ require "models/blueprints/wall"
 require "models/blueprints/buoy"
 require "models/blueprints/pipeline"
 require "models/blueprints/localization"
+require "models/blueprints/auv_cont"
 require "models/blueprints/auv_control"
 
 using_task_library 'controldev'
@@ -52,6 +53,11 @@ module DFKI
                 'controller' => AuvRelPosController::Task.with_conf('default','relative_heading')
             )
             ############### /DEPRICATED #########################
+            
+            define 'world_controller', AuvCont::WorldPositionCmp
+            define 'world_and_xy_velo_controller', AuvCont::WorldAndXYVelocityCmp.use(
+                    'joint' => thruster_tag
+            )
 
             define 'relative_loop', Base::ControlLoop.use(
                     'orientation_with_z' => final_orientation_with_z_tag,
@@ -144,13 +150,13 @@ module DFKI
 
 
             ###     New Stuff not (yet) integrated #######################
-####            define 'target_move_new', world_controller_def.use(
-####                'localization' => localization_def, 
-####                'controller' => AuvControl::ConstantCommand#, 
-####                #Base::GroundDistanceSrv => altimeter_dev, 
-####                #Base::ZProviderSrv => depth_reader_dev
-####            )
-###
+            define 'target_move_new', world_and_xy_velo_controller_def.use(
+                'pose' => localization_def, 
+                'command' => AuvControl::ConstantCommand#, 
+                #Base::GroundDistanceSrv => altimeter_dev, 
+                #Base::ZProviderSrv => depth_reader_dev
+            )
+
 
         end
     end

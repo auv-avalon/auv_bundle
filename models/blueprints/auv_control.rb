@@ -1,5 +1,6 @@
 require "models/blueprints/control"
 require "models/blueprints/auv"
+require "models/blueprints/pose.rb"
 
 using_task_library "auv_rel_pos_controller"
 using_task_library "avalon_control"
@@ -58,18 +59,18 @@ module AuvControl
     DELTA_TIMEOUT = 2
 
     Base::ControlLoop.specialize Base::ControlLoop.controller_child => AvalonControl::PositionControlTask do
-        add Base::PoseSrv, :as => "pose"
+        add ::Base::PoseSrv, :as => "pose"
         pose_child.connect_to controller_child
     end
     
     Base::ControlLoop.specialize Base::ControlLoop.controller_child => AuvRelPosController::Task do
-        add Base::OrientationWithZSrv, :as => "orientation_with_z"
+        add ::Base::OrientationWithZSrv, :as => "orientation_with_z"
         orientation_with_z_child.connect_to controller_child
     end
 
     Base::ControlLoop.specialize Base::ControlLoop.controller_child => AvalonControl::MotionControlTask do
-        add Base::OrientationWithZSrv, :as => 'pose'
-        add Base::GroundDistanceSrv, :as => 'dist'
+        add ::Base::OrientationWithZSrv, :as => 'pose'
+        add ::Base::GroundDistanceSrv, :as => 'dist'
         connect pose_child.orientation_z_samples_port => controller_child.pose_samples_port
         connect dist_child.distance_port => controller_child.ground_distance_port
     end
@@ -81,10 +82,10 @@ module AuvControl
     #end
 
     class JoystickCommandCmp < Syskit::Composition 
-        add Base::RawCommandControllerSrv, :as => 'rawCommand'
-        add Base::OrientationWithZSrv, :as => 'orientation_with_z'
+        add ::Base::RawCommandControllerSrv, :as => 'rawCommand'
+        add ::Base::OrientationWithZSrv, :as => 'orientation_with_z'
         add RawControlCommandConverter::Movement, :as => 'rawCommandConverter'
-        add Base::GroundDistanceSrv, :as => 'dist'
+        add ::Base::GroundDistanceSrv, :as => 'dist'
         connect rawCommand_child => rawCommandConverter_child
         connect dist_child.distance_port => rawCommandConverter_child.ground_distance_port
         connect orientation_with_z_child.orientation_z_samples_port => rawCommandConverter_child.orientation_readings_port
@@ -101,7 +102,7 @@ module AuvControl
         add ::Base::ZProviderSrv, :as => 'z'
         add ::Base::OrientationSrv, :as => 'ori'
         add AuvHelper::DepthAndOrientationFusion, :as => 'task'
-	add Base::GroundDistanceSrv, :as => 'echo'
+	add ::Base::GroundDistanceSrv, :as => 'echo'
     
         connect z_child => task_child.depth_samples_port
         connect ori_child => task_child.orientation_samples_port
@@ -126,7 +127,7 @@ module AuvControl
         argument :delta_timeout, :default => DELTA_TIMEOUT 
 
         attr_reader :start_time
-        add Base::OrientationWithZSrv, :as => "reading"
+        add ::Base::OrientationWithZSrv, :as => "reading"
 
         on :start do |ev|
                 begin 
@@ -194,7 +195,7 @@ module AuvControl
     
         attr_reader :start_time
 
-        add Base::PoseSrv, :as => 'pose'
+        add ::Base::PoseSrv, :as => 'pose'
         
         on :start do |ev|
                 reader_port = nil
@@ -265,7 +266,7 @@ module AuvControl
 
         attr_reader :start_time
 
-        add Base::PoseSrv, :as => 'pose'
+        add ::Base::PoseSrv, :as => 'pose'
         pose_child.connect_to controller_child
 
         on :start do |ev|

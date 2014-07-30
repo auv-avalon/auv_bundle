@@ -2,7 +2,9 @@ require 'rock/models/blueprints/control'
 require "models/blueprints/control"
 require "models/blueprints/localization"
 require "models/blueprints/auv"
+
 using_task_library 'auv_control'
+
 module AuvCont
     #WORLD_TO_ALIGNED
     #data_service_type 'WorldXYZRollPitchYawSrv' do
@@ -55,10 +57,16 @@ module AuvCont
         add ::Base::PoseSrv, :as => "pose"
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
-        add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
-        add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
+        #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
+        #add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
+        add AuvControl::PIDController, :as => "aligned_position_controller"
+        aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default")
+        add AuvControl::PIDController, :as => "aligned_velocity_controller"
+        aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy")
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
         add AuvControl::AccelerationController, :as => "controller"
+        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
+        command_child.prefer_deployed_tasks("constand_command")
         
         conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
                            'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],

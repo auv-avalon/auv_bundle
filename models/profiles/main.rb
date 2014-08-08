@@ -165,6 +165,16 @@ module DFKI
                 #Base::ZProviderSrv => depth_reader_dev
             )
 
+            define 'drive_simple_new', AuvCont::PositionMoveCmp.use(
+                AuvControl::JoystickCommandCmp.use(
+                    "orientation_with_z" => final_orientation_with_z_tag,
+                    "dist" => altimeter_tag
+                ), 
+                'joint' => thruster_tag,
+                'pose' => localization_def
+                
+            )
+
         end
     end
 end

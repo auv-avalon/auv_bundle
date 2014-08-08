@@ -24,6 +24,7 @@ module Localization
         add Base::JointsStatusSrv, :as => 'hb'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
+        add_optional ::Base::VelocitySrv, as: 'velocity'
 
         connect sonar_child => sonar_estimator_child
         connect ori_child => sonar_estimator_child.orientation_sample_port
@@ -31,6 +32,7 @@ module Localization
         connect sonar_estimator_child.new_feature_port => main_child
         connect hb_child => main_child
         connect hough_child => main_child.pose_update_port
+        connect velocity_child.velocity_samples_port => main_child.speed_samples_port
 
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'

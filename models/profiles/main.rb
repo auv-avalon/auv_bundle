@@ -17,6 +17,7 @@ using_task_library 'auv_rel_pos_controller'
 module DFKI 
     module Profiles
         profile "AUV" do
+
             
 #            tag 'base_loop', ::Base::ControlLoop
 #            tag 'drive_simpe', ::Base::ControlLoop
@@ -56,6 +57,10 @@ module DFKI
             
             define 'world_controller', AuvCont::WorldPositionCmp
             define 'world_and_xy_velo_controller', AuvCont::WorldAndXYVelocityCmp.use(
+                    'joint' => thruster_tag
+            )
+
+            define 'position_move', AuvCont::PositionMoveCmp.with_conf('simulation').use(
                     'joint' => thruster_tag
             )
 
@@ -151,7 +156,7 @@ module DFKI
 
 
             ###     New Stuff not (yet) integrated #######################
-            define 'target_move_new', world_and_xy_velo_controller_def.use(
+            define 'target_move_new', position_move_def.use(
                 'pose' => localization_def, 
                 'command' => AuvControl::ConstantCommand#, 
                 #Base::GroundDistanceSrv => altimeter_dev, 

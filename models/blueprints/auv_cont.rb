@@ -6,6 +6,12 @@ require "models/blueprints/auv"
 using_task_library 'auv_control'
 
 module AuvCont
+
+    DELTA_YAW = 0.1
+    DELTA_Z = 0.2
+    DELTA_XY = 2
+    DELTA_TIMEOUT = 2
+
     #WORLD_TO_ALIGNED
     #data_service_type 'WorldXYZRollPitchYawSrv' do
     #    input_port 'world_cmd', 'base/LinearAngular6DCommand'
@@ -53,6 +59,7 @@ module AuvCont
 
     end
     class WorldAndXYVelocityCmp < Syskit::Composition
+
         add ::Base::JointsCommandConsumerSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
@@ -60,20 +67,36 @@ module AuvCont
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
         add AuvControl::PIDController, :as => "aligned_position_controller"
-        aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default")
+
+        puts ::CONFIG_HACK
+        if ::CONFIG_HACK == 'default'
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
+        else #simulation
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
+        end
+
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
-        aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy")
+        if  ::CONFIG_HACK == 'default'
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+        else
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
+        end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
         add AuvControl::AccelerationController, :as => "controller"
         add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
         command_child.prefer_deployed_tasks("constand_command")
         
-        conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
-                           'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
+        conf 'simulation',
+        #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
+        #                   'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
                            'controller' => ['default_simulation']
-        conf 'default', 'aligned_position_controller' => ['default', 'position'],
-                           'aligned_velocity_controller' => ['default', 'velocity'],
+        conf 'default',
+        #conf 'default', 'aligned_position_controller' => ['default', 'position'],
+        #                   'aligned_velocity_controller' => ['default', 'velocity'],
                            'controller' => ['default']
+
+        command_child.connect_to world_to_aligned_child.cmd_in_port
+
         pose_child.connect_to world_to_aligned_child
         pose_child.connect_to aligned_position_controller_child
         pose_child.connect_to aligned_velocity_controller_child
@@ -122,6 +145,77 @@ module AuvCont
         
     end
 =end
+    class PositionMoveCmp < WorldAndXYVelocityCmp
+        overload 'command', AuvControl::ConstantCommand
+
+        argument :heading, :default => 0
+        argument :depth, :default => -4 
+        argument :x, :default => 0
+        argument :y, :default => 0
+        argument :timeout, :default => nil
+        argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
+        argument :event_on_timeout, :default => :success
+        argument :delta_xy, :default => DELTA_XY
+        argument :delta_z, :default => DELTA_Z
+        argument :delta_yaw, :default => DELTA_YAW
+        argument :delta_timeout, :default => DELTA_TIMEOUT
+    
+        attr_reader :start_time
+
+        on :start do |ev|
+                reader_port = nil
+                if pose_child.has_port?('pose_samples')
+                    reader_port = pose_child.pose_samples_port
+                else
+                    pose_child.each_child do |c| 
+                        if c.has_port?('pose_samples')
+                            reader_port = c.pose_samples_port
+                            break
+                        end
+                    end
+                end
+                @reader = reader_port.reader 
+                @start_time = Time.now
+                Robot.info "Starting Position moving #{self}"
+                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
+                @last_invalid_post = Time.new
+        end
+        
+        poll do
+            @last_invalid_pose = Time.new if @last_invalid_pose.nil?
+            @start_time = Time.now if @start_time.nil?
+            if @start_time.my_timeout?(self.timeout)
+                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + self.timeout}"
+                emit event_on_timeout 
+            end
+
+            if finish_when_reached
+                if @reader
+                    if pos = @reader.read
+                        if 
+                            pos.position[0].x_in_range(x,delta_xy) and
+                            pos.position[1].y_in_range(y,delta_xy) and
+                            pos.position[2].depth_in_range(depth,delta_z) and
+                            pos.orientation.yaw.angle_in_range(heading,delta_yaw)
+                                @reached_position = true
+                                if @last_invalid_pose.delta_timeout?(delta_timeout) 
+                                    Robot.info "Hold Position, recalculating"
+                                    emit :success
+                                end
+                        else
+                            if @reached_position
+                                Robot.info "################### Bad Pose! ################" 
+                            end
+                            @last_invalid_pose = Time.new
+                            @reached_position = false
+                        end
+                    end
+                end
+            end
+        end
+
+    end
+
 end
     
 

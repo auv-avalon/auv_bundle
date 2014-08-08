@@ -60,7 +60,8 @@ module DFKI
                     'joint' => thruster_tag
             )
 
-            define 'position_move', AuvCont::PositionMoveCmp.with_conf('simulation').use(
+
+            define 'position_move', AuvCont::PositionMoveCmp.use(
                     'joint' => thruster_tag
             )
 
@@ -116,14 +117,14 @@ module DFKI
                 motion_model_tag,
                 Base::OrientationWithZSrv => final_orientation_with_z_tag, 
                 'hough' => hough_detector_def,
-                'hb' => thruster_tag,
+                'hb' => thruster_feedback_tag,
                 'ori' => final_orientation_with_z_tag
             )
 
             ################# Basic Movements #########################
             define 'target_move', ::AuvControl::SimplePosMove.use(
-                'controller' => AvalonControl::RelFakeWriter, #TODO this should not needed see https://github.com/rock-core/tools-syskit/issues/16
                 'controlled_system' => base_loop_def,
+                'controller' => AvalonControl::RelFakeWriter, #TODO this should not needed see https://github.com/rock-core/tools-syskit/issues/16
                 'pose' => localization_def
             )
 
@@ -158,11 +159,11 @@ module DFKI
             ###     New Stuff not (yet) integrated #######################
             define 'target_move_new', position_move_def.use(
                 'pose' => localization_def, 
-                'command' => AuvControl::ConstantCommand#, 
+                'command' => AuvControl::ConstantCommand, 
+                'joint' => thruster_tag
                 #Base::GroundDistanceSrv => altimeter_dev, 
                 #Base::ZProviderSrv => depth_reader_dev
             )
-
 
         end
     end

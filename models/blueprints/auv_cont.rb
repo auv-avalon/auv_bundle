@@ -60,7 +60,7 @@ module AuvCont
     end
     class WorldAndXYVelocityCmp < Syskit::Composition
 
-        add ::Base::JointsCommandConsumerSrv, :as => "joint"
+        add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
@@ -68,32 +68,43 @@ module AuvCont
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
         add AuvControl::PIDController, :as => "aligned_position_controller"
 
-        puts ::CONFIG_HACK
         if ::CONFIG_HACK == 'default'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
-        else #simulation
+        elsif ::CONFIG_HACK == 'simulation'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
+        elsif ::CONFIG_HACK == 'dagon'
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default_aligned_position")
         end
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
         if  ::CONFIG_HACK == 'default'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
-        else
+        elsif ::CONFIG_HACK == 'simulation'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
+        elsif ::CONFIG_HACK == 'dagon'
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("default_aligned_velocity")
+        end
+
+        add AuvControl::AccelerationController, :as => "controller"
+        if  ::CONFIG_HACK == 'default'
+            controller_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'simulation'
+            controller_child.with_conf("default_simulation")
+        elsif ::CONFIG_HACK == 'dagon'
+            controller_child.with_conf('default', 'all_thruster_huelle')
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
-        add AuvControl::AccelerationController, :as => "controller"
         add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
         command_child.prefer_deployed_tasks("constand_command")
         
-        conf 'simulation',
+        #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
         #                   'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
-                           'controller' => ['default_simulation']
-        conf 'default',
+        #                   'controller' => ['default_simulation']
+        #conf 'default',
         #conf 'default', 'aligned_position_controller' => ['default', 'position'],
         #                   'aligned_velocity_controller' => ['default', 'velocity'],
-                           'controller' => ['default']
+        #                   'controller' => ['default', 'all_thruster_huelle']
 
         command_child.connect_to world_to_aligned_child.cmd_in_port
 
@@ -118,7 +129,7 @@ module AuvCont
     end
     
     ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
-    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldAndXYVelocityCmp
+    #::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldAndXYVelocityCmp
 =begin
     class WorldZRollPitchYawVelocityXY < ::Base::ControlLoop
         add ::Base::JointsCommandConsumerSrv, :as => "joint_srv"
@@ -177,7 +188,7 @@ module AuvCont
                 @reader = reader_port.reader 
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
-                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
+                command_child.update_config(:x => x, :heading => heading, :depth=> -depth, :y => y)
                 @last_invalid_post = Time.new
         end
         

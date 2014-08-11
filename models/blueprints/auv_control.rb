@@ -4,6 +4,7 @@ require "models/blueprints/pose.rb"
 
 using_task_library "auv_rel_pos_controller"
 using_task_library "avalon_control"
+using_task_library "auv_control"
 using_task_library "auv_helper"
 using_task_library "controldev"
 using_task_library "raw_control_command_converter"
@@ -58,17 +59,17 @@ module AuvControl
     DELTA_XY = 2
     DELTA_TIMEOUT = 2
 
-    Base::ControlLoop.specialize Base::ControlLoop.controller_child => AvalonControl::PositionControlTask do
+    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::PositionControlTask do
         add ::Base::PoseSrv, :as => "pose"
         pose_child.connect_to controller_child
     end
     
-    Base::ControlLoop.specialize Base::ControlLoop.controller_child => AuvRelPosController::Task do
+    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AuvRelPosController::Task do
         add ::Base::OrientationWithZSrv, :as => "orientation_with_z"
         orientation_with_z_child.connect_to controller_child
     end
 
-    Base::ControlLoop.specialize Base::ControlLoop.controller_child => AvalonControl::MotionControlTask do
+    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::MotionControlTask do
         add ::Base::OrientationWithZSrv, :as => 'pose'
         add ::Base::GroundDistanceSrv, :as => 'dist'
         connect pose_child.orientation_z_samples_port => controller_child.pose_samples_port
@@ -93,9 +94,6 @@ module AuvControl
         export rawCommandConverter_child.motion_command_port
         export rawCommandConverter_child.world_command_port, :as => "WorldCommand"
         export rawCommandConverter_child.aligned_velocity_command_port, :as =>"VeloCommand"
-        
-        provides Base::AUVMotionControllerSrv, :as => "controller"
-
     end
 
     class DepthFusionCmp < Syskit::Composition

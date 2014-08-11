@@ -51,7 +51,7 @@ module DFKI
             )
             ############### /DEPRICATED #########################
             
-            define 'world_controller', AuvCont::WorldPositionCmp
+#            define 'world_controller', AuvCont::WorldPositionCmp
             define 'world_and_xy_velo_controller', AuvCont::WorldAndXYVelocityCmp.use(
                     'joint' => thruster_tag
             )
@@ -101,6 +101,7 @@ module DFKI
                 ), 
                 'controlled_system' => base_loop_def    
             )
+
             
             ############### Localization stuff  ######################
 
@@ -162,18 +163,15 @@ module DFKI
                 'pose' => localization_def, 
                 'command' => AuvControl::ConstantCommand, 
                 'joint' => thruster_tag
-                #Base::GroundDistanceSrv => altimeter_dev, 
-                #Base::ZProviderSrv => depth_reader_dev
             )
-
-            define 'drive_simple_new', AuvCont::PositionMoveCmp.use(
-                AuvControl::JoystickCommandCmp.use(
-                    "orientation_with_z" => final_orientation_with_z_tag,
-                    "dist" => altimeter_tag
-                ), 
+            
+            define 'drive_simple_new', AuvCont::JoystickNew.use(
+                'pose' => localization_def, 
                 'joint' => thruster_tag,
-                'pose' => localization_def
-                
+                'joystick' => AuvControl::JoystickCommandCmp.use(
+                        'orientation_with_z' => final_orientation_with_z_tag,
+                        'dist' => altimeter_tag
+                    )
             )
 
         end

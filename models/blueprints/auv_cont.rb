@@ -21,43 +21,43 @@ module AuvCont
         input_port 'Velocity_cmd', 'base/LinearAngular6DCommand'
     end
    
-    class WorldPositionCmp < Syskit::Composition
-        add ::Base::JointsCommandConsumerSrv, :as => "joint"
-        add ::Base::PoseSrv, :as => "pose"
-        add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
-        add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
-        add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
-        add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
-        add AuvControl::AlignedToBody, :as => "aligned_to_body"
-        add AuvControl::AccelerationController, :as => "controller"
-        
-        conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
-                           'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
-                           'controller' => ['default_simulation']
-        conf 'default', 'aligned_position_controller' => ['default', 'position'],
-                           'aligned_velocity_controller' => ['default', 'velocity'],
-                           'controller' => ['default']
-        pose_child.connect_to world_to_aligned_child
-        pose_child.connect_to aligned_position_controller_child
-        pose_child.connect_to aligned_velocity_controller_child
-        pose_child.connect_to aligned_to_body_child
-        pose_child.connect_to optimal_heading_controller_child
-        world_to_aligned_child.cmd_out_port.connect_to optimal_heading_controller_child.cmd_cascade_port
-        optimal_heading_controller_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
-        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
-        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
-        aligned_to_body_child.cmd_out_port.connect_to controller_child.cmd_cascade_port
-        controller_child.connect_to joint_child
-        
-        export world_to_aligned_child.cmd_in_port
-        export controller_child.cmd_out_port
-        provides ::Base::WorldXYZRollPitchYawControlledSystemSrv, :as => "cmd_in"
-
-        #TODO @Christian, wenn du hier "nur" ein CommandSrv definierst erfüllt das den controlloop ja nicht, das meinte ich schonmal
-        #provides ::Base::JointsControllerSrv, :as => "command_out"
-        provides ::Base::JointsCommandSrv, :as => "command_out"
-
-    end
+#    class WorldPositionCmp < Syskit::Composition
+#        add ::Base::JointsCommandConsumerSrv, :as => "joint"
+#        add ::Base::PoseSrv, :as => "pose"
+#        add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
+#        add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
+#        add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
+#        add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
+#        add AuvControl::AlignedToBody, :as => "aligned_to_body"
+#        add AuvControl::AccelerationController, :as => "controller"
+#        
+#        conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
+#                           'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
+#                           'controller' => ['default_simulation']
+#        conf 'default', 'aligned_position_controller' => ['default', 'position'],
+#                           'aligned_velocity_controller' => ['default', 'velocity'],
+#                           'controller' => ['default']
+#        pose_child.connect_to world_to_aligned_child
+#        pose_child.connect_to aligned_position_controller_child
+#        pose_child.connect_to aligned_velocity_controller_child
+#        pose_child.connect_to aligned_to_body_child
+#        pose_child.connect_to optimal_heading_controller_child
+#        world_to_aligned_child.cmd_out_port.connect_to optimal_heading_controller_child.cmd_cascade_port
+#        optimal_heading_controller_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
+#        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
+#        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
+#        aligned_to_body_child.cmd_out_port.connect_to controller_child.cmd_cascade_port
+#        controller_child.connect_to joint_child
+#        
+#        export world_to_aligned_child.cmd_in_port
+#        export controller_child.cmd_out_port
+#        provides ::Base::WorldXYZRollPitchYawControlledSystemSrv, :as => "cmd_in"
+#
+#        #TODO @Christian, wenn du hier "nur" ein CommandSrv definierst erfüllt das den controlloop ja nicht, das meinte ich schonmal
+#        #provides ::Base::JointsControllerSrv, :as => "command_out"
+#        provides ::Base::JointsCommandSrv, :as => "command_out"
+#
+#    end
     class WorldAndXYVelocityCmp < Syskit::Composition
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
@@ -94,8 +94,8 @@ module AuvCont
             controller_child.with_conf('default', 'all_thruster_huelle')
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
-        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
-        command_child.prefer_deployed_tasks("constand_command")
+#        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
+#        command_child.prefer_deployed_tasks("constand_command")
         
         #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
@@ -106,7 +106,7 @@ module AuvCont
         #                   'aligned_velocity_controller' => ['default', 'velocity'],
         #                   'controller' => ['default', 'all_thruster_huelle']
 
-        command_child.connect_to world_to_aligned_child.cmd_in_port
+#        command_child.connect_to world_to_aligned_child.cmd_in_port
 
         pose_child.connect_to world_to_aligned_child
         pose_child.connect_to aligned_position_controller_child
@@ -123,12 +123,18 @@ module AuvCont
         export world_to_aligned_child.cmd_in_port, :as => 'world_in'
         export aligned_velocity_controller_child.cmd_in_port, :as => 'velocity_in'
         export controller_child.cmd_out_port
-        provides ::Base::WorldZRollPitchYawControlledSystemSrv, :as => "world_in_s", "command_in" => "velocity_in"
-        provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
+    #    provides ::Base::WorldZRollPitchYawControlledSystemSrv, :as => "world_in_s", "command_in" => "velocity_in"
+    #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
     
-    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
+    class JoystickNew < WorldAndXYVelocityCmp
+        add AuvControl::JoystickCommandCmp, :as => 'joystick'
+        connect joystick_child.WorldCommand_port => world_to_aligned_child.cmd_in_port
+        connect joystick_child.VeloCommand_port => aligned_velocity_controller_child.cmd_in_port
+    end
+    
+#    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
     #::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldAndXYVelocityCmp
 =begin
     class WorldZRollPitchYawVelocityXY < ::Base::ControlLoop
@@ -157,8 +163,10 @@ module AuvCont
     end
 =end
     class PositionMoveCmp < WorldAndXYVelocityCmp
-        overload 'command', AuvControl::ConstantCommand
-
+        add AuvControl::ConstantCommand, :as => 'command'
+        command_child.prefer_deployed_tasks("constand_command")
+        command_child.connect_to world_to_aligned_child.cmd_in_port
+        
         argument :heading, :default => 0
         argument :depth, :default => -4 
         argument :x, :default => 0

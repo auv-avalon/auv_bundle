@@ -44,10 +44,6 @@ module DFKI
                 'controlled_system' => base_loop_def
             )
 
-            define 'position_control_loop', ::Base::ControlLoop.use(
-                'controller' =>  AvalonControl::PositionControlTask, 
-                'controlled_system' => base_loop_def
-            )
             define 'relative_heading_loop', ::Base::ControlLoop.use(
                 'controlled_system' => base_loop_def,
                 'orientation_with_z' => final_orientation_with_z_tag,
@@ -120,11 +116,16 @@ module DFKI
                 'hb' => thruster_feedback_tag,
                 'ori' => final_orientation_with_z_tag
             )
+            
+            define 'position_control_loop', ::Base::ControlLoop.use(
+                'controller' =>  AvalonControl::PositionControlTask, 
+                'controlled_system' => base_loop_def,
+                'pose' => localization_def
+            )
 
             ################# Basic Movements #########################
             define 'target_move', ::AuvControl::SimplePosMove.use(
-                'controlled_system' => base_loop_def,
-                'controller' => AvalonControl::RelFakeWriter, #TODO this should not needed see https://github.com/rock-core/tools-syskit/issues/16
+                'controlled_system' => position_control_loop_def,
                 'pose' => localization_def
             )
 

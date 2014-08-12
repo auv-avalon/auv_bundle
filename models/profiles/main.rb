@@ -180,7 +180,7 @@ module DFKI
                     )
             )
 
-            define 'pipeline_new', AuvCont::XYPositionCmp.use(
+            define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(
                 'pose' => localization_def,
                 'controller' => pipeline_detector_new_def
             )

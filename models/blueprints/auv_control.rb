@@ -92,8 +92,8 @@ module AuvControl
         connect orientation_with_z_child.orientation_z_samples_port => rawCommandConverter_child.orientation_readings_port
 
         export rawCommandConverter_child.motion_command_port
-        export rawCommandConverter_child.world_command_port, :as => "WorldCommand"
-        export rawCommandConverter_child.aligned_velocity_command_port, :as =>"VeloCommand"
+        export rawCommandConverter_child.world_command_port, :as => "world_command"
+        export rawCommandConverter_child.aligned_velocity_command_port, :as =>"velo_command"
     end
 
     class DepthFusionCmp < Syskit::Composition

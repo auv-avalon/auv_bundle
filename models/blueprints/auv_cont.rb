@@ -16,54 +16,80 @@ module AuvCont
     #data_service_type 'WorldXYZRollPitchYawSrv' do
     #    input_port 'world_cmd', 'base/LinearAngular6DCommand'
     #end
-    data_service_type 'WorldZRollPitchYawSrvVelocityXY' do
-        input_port 'world_cmd', 'base/LinearAngular6DCommand'
-        input_port 'Velocity_cmd', 'base/LinearAngular6DCommand'
-    end
-   
-#    class WorldPositionCmp < Syskit::Composition
-#        add ::Base::JointsCommandConsumerSrv, :as => "joint"
-#        add ::Base::PoseSrv, :as => "pose"
-#        add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
-#        add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
-#        add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
-#        add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
-#        add AuvControl::AlignedToBody, :as => "aligned_to_body"
-#        add AuvControl::AccelerationController, :as => "controller"
-#        
-#        conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
-#                           'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
-#                           'controller' => ['default_simulation']
-#        conf 'default', 'aligned_position_controller' => ['default', 'position'],
-#                           'aligned_velocity_controller' => ['default', 'velocity'],
-#                           'controller' => ['default']
-#        pose_child.connect_to world_to_aligned_child
-#        pose_child.connect_to aligned_position_controller_child
-#        pose_child.connect_to aligned_velocity_controller_child
-#        pose_child.connect_to aligned_to_body_child
-#        pose_child.connect_to optimal_heading_controller_child
-#        world_to_aligned_child.cmd_out_port.connect_to optimal_heading_controller_child.cmd_cascade_port
-#        optimal_heading_controller_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
-#        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
-#        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
-#        aligned_to_body_child.cmd_out_port.connect_to controller_child.cmd_cascade_port
-#        controller_child.connect_to joint_child
-#        
-#        export world_to_aligned_child.cmd_in_port
-#        export controller_child.cmd_out_port
-#        provides ::Base::WorldXYZRollPitchYawControlledSystemSrv, :as => "cmd_in"
-#
-#        #TODO @Christian, wenn du hier "nur" ein CommandSrv definierst erfüllt das den controlloop ja nicht, das meinte ich schonmal
-#        #provides ::Base::JointsControllerSrv, :as => "command_out"
-#        provides ::Base::JointsCommandSrv, :as => "command_out"
-#
+#    data_service_type 'WorldZRollPitchYawSrvVelocityXY' do
+#        input_port 'world_cmd', 'base/LinearAngular6DCommand'
+#        input_port 'Velocity_cmd', 'base/LinearAngular6DCommand'
 #    end
-    class WorldAndXYVelocityCmp < Syskit::Composition
-
+   
+    class WorldPositionCmp < Syskit::Composition
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
+        add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
+        add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
+        add AuvControl::AlignedToBody, :as => "aligned_to_body"
+        add AuvControl::AccelerationController, :as => "controller"
+
+        if ::CONFIG_HACK == 'default'
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
+        elsif ::CONFIG_HACK == 'simulation'
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
+        elsif ::CONFIG_HACK == 'dagon'
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default_aligned_position")
+        end
+
+        add AuvControl::PIDController, :as => "aligned_velocity_controller"
+        if  ::CONFIG_HACK == 'default'
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+        elsif ::CONFIG_HACK == 'simulation'
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
+        elsif ::CONFIG_HACK == 'dagon'
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("default_aligned_velocity")
+        end
+
+        add AuvControl::AccelerationController, :as => "controller"
+        if  ::CONFIG_HACK == 'default'
+            controller_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'simulation'
+            controller_child.with_conf("default_simulation")
+        elsif ::CONFIG_HACK == 'dagon'
+            controller_child.with_conf('default', 'all_thruster_huelle')
+        end
+        
+        #conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
+        #                   'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
+        #                   'controller' => ['default_simulation']
+        #conf 'default', 'aligned_position_controller' => ['default', 'position'],
+        #                   'aligned_velocity_controller' => ['default', 'velocity'],
+        #                   'controller' => ['default']
+        #
+        pose_child.connect_to world_to_aligned_child
+        pose_child.connect_to aligned_position_controller_child
+        pose_child.connect_to aligned_velocity_controller_child
+        pose_child.connect_to aligned_to_body_child
+        pose_child.connect_to optimal_heading_controller_child
+        world_to_aligned_child.cmd_out_port.connect_to optimal_heading_controller_child.cmd_cascade_port
+        optimal_heading_controller_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
+        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
+        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
+        aligned_to_body_child.cmd_out_port.connect_to controller_child.cmd_cascade_port
+        controller_child.connect_to joint_child
+        
+        export world_to_aligned_child.cmd_in_port
+        export controller_child.cmd_out_port
+        provides ::Base::WorldXYZRollPitchYawControlledSystemSrv, :as => "cmd_in"
+
+        #provides ::Base::JointsControllerSrv, :as => "command_out"
+        provides ::Base::JointsCommandSrv, :as => "command_out"
+
+    end
+    class WorldAndXYVelocityCmp < Syskit::Composition
+
+        add ::Base::JointsControlledSystemSrv, :as => "joint"
+        add ::Base::PoseSrv, :as => "pose"
+        add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
+        add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_velocity_controller"), :as => "aligned_velocity_controller"
         add AuvControl::PIDController, :as => "aligned_position_controller"
@@ -73,7 +99,7 @@ module AuvCont
         elsif ::CONFIG_HACK == 'simulation'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default_aligned_position")
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf('default_aligned_position', 'no_xy')
         end
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
@@ -125,13 +151,14 @@ module AuvCont
         export controller_child.cmd_out_port
     #    provides ::Base::WorldZRollPitchYawControlledSystemSrv, :as => "world_in_s", "command_in" => "velocity_in"
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
+        #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
     
     class JoystickNew < WorldAndXYVelocityCmp
         add AuvControl::JoystickCommandCmp, :as => 'joystick'
-        connect joystick_child.WorldCommand_port => world_to_aligned_child.cmd_in_port
-        connect joystick_child.VeloCommand_port => aligned_velocity_controller_child.cmd_in_port
+        connect joystick_child.world_command_port => world_to_aligned_child.cmd_in_port
+        connect joystick_child.velo_command_port => aligned_velocity_controller_child.cmd_in_port
     end
     
 #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
@@ -162,7 +189,7 @@ module AuvCont
         
     end
 =end
-    class PositionMoveCmp < WorldAndXYVelocityCmp
+    class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")
         command_child.connect_to world_to_aligned_child.cmd_in_port

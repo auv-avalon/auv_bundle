@@ -120,7 +120,7 @@ module AuvCont
             acceleration_controller_child.with_conf('default', 'all_thruster_huelle')
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
-#        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
+        add Base::WorldXYVelocityControllerSrv, :as => "controller"
 #        command_child.prefer_deployed_tasks("constand_command")
         
         #conf 'simulation',
@@ -134,17 +134,19 @@ module AuvCont
 
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
 
-        pose_child.connect_to world_to_aligned_child
-        pose_child.connect_to aligned_position_controller_child
-        pose_child.connect_to aligned_velocity_controller_child
-        pose_child.connect_to aligned_to_body_child
-        pose_child.connect_to optimal_heading_controller_child
-        world_to_aligned_child.cmd_out_port.connect_to optimal_heading_controller_child.cmd_cascade_port
-        optimal_heading_controller_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
-        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
-        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
-        aligned_to_body_child.cmd_out_port.connect_to acceleration_controller_child.cmd_cascade_port
-        acceleration_controller_child.connect_to joint_child
+        connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        connect controller_child.aligned_velocity_command_port => aligned_velocity_controller_child.cmd_in_port
+        connect pose_child => world_to_aligned_child
+        connect pose_child => aligned_position_controller_child
+        connect pose_child => aligned_velocity_controller_child
+        connect pose_child => aligned_to_body_child
+        connect pose_child => optimal_heading_controller_child
+        connect world_to_aligned_child.cmd_out_port => optimal_heading_controller_child.cmd_cascade_port
+        connect optimal_heading_controller_child.cmd_out_port => aligned_position_controller_child.cmd_cascade_port
+        connect aligned_position_controller_child.cmd_out_port => aligned_velocity_controller_child.cmd_cascade_port
+        connect aligned_velocity_controller_child.cmd_out_port => aligned_to_body_child.cmd_cascade_port
+        connect aligned_to_body_child.cmd_out_port => acceleration_controller_child.cmd_cascade_port
+        connect acceleration_controller_child => joint_child
         
         export world_to_aligned_child.cmd_in_port, :as => 'world_in'
         export aligned_velocity_controller_child.cmd_in_port, :as => 'velocity_in'
@@ -230,40 +232,9 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
 
-    class JoystickNew < WorldAndXYVelocityCmp
-        add AuvControl::JoystickCommandCmp, :as => 'joystick'
-        connect joystick_child.world_command_port => world_to_aligned_child.cmd_in_port
-        connect joystick_child.velo_command_port => aligned_velocity_controller_child.cmd_in_port
-    end
-
 #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
     #::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldAndXYVelocityCmp
-=begin
-    class WorldZRollPitchYawVelocityXY < ::Base::ControlLoop
-        add ::Base::JointsCommandConsumerSrv, :as => "joint_srv"
-        add ::Localization::ParticleDetector, :as => "pose"
-        add AuvCont::WorldToAligned.with_conf("default","ZRollPitchYaw"), :as => "world_to_aligned"
-        add AuvCont::PIDController.with_conf("default","aligned","position","ZRollPitchYaw"), :as => "aligned_position_controller"
-        add AuvCont::PIDController.with_conf("default","aligned","velocity","all"), :as => "aligned_velocity_controller"
-        add AuvCont::AlignedToBody, :as => "aligned_to_body"
-        add AuvCont::AccelerationController, :as => "acceleration_controller"
-        
-        pose_child.connect_to world_to_aligned_child
-        pose_child.connect_to aligned_position_controller_child
-        pose_child.connect_to aligned_velocity_controller_child
-        pose_child.connect_to aligned_to_body_child
-        world_to_aligned_child.cmd_out_port.connect_to aligned_position_controller_child.cmd_cascade_port
-        aligned_position_controller_child.cmd_out_port.connect_to aligned_velocity_controller_child.cmd_cascade_port
-        aligned_velocity_controller_child.cmd_out_port.connect_to aligned_to_body_child.cmd_cascade_port
-        aligned_to_body_child.cmd_out_port.connect_to acceleration_controller_child.cmd_cascade_port
-        acceleration_controller_child.cmd_out_port.connect_to joint_srv_child 
-        
-        export world_to_aligned_child.cmd_in_port
-        export aligned_velocity_controller_child.cmd_in_port
-        provides WorldZRollPitchYawSrvVelocityXY, :as => "cmd_in"
-        
-    end
-=end
+    
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")

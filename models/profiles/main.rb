@@ -171,10 +171,10 @@ module DFKI
                 'joint' => thruster_tag
             )
             
-            define 'drive_simple_new', AuvCont::JoystickNew.use(
+            define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
                 'pose' => localization_def, 
                 'joint' => thruster_tag,
-                'joystick' => AuvControl::JoystickCommandCmp.use(
+                'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => final_orientation_with_z_tag,
                         'dist' => altimeter_tag
                     )

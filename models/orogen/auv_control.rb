@@ -5,9 +5,18 @@ module ::Base
        input_port 'world_cmd', 'base/LinearAngular6DCommand'
     end
 
+    data_service_type 'WorldXYZRollPitchYawControllerSrv' do
+       output_port 'world_cmd', 'base/LinearAngular6DCommand'
+    end
+
     data_service_type 'WorldXYPositionControllerSrv' do
        output_port 'world_command', 'base/LinearAngular6DCommand'
        output_port 'aligned_position_command', 'base/LinearAngular6DCommand'
+    end
+
+    data_service_type 'WorldXYVelocityControllerSrv' do
+       output_port 'world_command', 'base/LinearAngular6DCommand'
+       output_port 'aligned_velocity_command', 'base/LinearAngular6DCommand'
     end
 
     data_service_type 'WorldZRollPitchYawSrv' do

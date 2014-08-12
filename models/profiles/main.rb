@@ -84,6 +84,12 @@ module DFKI
                 'laser_scanner' => line_scanner_def,
                 'orientation_with_z' => final_orientation_with_z_tag
             )
+
+            define 'pipeline_detector_new', Pipeline::Detector_new.use(
+                'camera' => down_looking_camera_tag,
+                'laser_scanner' => line_scanner_def,
+                'orientation_with_z' => final_orientation_with_z_tag
+            )
             
             define 'pipeline', Pipeline::Follower.use(
                 pipeline_detector_def,
@@ -172,6 +178,11 @@ module DFKI
                         'orientation_with_z' => final_orientation_with_z_tag,
                         'dist' => altimeter_tag
                     )
+            )
+
+            define 'pipeline_new', AuvCont::XYPositionCmp.use(
+                'pose' => localization_def,
+                'controller' => pipeline_detector_new_def
             )
 
         end

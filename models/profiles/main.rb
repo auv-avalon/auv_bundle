@@ -136,6 +136,7 @@ module DFKI
 
 
             define 'wall_detector', Wall::Detector.use(
+                WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
                 "orientation_with_z" => final_orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )

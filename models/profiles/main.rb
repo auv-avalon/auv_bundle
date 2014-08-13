@@ -148,6 +148,11 @@ module DFKI
                 "dead_reckoning" => motion_model_tag
             )
 
+            define 'wall_detector_new', Wall::DetectorNew.use(
+                "orientation_with_z" => final_orientation_with_z_tag,
+                "dead_reckoning" => motion_model_tag
+            )
+
             define 'wall_right', Wall::Follower.use(
                 wall_detector_def,
                 'controlled_system' => relative_heading_loop_def
@@ -184,6 +189,12 @@ module DFKI
             define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(
                 'pose' => localization_def,
                 'controller' => pipeline_detector_new_def,
+                'joint' => thruster_tag
+            )
+
+            define 'wall_new', AuvCont::WorldAndYPositionAndXVelocityCmp.use(
+                'pose' => localization_def,
+                'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
             )
 

@@ -51,6 +51,53 @@ module Wall
 
     end
 
+    class DetectorNew < Syskit::Composition
+
+
+        add_main WallServoing::SingleSonarServoing, :as => 'detector'
+        add Base::SonarScanProviderSrv, :as => 'sonar'
+        add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
+        connect sonar_child => sonar_estimator_child
+        add Base::OrientationWithZSrv, :as => "orientation_with_z"
+	add_optional Base::VelocitySrv, :as => "dead_reckoning"
+        connect orientation_with_z_child => detector_child.orientation_sample_port
+        connect sonar_estimator_child => detector_child
+	connect dead_reckoning_child => detector_child.position_sample_port
+        #TODO Add motion model
+        #connect XXX => detector_child.position_sample_child
+
+        export detector_child.world_command_port
+        export detector_child.aligned_velocity_command_port
+        export detector_child.aligned_position_command_port
+        provides Base::WorldYPositionXVelocityControllerSrv, :as => 'controller'
+
+
+        event :wall_servoing
+        event :searching_wall
+        event :checking_wall
+        event :detected_corner
+        event :lost_all
+        event :origin_alignment
+        event :alignment_complete
+
+        attr_accessor :num_corners
+
+        on :start do |event|
+            self.num_corners = 0
+        end
+
+        def corner_passed!
+            @num_corners = @num_corners + 1 
+        end
+
+        on :detected_corner do |e|
+            self.corner_passed!
+            Robot.info "Passed a corner, have passed #{self.num_corners}"
+        end
+
+
+    end
+
     class Follower < ::Base::ControlLoop
         event :wall_servoing
         event :searching_wall

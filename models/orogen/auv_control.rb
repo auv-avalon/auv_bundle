@@ -15,6 +15,12 @@ module ::Base
        output_port 'aligned_position_command', '/base/LinearAngular6DCommand'
     end
 
+    data_service_type 'WorldYPositionXVelocityControllerSrv' do
+       output_port 'world_command', '/base/LinearAngular6DCommand'
+       output_port 'aligned_position_command', '/base/LinearAngular6DCommand'
+       output_port 'aligned_velocity_command', '/base/LinearAngular6DCommand'
+    end
+
     data_service_type 'WorldXYVelocityControllerSrv' do
        output_port 'world_command', '/base/LinearAngular6DCommand'
        output_port 'aligned_velocity_command', '/base/LinearAngular6DCommand'

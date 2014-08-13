@@ -1,6 +1,7 @@
 require "models/blueprints/control"
 require "models/blueprints/auv"
 require "models/blueprints/pose.rb"
+require "models/orogen/auv_control.rb"
 
 using_task_library "auv_rel_pos_controller"
 using_task_library "avalon_control"

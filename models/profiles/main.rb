@@ -51,7 +51,7 @@ module DFKI
             )
             ############### /DEPRICATED #########################
             
-            define 'world_controller', AuvCont::WorldPositionCmp
+#            define 'world_controller', AuvCont::WorldPositionCmp
             define 'world_and_xy_velo_controller', AuvCont::WorldAndXYVelocityCmp.use(
                     'joint' => thruster_tag
             )
@@ -84,6 +84,12 @@ module DFKI
                 'laser_scanner' => line_scanner_def,
                 'orientation_with_z' => final_orientation_with_z_tag
             )
+
+            define 'pipeline_detector_new', Pipeline::Detector_new.use(
+                'camera' => down_looking_camera_tag,
+                'laser_scanner' => line_scanner_def,
+                'orientation_with_z' => final_orientation_with_z_tag
+            )
             
             define 'pipeline', Pipeline::Follower.use(
                 pipeline_detector_def,
@@ -101,6 +107,7 @@ module DFKI
                 ), 
                 'controlled_system' => base_loop_def    
             )
+
             
             ############### Localization stuff  ######################
 
@@ -163,18 +170,20 @@ module DFKI
                 'pose' => localization_def, 
                 'command' => AuvControl::ConstantCommand, 
                 'joint' => thruster_tag
-                #Base::GroundDistanceSrv => altimeter_dev, 
-                #Base::ZProviderSrv => depth_reader_dev
+            )
+            
+            define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
+                'pose' => localization_def, 
+                'joint' => thruster_tag,
+                'controller' => AuvControl::JoystickCommandCmp.use(
+                        'orientation_with_z' => final_orientation_with_z_tag,
+                        'dist' => altimeter_tag
+                    )
             )
 
-            define 'drive_simple_new', AuvCont::PositionMoveCmp.use(
-                AuvControl::JoystickCommandCmp.use(
-                    "orientation_with_z" => final_orientation_with_z_tag,
-                    "dist" => altimeter_tag
-                ), 
-                'joint' => thruster_tag,
-                'pose' => localization_def
-                
+            define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(
+                'pose' => localization_def,
+                'controller' => pipeline_detector_new_def
             )
 
         end

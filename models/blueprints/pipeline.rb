@@ -36,6 +36,83 @@ module Pipeline
    end
 
         
+    class Detector_new < Syskit::Composition 
+        argument :heading, :default => nil
+        argument :depth, :default => nil
+        argument :speed_x, :default => nil
+        argument :turn_dir, :default => nil
+
+        event :check_candidate
+        event :follow_pipe
+        event :found_pipe
+        event :align_auv
+        event :lost_pipe
+        event :search_pipe
+        event :end_of_pipe
+        event :weak_signal
+
+
+        add_main OffshorePipelineDetector::Task, :as => 'offshorePipelineDetector'
+        add Base::ImageProviderSrv, :as => 'camera'
+#        add ImagePreprocessing::HSVSegmentationAndBlur, :as => 'blur'
+        add Base::OrientationWithZSrv, :as => "orientation_with_z"
+	add Pipeline::LineScanner, :as => "laser_scanner"
+
+        orientation_with_z_child.connect_to offshorePipelineDetector_child.orientation_sample_port
+        camera_child.frame_port.connect_to offshorePipelineDetector_child
+  #      camera_child.frame_port.connect_to blur_child
+ #       blur_child.oframe_port.connect_to offshorePipelineDetector_child
+        
+        export offshorePipelineDetector_child.find_port("position_command")
+#        export offshorePipelineDetector_child.position_command_port
+        export offshorePipelineDetector_child.world_command_port
+        export offshorePipelineDetector_child.aligned_position_command_port
+        provides Base::WorldXYPositionControllerSrv, :as => 'controller'
+        export offshorePipelineDetector_child.pipeline_port
+
+
+        attr_accessor :pipeline_heading
+        attr_accessor :last_valid_heading
+
+        script do
+            orientation_reader = orientation_with_z_child.orientation_z_samples_port.reader
+            poll do
+                if o = orientation_reader.read
+                    pipeline_heading = o.orientation.yaw
+                end
+            end
+        end
+
+#        refine_running_state do
+#            poll_in_state :end_of_pipe do |task|
+#                yaw = [:pose, :orientation].inject(State) do |value, field_name|
+#                    if value.respond_to?(field_name)
+#                        value.send(field_name)
+#                    else break
+#                    end
+#                end
+#                if !yaw.nil? && (yaw.yaw < 10* 180/Math::PI) && (yaw.yaw > 10 * -180/Math::PI)
+#                    emit :end_of_pipe
+#                else
+#                    Robot.info "Heading incorrect, don't emit event"
+#                end
+#            end
+#        end
+
+        def update_config(options)
+            offshorePipelineDetector_child.update_config(options)
+        end
+
+        on :weak_signal do |event|
+            self.last_valid_heading = pipeline_heading
+        end
+
+        on :end_of_pipe do |event|
+            Robot.info "got End of pipe Event"
+            self.last_valid_heading = pipeline_heading
+        end
+    end
+
     class Detector < Syskit::Composition 
         argument :heading, :default => nil
         argument :depth, :default => nil
@@ -52,19 +129,23 @@ module Pipeline
         event :weak_signal
 
 
+        add_main OffshorePipelineDetector::Task, :as => 'offshorePipelineDetector'
         add Base::ImageProviderSrv, :as => 'camera'
 #        add ImagePreprocessing::HSVSegmentationAndBlur, :as => 'blur'
-        add_main OffshorePipelineDetector::Task, :as => 'offshorePipelineDetector'
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
 	add Pipeline::LineScanner, :as => "laser_scanner"
+
         orientation_with_z_child.connect_to offshorePipelineDetector_child.orientation_sample_port
         camera_child.frame_port.connect_to offshorePipelineDetector_child
   #      camera_child.frame_port.connect_to blur_child
  #       blur_child.oframe_port.connect_to offshorePipelineDetector_child
+        
         export offshorePipelineDetector_child.find_port("position_command")
 #        export offshorePipelineDetector_child.position_command_port
         provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
         export offshorePipelineDetector_child.pipeline_port
+
+
         attr_accessor :pipeline_heading
         attr_accessor :last_valid_heading
 

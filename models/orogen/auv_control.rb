@@ -1,8 +1,34 @@
 require 'models/blueprints/auv'
     
-Base::ControlLoop.declare 'WorldXYZRollPitchYaw', '/base/LinearAngular6DCommand'
-Base::ControlLoop.declare 'WorldZRollPitchYaw', '/base/LinearAngular6DCommand'
-Base::ControlLoop.declare 'XYVelocity', '/base/LinearAngular6DCommand'
+module ::Base
+    data_service_type 'WorldXYZRollPitchYawControlledSystemSrv' do
+       input_port 'world_cmd', 'base/LinearAngular6DCommand'
+    end
+
+    data_service_type 'WorldXYZRollPitchYawControllerSrv' do
+       output_port 'world_cmd', 'base/LinearAngular6DCommand'
+    end
+
+    data_service_type 'WorldXYPositionControllerSrv' do
+       output_port 'world_command', 'base/LinearAngular6DCommand'
+       output_port 'aligned_position_command', 'base/LinearAngular6DCommand'
+    end
+
+    data_service_type 'WorldXYVelocityControllerSrv' do
+       output_port 'world_command', 'base/LinearAngular6DCommand'
+       output_port 'aligned_velocity_command', 'base/LinearAngular6DCommand'
+    end
+
+    data_service_type 'WorldZRollPitchYawSrv' do
+       input_port 'world_cmd', '/base/LinearAngular6DCommand'
+       input_port 'Velocity_cmd', '/base/LinearAngular6DCommand'
+    end
+
+    #Base::ControlLoop.declare 'WorldXYZRollPitchYaw', Auv::WorldZRollPitchYawSrvVelocityXY
+    #Base::ControlLoop.declare 'WorldXYZRollPitchYaw', '/base/LinearAngular6DCommand'
+    #Base::ControlLoop.declare 'WorldZRollPitchYaw', '/base/LinearAngular6DCommand'
+    #Base::ControlLoop.declare 'XYVelocity', '/base/LinearAngular6DCommand'
+end
 
 class AuvControl::ConstantCommand
     attr_reader :options
@@ -30,5 +56,5 @@ class AuvControl::ConstantCommand
 
     end
 
-    provides Base::WorldXYZRollPitchYawControllerSrv, :as => 'world_cmd'
+#    provides Base::WorldXYZRollPitchYawControllerSrv, :as => 'world_cmd'
 end

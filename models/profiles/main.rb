@@ -192,7 +192,8 @@ module DFKI
                 'joint' => thruster_tag
             )
 
-            define 'wall_new', AuvCont::WorldAndYPositionAndXVelocityCmp.use(
+            define 'wall_new_right', AuvCont::WorldAndXYPositionCmp.use(
+		 WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
                 'pose' => localization_def,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag

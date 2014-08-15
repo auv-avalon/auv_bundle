@@ -30,7 +30,7 @@ module Localization
         connect ori_child => sonar_estimator_child.orientation_sample_port
         connect ori_child => main_child.orientation_samples_port
         connect sonar_estimator_child.new_feature_port => main_child
-        connect hb_child => main_child
+        connect hb_child => main_child.thruster_samples_port
         connect hough_child => main_child.pose_update_port
         connect velocity_child.velocity_samples_port => main_child.speed_samples_port
 

@@ -52,8 +52,6 @@ module Wall
     end
 
     class DetectorNew < Syskit::Composition
-
-
         add_main WallServoing::SingleSonarServoing, :as => 'detector'
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
@@ -67,9 +65,8 @@ module Wall
         #connect XXX => detector_child.position_sample_child
 
         export detector_child.world_command_port
-        export detector_child.aligned_velocity_command_port
         export detector_child.aligned_position_command_port
-        provides Base::WorldYPositionXVelocityControllerSrv, :as => 'controller'
+        provides Base::WorldXYPositionControllerSrv, :as => 'controller'
 
 
         event :wall_servoing
@@ -79,11 +76,25 @@ module Wall
         event :lost_all
         event :origin_alignment
         event :alignment_complete
+        argument :timeout, :default => nil
+        argument :max_corners, :default => nil
 
         attr_accessor :num_corners
 
         on :start do |event|
+            Robot.info "Starting Wall Servoing"
             self.num_corners = 0
+            @start_time = Time.now
+            
+            
+            Robot.info "Starting wall detector reconfiguring sonar to wall_right"
+            @sonar_workaround = true 
+            if sonar_child.respond_to?(:orocos_task)
+                @old_sonar_conf = sonar_child.conf
+            else
+                #Simulation special case
+                @old_sonar_conf = sonar_child.children.to_a[1].conf
+            end
         end
 
         def corner_passed!
@@ -95,6 +106,48 @@ module Wall
             Robot.info "Passed a corner, have passed #{self.num_corners}"
         end
 
+        poll do
+            if(self.timeout)
+                if(@start_time + self.timeout < Time.now)
+                    STDOUT.puts "Finished #{self} becaue time is over! #{@start_time} #{@start_time + self.timeout}"
+                    emit :success
+                end
+            end
+            if(self.max_corners)
+                if(num_corners == self.max_corners)
+                    Robot.info "Wall servoing succssfull get all corners"
+                    emit :success
+                end
+            end
+
+            #Workaround sonar configs
+            orocos_t = nil
+            if sonar_child.respond_to?(:orocos_task)
+                orocos_t = sonar_child.orocos_task
+            else
+                #Simulation special case
+                orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
+            end
+
+            if orocos_t.state == :RUNNING and @sonar_workaround
+                condition = true
+                if sonar_child.respond_to?(:orocos_task)
+                    condition = orocos_t.config.continous == 1
+                else
+                    condition = orocos_t.ping_pong_mode == false
+                    #Nothing for sim, workarounding always
+                end
+
+                if condition 
+                    STDOUT.puts "Overriding sonar config to wall right"
+                    orocos_t.apply_conf(['default','wall_servoing_right'],true)
+                    @sonar_workaround = false
+                else
+                    @sonar_workaround = false
+                    STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
+                end
+            end
+        end
 
     end
 

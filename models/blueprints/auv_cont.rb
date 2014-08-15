@@ -32,7 +32,7 @@ module AuvCont
         add AuvControl::AccelerationController, :as => "acceleration_controller"
 
         if ::CONFIG_HACK == 'default'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -41,7 +41,7 @@ module AuvCont
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
         if  ::CONFIG_HACK == 'default'
-            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -95,16 +95,16 @@ module AuvCont
         add AuvControl::PIDController, :as => "aligned_position_controller"
 
         if ::CONFIG_HACK == 'default'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_parallel', 'no_xy')
         elsif ::CONFIG_HACK == 'simulation'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel', 'no_xy')
         elsif ::CONFIG_HACK == 'dagon'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf('default_aligned_position', 'no_xy')
         end
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
         if  ::CONFIG_HACK == 'default'
-            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -113,7 +113,7 @@ module AuvCont
 
         add AuvControl::AccelerationController, :as => "acceleration_controller"
         if  ::CONFIG_HACK == 'default'
-            acceleration_controller_child.with_conf("default")
+            acceleration_controller_child.with_conf('default')
         elsif ::CONFIG_HACK == 'simulation'
             acceleration_controller_child.with_conf("default_simulation")
         elsif ::CONFIG_HACK == 'dagon'
@@ -168,7 +168,7 @@ module AuvCont
         add AuvControl::PIDController, :as => "aligned_position_controller"
 
         if ::CONFIG_HACK == 'default'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position')
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -177,7 +177,7 @@ module AuvCont
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
         if  ::CONFIG_HACK == 'default'
-            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -246,7 +246,7 @@ module AuvCont
         add AuvControl::PIDController, :as => "aligned_position_controller"
 
         if ::CONFIG_HACK == 'default'
-            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position', 'no_x')
+            aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_parallel', 'no_x')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_position_controller_child.prefer_deployed_tasks("aligned_position_controller").with_conf("default", 'position_simulation_parallel', 'no_x')
         elsif ::CONFIG_HACK == 'dagon'
@@ -255,7 +255,7 @@ module AuvCont
 
         add AuvControl::PIDController, :as => "aligned_velocity_controller"
         if  ::CONFIG_HACK == 'default'
-            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity')
+            aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_parallel')
         elsif ::CONFIG_HACK == 'simulation'
             aligned_velocity_controller_child.prefer_deployed_tasks("aligned_velocity_controller").with_conf("dummy", 'velocity_simulation_parallel')
         elsif ::CONFIG_HACK == 'dagon'
@@ -264,7 +264,7 @@ module AuvCont
 
         add AuvControl::AccelerationController, :as => "acceleration_controller"
         if  ::CONFIG_HACK == 'default'
-            acceleration_controller_child.with_conf("default")
+            acceleration_controller_child.with_conf('default')
         elsif ::CONFIG_HACK == 'simulation'
             acceleration_controller_child.with_conf("default_simulation")
         elsif ::CONFIG_HACK == 'dagon'

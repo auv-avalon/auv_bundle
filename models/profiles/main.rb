@@ -3,6 +3,7 @@ require "models/blueprints/pose_auv"
 require "models/blueprints/wall"
 require "models/blueprints/buoy"
 require "models/blueprints/pipeline"
+require "models/blueprints/structure"
 require "models/blueprints/localization"
 require "models/blueprints/auv_cont"
 require "models/blueprints/auv_control"
@@ -183,6 +184,13 @@ module DFKI
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => final_orientation_with_z_tag,
                         'dist' => altimeter_tag
+                    )
+            )
+            define 'structure_inspection', AuvCont::WorldAndXYVelocityCmp.use(
+                'pose' => localization_def, 
+                'joint' => thruster_tag,
+                'controller' => Structure::Detector.use(
+                        'camera' => forward_looking_camera_tag
                     )
             )
 

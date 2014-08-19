@@ -36,6 +36,8 @@ module Localization
 
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
+        export main_child.dead_reckoning_samples_port, as: 'velocity_samples'
+        provides Base::VelocitySrv, :as => 'velocity'
 
 #        @position = :position2 
 #        

@@ -74,29 +74,6 @@ module DFKI
                     'controller' => AuvRelPosController::Task.with_conf('default','absolute_heading')
             )
 
-            define 'line_scanner', Pipeline::LineScanner.use(
-               LineScanner::Task.with_conf('default'),
-               'camera' => down_looking_camera_tag,
-               'motion_model' => motion_model_tag
-            )
-
-            define 'pipeline_detector', Pipeline::Detector.use(
-                'camera' => down_looking_camera_tag,
-                'laser_scanner' => line_scanner_def,
-                'orientation_with_z' => final_orientation_with_z_tag
-            )
-
-            define 'pipeline_detector_new', Pipeline::Detector_new.use(
-                'camera' => down_looking_camera_tag,
-                'laser_scanner' => line_scanner_def,
-                'orientation_with_z' => final_orientation_with_z_tag
-            )
-            
-            define 'pipeline', Pipeline::Follower.use(
-                pipeline_detector_def,
-                'controlled_system' =>  relative_loop_def
-            )
-
             define 'buoy', Buoy::FollowerCmp.use(
                 'controlled_system' => absolute_loop_def
             )
@@ -194,6 +171,30 @@ module DFKI
                         'camera' => forward_looking_camera_tag,
                         'ori' => final_orientation_with_z_tag
                     )
+            )
+
+            define 'line_scanner', Pipeline::LineScanner.use(
+               LineScanner::Task.with_conf('default'),
+               'camera' => down_looking_camera_tag,
+               'motion_model' => localization_def,
+               #'motion_model' => motion_model_tag
+            )
+
+            define 'pipeline_detector', Pipeline::Detector.use(
+                'camera' => down_looking_camera_tag,
+                'laser_scanner' => line_scanner_def,
+                'orientation_with_z' => final_orientation_with_z_tag
+            )
+
+            define 'pipeline_detector_new', Pipeline::Detector_new.use(
+                'camera' => down_looking_camera_tag,
+                'laser_scanner' => line_scanner_def,
+                'orientation_with_z' => final_orientation_with_z_tag
+            )
+            
+            define 'pipeline', Pipeline::Follower.use(
+                pipeline_detector_def,
+                'controlled_system' =>  relative_loop_def
             )
 
             define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(

@@ -9,9 +9,10 @@ module Structure
     class Detector < Syskit::Composition
         add_main StructureServoing::Task, :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
-        add ImagePreprocessing::HSVSegmentationAndBlur, :as => "seg" 
+        add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
         add Base::ImageProviderSrv, :as => 'camera'
         add Base::OrientationWithZSrv, :as => "ori"
+
 
         connect ori_child => detector_child 
         connect camera_child => seg_child

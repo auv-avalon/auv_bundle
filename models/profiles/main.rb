@@ -186,11 +186,13 @@ module DFKI
                         'dist' => altimeter_tag
                     )
             )
+            
             define 'structure_inspection', AuvCont::WorldAndXYVelocityCmp.use(
                 'pose' => localization_def, 
                 'joint' => thruster_tag,
                 'controller' => Structure::Detector.use(
-                        'camera' => forward_looking_camera_tag
+                        'camera' => forward_looking_camera_tag,
+                        'ori' => final_orientation_with_z_tag
                     )
             )
 

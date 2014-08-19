@@ -11,7 +11,9 @@ module Structure
         add HsvMosaicing::Task, :as => "mosaic" 
         add ImagePreprocessing::HSVSegmentationAndBlur, :as => "seg" 
         add Base::ImageProviderSrv, :as => 'camera'
+        add Base::OrientationWithZSrv, :as => "ori"
 
+        connect ori_child => detector_child 
         connect camera_child => seg_child
         connect seg_child.binary_result_port => mosaic_child
         connect mosaic_child => detector_child

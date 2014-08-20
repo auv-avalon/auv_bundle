@@ -56,6 +56,7 @@ module AuvCont
         elsif ::CONFIG_HACK == 'dagon'
             acceleration_controller_child.with_conf('default', 'all_thruster_huelle')
         end
+        add Base::WorldXYZRollPitchYawControllerSrv, :as => "controller"
         
         #conf 'simulation', 'aligned_position_controller' => ['default', 'position_simulation_parallel'],
         #                   'aligned_velocity_controller' => ['default', 'velocity_simulation_parallel'],
@@ -64,6 +65,7 @@ module AuvCont
         #                   'aligned_velocity_controller' => ['default', 'velocity'],
         #                   'acceleration_controller' => ['default']
         #
+        connect controller_child.world_cmd_port => world_to_aligned_child.cmd_in_port
         pose_child.connect_to world_to_aligned_child
         pose_child.connect_to aligned_position_controller_child
         pose_child.connect_to aligned_velocity_controller_child
@@ -310,16 +312,9 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
     
-    class FullWorldControlCmp < WorldPositionCmp
-        add ::Base::WorldXYZRollPitchYawControllerSrv, :as => 'controller'
-        #TODO @Christian connect me
-        #
-    end
-
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")
-        command_child.connect_to world_to_aligned_child.cmd_in_port
         
         argument :heading, :default => 0
         argument :depth, :default => -4 

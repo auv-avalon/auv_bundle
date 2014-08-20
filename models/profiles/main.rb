@@ -58,10 +58,6 @@ module DFKI
             )
 
 
-            define 'position_move', AuvCont::PositionMoveCmp.use(
-                    'joint' => thruster_tag
-            )
-
             define 'relative_loop', Base::ControlLoop.use(
                     'orientation_with_z' => final_orientation_with_z_tag,
                     'controlled_system' => base_loop_def, 
@@ -119,7 +115,6 @@ module DFKI
                 'reading' => final_orientation_with_z_tag
             )
 
-
             define 'wall_detector', Wall::Detector.use(
                 WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
                 "orientation_with_z" => final_orientation_with_z_tag,
@@ -149,7 +144,7 @@ module DFKI
 
 
             ###     New Stuff not (yet) integrated #######################
-            define 'target_move_new', position_move_def.use(
+            define 'target_move_new', AuvCont::PositionMoveCmp.use(
                 'pose' => localization_def, 
                 'command' => AuvControl::ConstantCommand, 
                 'joint' => thruster_tag
@@ -210,7 +205,7 @@ module DFKI
                 'joint' => thruster_tag
             )
 
-            define 'trajectory', AuvCont::FullWorldControlCmp.use(
+            define 'trajectory', AuvCont::WorldPositionCmp.use(
                 'controller' => AvalonControl::TrajectoryFollower,
                 'joint' => thruster_tag,
                 'pose' => localization_def

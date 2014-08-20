@@ -59,41 +59,42 @@ class AvalonControl::PositionControlTask
 end
 
 class AvalonControl::TrajectoryFollower
-    attr_reader :trajectory
-
-    def configure
-        super
-        return if(!@trajectory)
-        orocos_task.trajectory = @trajectory
-    end
-
-    def update_target(target)
-        points = []
-        if target == "pipeline"
-            points << Eigen::Vector3.new(-5.5,4,-5)
-            #points << Eigen::Vector3.new(2,4,-5)
-            points << Eigen::Vector3.new(0,0,-5)
-            points << Eigen::Vector3.new(-5.5,-4,-5)
-		elsif target == "over_pipeline"
-			orocos_task.final_heading = 3.14
-            points << Eigen::Vector3.new(-6.5,-1,-5)
-            points << Eigen::Vector3.new(-3.5,5.3,-5)
-            points << Eigen::Vector3.new(-2.0,5.9,-5)
-            points << Eigen::Vector3.new(-0.5,5.5,-5)
-		elsif target == "explore"
-            points << Eigen::Vector3.new(-0.5,5.5,-5)
-            points << Eigen::Vector3.new(-7,5.5,-5)
-            points << Eigen::Vector3.new(0.0,0.0,-5)
-            points << Eigen::Vector3.new(-6,-1,-5)
-        
-		else
-            raise ArgumentError, "#{target} is unspported as a target for the trajectory mover"
-        end
-        trajectory = Types::Base::Trajectory.new
-        spline = Types::Base::Geometry::Spline3.interpolate(points)
-        trajectory.spline = spline
-        orocos_task.trajectory = trajectory
-        @trajectory = trajectory
-    end
+#    attr_reader :trajectory
+#
+#    def configure
+#        super
+#        return if(!@trajectory)
+#        orocos_task.trajectory = @trajectory
+#    end
+#
+#    def update_target(target)
+#        points = []
+#        if target == "pipeline"
+#            points << Eigen::Vector3.new(-5.5,4,-5)
+#            #points << Eigen::Vector3.new(2,4,-5)
+#            points << Eigen::Vector3.new(0,0,-5)
+#            points << Eigen::Vector3.new(-5.5,-4,-5)
+#		elsif target == "over_pipeline"
+#			orocos_task.final_heading = 3.14
+#            points << Eigen::Vector3.new(-6.5,-1,-5)
+#            points << Eigen::Vector3.new(-3.5,5.3,-5)
+#            points << Eigen::Vector3.new(-2.0,5.9,-5)
+#            points << Eigen::Vector3.new(-0.5,5.5,-5)
+#		elsif target == "explore"
+#            points << Eigen::Vector3.new(-0.5,5.5,-5)
+#            points << Eigen::Vector3.new(-7,5.5,-5)
+#            points << Eigen::Vector3.new(0.0,0.0,-5)
+#            points << Eigen::Vector3.new(-6,-1,-5)
+#
+#		else
+#            raise ArgumentError, "#{target} is unspported as a target for the trajectory mover"
+#        end
+#        trajectory = Types::Base::Trajectory.new
+#        spline = Types::Base::Geometry::Spline3.interpolate(points)
+#        trajectory.spline = spline
+#        orocos_task.trajectory = trajectory
+#        @trajectory = trajectory
+#    end
     provides Base::AUVRelativeMotionControllerSrv, :as => "controller"
+    provides Base::WorldXYZRollPitchYawControllerSrv , :as => "world_controller"
 end

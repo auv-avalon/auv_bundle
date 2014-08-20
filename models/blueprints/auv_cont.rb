@@ -310,6 +310,12 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
     
+    class FullWorldControlCmp < WorldPositionCmp
+        add ::Base::WorldXYZRollPitchYawControllerSrv, :as => 'controller'
+        #TODO @Christian connect me
+        #
+    end
+
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")

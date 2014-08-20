@@ -203,8 +203,8 @@ module Pipeline
         #controller_child.position_command_port.connect_to workaround_child 
         #end workaround
         
-        add_optional AvalonControl::PositionControlTask, :as => "workaround"
-        connect controller_local_child.pipeline_port => workaround_child
+        #add_optional AvalonControl::PositionControlTask, :as => "workaround"
+        #connect controller_local_child.pipeline_port => workaround_child
 
         argument :turn_dir, :default => nil
         argument :heading, :default => nil

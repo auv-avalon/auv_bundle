@@ -1,0 +1,47 @@
+--- name:default
+# defaults to unset, so not taken into account
+final_heading: .nan
+# no documentation available for this property
+geometrical_resolution: 0.1
+kacke: 0.1
+# If the is not set, the next position is take either from step_with from the current location based,
+# independat if the vehicle might jup on the spline. For calculation the NEXT position to the spline for the vehicle is taken
+# if this is set, the value indicates the maximum-allowed jump-value on the spline. This means the spline is started at the beginning, and the allowed
+# next position on the spline cannot be more far away than this property. The result will be that the vehicle follows the complete spline from beginning to end
+# independant id another spoint of the spline is closer to the vehicle.
+max_spline_jump_distance: 3
+# no documentation available for this property
+step_width: 2.0
+# no documentation available for this property
+timeout_at_end_before_mark_end_reached: 10.0
+# use the zero heading for debuggin, instead calculated heading
+use_zero_heading: false
+--- name:hall_square
+trajectory:
+  speed: 1.81844853e-316
+  spline:
+    geometric_resolution: 0.1
+    dimension: 3
+    curve_order: 3
+    kind: :POLYNOMIAL_BSPLINE
+    knots:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 21.402295979079504
+    - 38.89508823891228
+    - 38.89508823891228
+    - 38.89508823891228
+    vertices:
+    - 6.0
+    - 4.0
+    - -5.0
+    - -14.092692070806969
+    - 10.488859875419607
+    - 2.6141634687526523
+    - -4.85338528528596
+    - -8.726471397007122
+    - -10.50961038305679
+    - 6.0
+    - -4.0
+    - -4.0

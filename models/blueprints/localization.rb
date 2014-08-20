@@ -26,6 +26,15 @@ module Localization
         add_optional ::Localization::HoughSrv, as: 'hough'
         add_optional ::Base::VelocitySrv, as: 'velocity'
 
+        if ::CONFIG_HACK == 'default'
+            main_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'simulation'
+            main_child.with_conf("sim_nurc")
+        elsif ::CONFIG_HACK == 'dagon'
+            main_child.with_conf("default")
+        end
+
+
         connect sonar_child => sonar_estimator_child
         connect ori_child => sonar_estimator_child.orientation_sample_port
         connect ori_child => main_child.orientation_samples_port

@@ -205,8 +205,8 @@ module DFKI
                 'joint' => thruster_tag
             )
 
-            define 'trajectory', AuvCont::WorldPositionCmp.use(
-                'controller' => AvalonControl::TrajectoryFollower.with_conf('detault','hall_square'),
+            define 'trajectory', AuvCont::Trajectory.use(
+                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
                 'joint' => thruster_tag,
                 'pose' => localization_def
             )

@@ -311,7 +311,12 @@ module AuvCont
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
-    
+   
+    class Trajectory < WorldPositionCmp 
+        overload 'controller', AvalonControl::TrajectoryFollower 
+        connect pose_child => controller_child 
+    end
+
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")

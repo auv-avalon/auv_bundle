@@ -168,6 +168,12 @@ module DFKI
                     )
             )
 
+            define 'structure_detector_down',Structure::Detector.use(
+                'camera' => down_looking_camera_tag,
+                'ori' => final_orientation_with_z_tag
+            )
+
+
             define 'line_scanner', Pipeline::LineScanner.use(
                LineScanner::Task.with_conf('default'),
                'camera' => down_looking_camera_tag,

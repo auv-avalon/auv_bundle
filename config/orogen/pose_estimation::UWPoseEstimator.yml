@@ -23,11 +23,15 @@ transformer_max_latency: 0.1
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
 # Time in s between velocity_samples readings
-velocity_samples_period: 0.01
+model_velocity_samples_period: 0.01
+# Time in s between velocity_samples readings
+dvl_velocity_samples_period: 0.01
 # Time in s between orientation_samples readings
 orientation_samples_period: 0.01
 # Time in s between position_samples readings
-position_samples_period: 0.01
+lbl_position_samples_period: 0.01
+# Time in s between position_samples readings
+xy_position_samples_period: 0.01
 # Time in s between depth_samples readings
 depth_samples_period: 0.01
 

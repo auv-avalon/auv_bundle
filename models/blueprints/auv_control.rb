@@ -96,7 +96,8 @@ module AuvControl
         export rawCommandConverter_child.world_command_port, :as => "world_command"
         export rawCommandConverter_child.aligned_velocity_command_port, :as =>"aligned_velocity_command"
 
-        provides ::Base::WorldXYVelocityControllerSrv, as: 'controller'
+        provides ::Base::WorldXYVelocityControllerSrv, :as => 'controller'
+        provides ::Base::AUVMotionControllerSrv, :as => 'old_controller'
     end
 
     class DepthFusionCmp < Syskit::Composition

@@ -1,0 +1,66 @@
+--- name:default
+# Line Scanner calibration parameters. camRight is interpreted as projector.
+calibration:
+  camLeft:
+    fx: 475.165
+    fy: 464.937
+    cx: 341.189
+    cy: 231.744
+    d0: -0.182326
+    d1: 0.229556
+    d2: 0.0163551
+    d3: -0.00182374
+    width: -1
+    height: -1
+    ex: .nan
+    ey: .nan
+  camRight:
+    fx: 1.0
+    fy: 1.0
+    cx: 0.0
+    cy: 0.0
+    d0: 0.0
+    d1: 0.0
+    d2: 0.0339155
+    d3: 0.0
+    width: -1
+    height: -1
+    ex: .nan
+    ey: .nan
+  extrinsic:
+    tx: 0.0355682
+    ty: 0.526439
+    tz: 0.00524579
+    rx: 0.6301
+    ry: -0.039252
+    rz: -0.0721216
+# the full HSV room is passed each interval[m].
+colorize_interval: 0.3
+# turns on point colorization
+colorize_points: true
+# turns on the debug mode
+debug_mode: false
+# width of the laser line at the bottom of the image [pixel]
+laser_width_bottom: 7.0
+# width of the laser line at the top of the image [pixel]
+laser_width_top: 1.0
+# min y distance between two parallel laser line segments [pixel]
+max_gap_length: 5.0
+# no documentation available for this property
+metadata:
+  metadata: []
+  properties: []
+  input_ports: []
+  output_ports: []
+# min length of a laser line segment [pixel]
+min_segment_length: 40
+# min distance between two laser line candiates [pixel] of the same col/row
+min_seperation: 40
+# min signal to noise ration [dB]
+min_snr: 10.0
+# indicates if the frame must be corrected before processing (undistort)
+undistort_frame: true
+# indicates if multiple points per column are allowed
+unique_solution: true
+# indicates if only the green channel should be used
+use_green_channel: true

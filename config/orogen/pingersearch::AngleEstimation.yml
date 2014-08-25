@@ -1,0 +1,13 @@
+--- name:default
+# no documentation available for this property
+distance_between_sensors: 1.0
+# enables the debug output port
+enable_debug_output: 0
+# no documentation available for this property
+expected_frequency: 13000
+# no documentation available for this property
+expected_signal_length: 0.01
+# no documentation available for this property
+sound_velocity: 343.0
+# no documentation available for this property
+x_correlation_sequence_length: 0.005

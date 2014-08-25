@@ -1,0 +1,80 @@
+--- name:default_old
+# the angle between orientation-zero and basin zero (in degree)
+angleDelta: 0.0
+# Number of Angle steps collected in 1 bin in houghspace
+anglesPerBin: 2
+# Height of the basin
+basinHeight: 50.0
+# Width of the basin
+basinWidth: 120.0
+# Number of distance bin in sonar beam collected in 1 bin in houghspace
+distancesPerBin: 4
+# bins in sonar beam with fewer entries will be ignored
+filterThreshold: 50
+# Number of bins of the sonar
+maxDistance: 600
+# Minimum distance for sonar to filter out the auv itself
+minDistance: 10.0
+# Factor for sonar peaks; lines must have at least that many votes to be detected as lines
+minLineVotesRatio: 0.1
+# Angular resolution of sonar (in degree)
+sensorAngularResolution: 2.5
+# If the incoming beams should be filtered with a minimum filter first
+withMinimumFilter: 1
+# write continously last detected position sample to output
+continous_write: 0
+# Shows sonar peaks, houghspace and lines as debug
+show_debug: 1
+--- name:simulation
+basinHeight: 50.0
+basinWidth: 120.0
+maxDistance: 400
+minDistance: 2.5
+withMinimumFilter: 0
+--- name:default
+# the angle between orientation-zero and basin zero (in degree)
+angleDelta: 0.0
+# Number of Angle steps collected in 1 bin in houghspace
+anglesPerBin: 2
+# Position of the sonar at Avalon, given as the relative x-Position to the origin of Avalon
+avalonSonarPose: 0.5
+# Height of the basin
+basinHeight: 20.0
+# Width of the basin
+basinWidth: 23.0
+# write continously each position sample to output
+continous_write: false
+# no documentation available for this property
+correctToFirstPosition: true
+# Number of distance bin in sonar beam collected in 1 bin in houghspace
+distancesPerBin: 4
+# bins in sonar beam with fewer entries will be ignored
+filterThreshold: 50
+# How much do the sonar peaks accumulate the hough space
+gain: 10
+# Number of bins of the sonar
+maxDistance: 500
+# no documentation available for this property
+metadata:
+  metadata: []
+  properties: []
+  input_ports: []
+  output_ports: []
+# Minimum distance for sonar to filter out the auv itself
+minDistance: 1.0
+# Factor for sonar peaks; lines must have at least that many votes to be detected as lines
+minLineVotesRatio: 0.05
+# Angular resolution of sonar (in degree)
+sensorAngularResolution: 1.8
+# Angular tolerance of linedetection
+#sensorAngularTolerance: 18.0
+# Shows sonar peaks, houghspace and lines as debug
+show_debug: true 
+# enable sensor-correction by position_samples
+usePositionSamples: false
+# If the incoming beams should be filtered with a minimum filter first
+withMinimumFilter: true
+ignoreOrientation: true
+sensorAngularTolerance: 10
+
+

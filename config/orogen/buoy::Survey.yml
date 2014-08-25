@@ -1,0 +1,36 @@
+--- name:default
+# the absolute high of the buoy in the water.
+buoy_depth: -1.55
+# no documentation available for this property
+cutting_hight: -0.25
+# time for the cutting-action in seconds.
+cutting_time: 53
+# no documentation available for this property
+cutting_wait_time: 60
+# for detecting if the buoy is in a good position to strafe.
+good_x: 0.3
+# for detecting if the buoy is in a good position to strafe.
+good_y_z: 0.2
+# factor multiplied for heading
+headingFactor: 1.0
+# pre-heading for strafing
+headingModulation: 0.0
+# timeout how long it takes to change state from RE_SEARCHING_BUOY to BUOY_LOST.
+lost_timeout: 17
+# maximum x value for strafing
+maxX: 0.2
+# maximum buoy distance in m
+max_buoy_distance: 1.2 #0.9
+# Step size to detect V value.
+steps: 5
+# no documentation available for this property
+strafe_angle: 0.95
+# no documentation available for this property
+strafe_around: 1
+# intensity and direction of strafing (negative is right).
+strafe_intensity: 0.8
+--- name:simulation
+buoy_depth: -1.55
+strafe_intensity: 0.2
+lost_timeout: 60
+

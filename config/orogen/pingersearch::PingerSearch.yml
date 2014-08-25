@@ -1,0 +1,11 @@
+--- name:default
+# minimum number of perceptions before starting resampling
+minimum_perceptions: 2
+# number of used particles
+particle_number: 50
+# auv reference depth
+fixed_depth: -1.5
+# pinger reference depth
+pinger_depth: -1.0
+# max auv speed as max relative target distance     
+max_auv_speed: 5.0

@@ -1,0 +1,11 @@
+--- name:default
+# the exploration will simply drive forward in the origin serviong direction
+exploration_speed: 0.2
+# reference depth
+fixed_depth: -2.0
+# opening angle for each of the three observed angular ranges
+opening_angle: 0.09
+# set distance for the y axis, witch will result in a certain speed
+servoing_speed: 0.25
+# reference distance to wall
+wall_distance: 3.0

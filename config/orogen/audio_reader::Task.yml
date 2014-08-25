@@ -1,0 +1,7 @@
+--- name:default
+# setup input device for audio capturing
+device: -1
+# setup sample frequency for audio_reader
+sample_frequency: 44100
+# setup sequence size for audio_reader
+sequence_size: 512

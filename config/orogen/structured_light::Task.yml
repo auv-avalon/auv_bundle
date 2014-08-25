@@ -1,0 +1,17 @@
+--- name:default
+## config file to calibrate sensor
+## config_file: ""
+## debug_level 0=off 
+#debug_level: 1
+## lut file to calibrate laser scan
+## lut_file: ""  [conquest] 2011-09-30: Property does not exist?
+## no documentation available for this property
+#settings: 
+#  max_width: 0
+#  #min_confidence: 0.0 # [conquest] 2011-09-30: Property does not exist?
+#  #fluctuation: 0      # see above.
+#  #cut_percentage: 0.0 # see above.
+#  min_snr: 0.0
+#  #min_delta_start: 0  # see above.
+#  min_width: 0
+#  #min_delta_end: 0    # see above.

@@ -1,0 +1,61 @@
+--- name:default
+# enables the debug output port
+enable_debug_output: 1
+# the exploration will simply drive forward in the origin serviong direction
+exploration_speed: 0.1
+# fading out factor for the features in center wall estimator
+fading_out_factor: 0.005 #0.028
+# epsilon in one meter distance of dbscan algorithm. epsilon will be increased linear by the distance of the features
+#dbscan_epsilon: 0.15 #Not a property????
+# reference depth
+fixed_depth: -2.0
+# the wall will be in this direction if the wall servoing is performed, default is 0 than the wall is in front
+servoing_wall_direction: 0.0
+# the inital heading of avalon to the wall, default is 0 than the wall is in front
+initial_wall_direction: 0.0
+# the auv will move away from the wall if the wall is to near
+minimal_wall_distance: 0.75
+# set distance for the y axis, witch will result in a certain speed
+servoing_speed: 0.0
+# reference distance to wall
+wall_distance: 3.00 
+# minimum count inliers of the point cloud in percent to be a valid model
+#wall_estimation_ransac_min_inliers: 0.85 ##Not a eroperty????
+# maximal inlier distance to the model
+#wall_estimation_ransac_threshold: 0.2 ##Not a property??
+# opening angle to the left of the supposed wall direction, always positive
+left_opening_angle: 0.785
+# opening angle to the right of the supposed wall direction, always positive
+right_opening_angle: 0.785
+# waiting time in seconds until the wall servoing will start, this helps to get better data from the estimator
+wait_until_start: 3.0
+right_front_angle: 0.0
+left_front_angle: 0.0
+--- name:wall_front
+servoing_wall_direction: 0.0
+servoing_speed: 0.0
+left_opening_angle: 0.393
+right_opening_angle: 0.393
+wall_distance: 5.0
+--- name:wall_front_left
+servoing_wall_direction: -0.4
+servoing_speed: 0.5
+left_opening_angle: 1.01
+right_opening_angle: 0.785
+--- name:wall_front_right
+servoing_wall_direction: 0.4
+servoing_speed: -0.5
+left_opening_angle: 0.785
+right_opening_angle: 1.01
+--- name:wall_left
+servoing_wall_direction: 1.57
+initial_wall_direction: 1.57
+servoing_speed: -0.25
+left_opening_angle: 1.1
+right_opening_angle: 1.57
+--- name:wall_right
+servoing_wall_direction: -1.57
+initial_wall_direction: -1.57
+servoing_speed: 0.5
+left_opening_angle: 1.57
+right_opening_angle: 1.1

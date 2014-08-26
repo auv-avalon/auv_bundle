@@ -1,0 +1,332 @@
+--- name:default
+# General configuration values to run the task
+filter_configuration:
+  source_frame_name: 'orientation'
+  target_frame_name: 'world'
+  use_samples_as_theoretical_gravity: true
+  use_magnetometers: false
+  fog_type: :MULTI_AXIS #:SINGLE_AXIS
+  initial_heading_source: :INITIAL_HEADING_PARAMETER #:ESTIMATE_FROM_EARTH_ROTATION :MAGNETOMETERS 
+  substract_earth_rotation: false #true
+  initial_alignment_duration: 30.0
+  correction_frequency: 1.0
+# Initial heading in radians. This is only used if initial_orientation is not connected and north seeking isnt activated.
+initial_heading: 0.0
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.1
+# minimum time, in s, between two sequential samples arrive on fog_samples
+fog_samples_period: 0.01
+# minimum time, in s, between two sequential samples arrive on initial_orientation
+initial_orientation_period: 0.01
+# minimum time, in s, between two sequential samples arrive on imu_samples
+imu_samples_period: 0.01
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+
+--- name:local_initial_estimator
+filter_configuration:
+  source_frame_name: 'body'
+  target_frame_name: 'local_orientation'
+  use_samples_as_theoretical_gravity: true
+  use_magnetometers: false
+  fog_type: :SINGLE_AXIS
+  initial_heading_source: :INITIAL_HEADING_PARAMETER
+  substract_earth_rotation: false
+  initial_alignment_duration: 30.0
+  correction_frequency: 1.0
+initial_heading: 0.0
+
+--- name:avalon
+filter_configuration:
+  source_frame_name: 'body'
+  target_frame_name: 'world_orientation'
+  use_samples_as_theoretical_gravity: true
+  use_magnetometers: false
+  fog_type: :SINGLE_AXIS
+  initial_heading_source: :INITIAL_HEADING_PARAMETER
+  substract_earth_rotation: true
+  initial_alignment_duration: 30.0
+  correction_frequency: 1.0
+initial_heading: 0.0 #override this on start
+
+--- name:simulation
+filter_configuration:
+  substract_earth_rotation: false
+
+#******************************
+#******** IMU Configs *********
+#******************************
+--- name:imu_xsens
+# Noise parameters for the internal sensors of the IMU.
+inertial_noise_imu:
+  bandwidth: 100.0
+  gbiasoff:
+    data:
+    - -0.00204578
+    - -0.00220685
+    - 0.000797458
+  gyrorw:
+    data:
+    - 0.0006898864
+    - 0.0007219069
+    - 0.0005708627
+  gyrorrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  gbiasins:
+    data:
+    - 0.1e-4
+    - 0.1e-4
+    - 0.1e-4
+  abiasoff:
+    data:
+    - 9.19516e-05
+    - 0.000178959
+    - 0.00225158
+  accrw:
+    data:
+    - 0.02236
+    - 0.02236
+    - 0.02236
+  accrrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  abiasins:
+    data:
+    - 0.1e-4
+    - 0.1e-4
+    - 0.1e-4
+  accresolut:
+    data:
+    - 0.05
+    - 0.05
+    - 0.05 #1.0
+  magrw:
+    data:
+    - 0.1 #0.0004290766
+    - 0.1 #9.21e-005
+    - 1.01 #1.06e-004
+# Adaptive estimation of external IMU acceleration.
+adaptive_config_acc_imu:
+  M1: 5.0
+  M2: 5.0
+  gamma: 0.1
+
+--- name:stim300_5g
+# Adaptive estimation of external acceleration.
+adaptive_config_acc_imu:
+  M1: 5
+  M2: 5
+  gamma: 0.001
+# Adaptive estimation of external inclinometers.
+adaptive_config_acc_fog:
+  M1: 10
+  M2: 2
+  gamma: 0.003
+# Noise parameters for the internal sensors of the IMU.
+inertial_noise_imu:
+  bandwidth: 33.0 #Hertz
+  gbiasoff:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  gyrorw:
+    data:
+    - 7.0e-05 #4.320343e-05
+    - 7.0e-05 #4.455001e-05
+    - 7.0e-05 #4.060973e-05
+  gyrorrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  gbiasins:
+    data:
+    - 7.05e-06
+    - 4.82e-06
+    - 6.36e-06
+  abiasoff:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  accrw:
+    data:
+    - 0.0005420144
+    - 0.0005131682
+    - 0.0004908665
+  accrrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  abiasins:
+    data:
+    - 7.05e-06
+    - 4.82e-06
+    - 6.36e-06
+  accresolut:
+    data:
+    - 0.0024525 #0.25mg
+    - 0.0024525 #0.25mg
+    - 0.0024525 #0.25mg
+  magrw:
+    data:
+    - 0.1 #0.0004290766
+    - 0.1 #9.21e-005
+    - 0.01 #1.06e-004
+# Inclinometers Sensors property.
+inertial_noise_fog:
+  bandwidth: 16.0 #Hertz
+  abiasoff:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  accrw:
+    data:
+    - 0.005019287
+    - 0.005019287
+    - 0.005019287
+  accrrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  abiasins:
+    data:
+    - 0.008292219
+    - 0.008160451
+    - 0.00846485
+  accresolut:
+    data:
+    - 0.002
+    - 0.002
+    - 0.002
+
+
+#******************************
+#******** FOG Configs *********
+#******************************
+--- name:imu_kvh_1750
+# Noise parameters for the internal sensors of the FOG.
+inertial_noise_fog:
+  bandwidth: 100.0 #440.0 #Hz for gyro, acc has 200.0 Hz
+  gbiasoff:
+    data:
+    - 0.0 
+    - 0.0 
+    - 0.0
+  gyrorw:
+    data:
+    - 3.78e-06 #rad/s/sqrt(Hz)
+    - 3.78e-06
+    - 3.78e-06
+  gyrorrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  gbiasins:
+    data:
+    - 2.42e-07 #9.6e-06 #value computed by javier
+    - 2.42e-07
+    - 2.42e-07
+  abiasoff:
+    data:
+    - 0.0 #-0.0027
+    - 0.0 
+    - 0.0 #0.0055
+  accrw:
+    data:
+    - 3.302e-04 #javier: 1.32e-03
+    - 3.302e-04
+    - 3.302e-04
+  accrrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  abiasins:
+    data:
+    - 4.905e-04 
+    - 4.905e-04 
+    - 4.905e-04 
+  accresolut:
+    data:
+    - 5.886e-03
+    - 5.886e-03
+    - 5.886e-03
+# Adaptive estimation of external FOG acceleration.
+adaptive_config_acc_fog:
+  M1: 5.0
+  M2: 5.0
+  gamma: 0.1
+
+--- name:fog_kvh_DSP_3000
+# Noise parameters for the internal sensors of the FOG.
+inertial_noise_fog:
+  bandwidth: 100.0
+  gbiasoff:
+    data:
+    - 6.911825e-03
+    - 1.202073e-01
+    - 0.00
+  gyrorw:
+    data:
+    - 0.0006898864
+    - 0.0007219069
+    - 1.32e-05
+  gyrorrw:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  gbiasins:
+    data:
+    - 2.42e-07 # config from kvh_1750
+    - 2.42e-07
+    - 2.42e-07
+# Adaptive estimation of external FOG acceleration.
+adaptive_config_acc_fog:
+  M1: 5.0
+  M2: 5.0
+  gamma: 0.1
+
+
+#******************************
+#***** Locataion Configs ******
+#******************************
+--- name:Bremen
+# Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
+location:
+  latitude: 0.926978312
+  longitude: 0.154608945
+  altitude: 12.0
+  magnetic_declination: 0.03098929 
+  magnetic_declination_mode: :EAST 
+  dip_angle: 1.187778974
+
+--- name:ESTEC
+# Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
+location:
+  latitude: 0.911367 #52deg 13min 03sec NORTH
+  longitude: 0.07709999 # 4deg 25 min 03 sec EAST
+  altitude: 0.0
+  magnetic_declination: 0.006690428 #0 deg 23 min EAST
+  magnetic_declination_mode: :EAST
+  dip_angle: 0.00663
+
+--- name:sauce14
+location:
+  latitude: 0.76961941 # 44deg 5min 45.4sec NORTH
+  longitude: 0.172172367 # 9deg 51 min 53.1 sec EAST
+  altitude: 0.0
+  magnetic_declination: 0.037233685 # 2 deg 8 min EAST
+  magnetic_declination_mode: :EAST
+  dip_angle: 1.051037276

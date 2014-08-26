@@ -59,3 +59,10 @@ initial_wall_direction: -1.57
 servoing_speed: 0.5
 left_opening_angle: 1.57
 right_opening_angle: 1.1
+--- name:hold_wall_right
+initial_wall_direction: -1.57
+servoing_wall_direction: -1.57
+servoing_speed: 0.0
+left_opening_angle: 1.1
+right_opening_angle: 1.1
+wall_distance: 5.0

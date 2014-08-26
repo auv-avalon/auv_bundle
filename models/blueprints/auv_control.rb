@@ -274,7 +274,6 @@ module AuvControl
         on :start do |ev|
                 @start_time = Time.now
                 Robot.info "Starting Trajectory moving #{self}"
-                controller_child.update_target(target)
         end
         
         poll do

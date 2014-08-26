@@ -122,6 +122,7 @@ module DFKI
             )
 
             define 'wall_detector_new', Wall::DetectorNew.use(
+		WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
                 "orientation_with_z" => final_orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )
@@ -133,6 +134,7 @@ module DFKI
 
             ################ HighLevelController ######################
             define 'trajectory_move', ::AuvControl::TrajectoryMove.use(
+                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 position_control_loop_def, 
                 localization_def, 
                 final_orientation_with_z_tag, 
@@ -205,7 +207,6 @@ module DFKI
             )
 
             define 'wall_new_right', AuvCont::WorldAndXYPositionCmp.use(
-		 WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
                 'pose' => localization_def,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag

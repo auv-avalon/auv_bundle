@@ -1,3 +1,3 @@
 class SonarWallHough::Task
-    worstcase_processing_time 5.0
+    worstcase_processing_time 0.01
 end

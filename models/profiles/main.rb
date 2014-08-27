@@ -134,7 +134,7 @@ module DFKI
 
             ################ HighLevelController ######################
             define 'trajectory_move', ::AuvControl::TrajectoryMove.use(
-                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
+#                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 position_control_loop_def, 
                 localization_def, 
                 final_orientation_with_z_tag, 
@@ -213,7 +213,7 @@ module DFKI
             )
 
             define 'trajectory', AuvCont::Trajectory.use(
-                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
+#                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
                 'joint' => thruster_tag,
                 'pose' => localization_def
             )

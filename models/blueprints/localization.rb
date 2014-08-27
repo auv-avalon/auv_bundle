@@ -100,12 +100,12 @@ module Localization
         add SonarWallHough::Task, as: 'main'
         add Base::SonarScanProviderSrv, as: 'sonar'
         add Base::OrientationSrv, as: 'ori'
-        add_optional Base::VelocitySrv, as: 'dead'
+        add_optional Base::DVLSrv, as: 'dvl'
         add_optional UwParticleLocalization::OrientationCorrection, :as => 'correction'
 
         connect sonar_child => main_child
         connect ori_child => main_child
-        connect dead_child => main_child.pose_samples_port
+        connect dvl_child => main_child.pose_samples_port
         connect main_child.position_quality_port => correction_child.orientation_offset_port
 
         export main_child.position_port, as: 'position'

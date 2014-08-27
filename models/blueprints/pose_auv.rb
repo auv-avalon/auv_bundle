@@ -76,11 +76,12 @@ module PoseAuv
 
     class PoseEstimator < Syskit::Composition
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
-        add OrientationEstimator::IKF, :as => 'ori'
-        add UwParticleLocalization::MotionModel, :as => 'model'
-        add UwParticleLocalization::Task, :as => 'localization'
+        add Base::OrientationSrv, :as => 'ori'#.prefer_deployed_task("ikf_orientation_estimator"), :as => 'ori'
+        add Base::VelocitySrv, :as => 'model'
         add Base::ZProviderSrv, :as => 'depth'
-        add_optional Base::VelocitySrv, as: 'velocity'
+        add_optional Base::PoseSrv, :as => 'localization'
+        add_optional Base::DVLSrv, as: 'dvl'
+        ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
         if ::CONFIG_HACK == 'avalon'
             pose_estimator_child.with_conf("default", "avalon", "sauce")
@@ -94,7 +95,7 @@ module PoseAuv
         connect model_child => pose_estimator_child.model_velocity_samples_port
         connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
         connect depth_child => pose_estimator_child.depth_samples_port
-        connect velocity_child => pose_estimator_child.dvl_velocity_samples_port
+        connect dvl_child => pose_estimator_child.dvl_velocity_samples_port
 
         export pose_estimator_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'

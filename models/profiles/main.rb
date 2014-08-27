@@ -30,6 +30,7 @@ module DFKI
             tag 'down_looking_camera',  ::Base::ImageProviderSrv
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
+            tag 'dvl', ::Base::DVLSrv
             
             
             ############### DEPRICATED ##########################
@@ -87,11 +88,11 @@ module DFKI
 
             define 'hough_detector', Localization::HoughDetector.use(
                 Base::OrientationSrv => final_orientation_with_z_tag,
-                'dead' => motion_model_tag
+                'dvl' => dvl_tag
             )
 
             define 'localization', Localization::ParticleDetector.use(
-                motion_model_tag,
+                dvl_tag,
                 Base::OrientationWithZSrv => final_orientation_with_z_tag, 
                 'hough' => hough_detector_def,
                 'hb' => thruster_feedback_tag,
@@ -103,6 +104,29 @@ module DFKI
                 'controlled_system' => base_loop_def,
                 'pose' => localization_def
             )
+
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimator
+            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimator
+
+            define 'pose_estimator_blind', PoseAuv::PoseEstimator.use(
+                'depth' => final_orientation_with_z_tag,
+                'ori' => ikf_orientation_estimator_def,
+                'model' => motion_model_tag,
+                'localization' => localization_def,
+                'dvl' => dvl_tag
+
+            )
+
+            define 'pose_estimator', PoseAuv::PoseEstimator.use(
+                'depth' => final_orientation_with_z_tag,
+                'ori' => ikf_orientation_estimator_def,
+                'model' => motion_model_tag,
+
+
+            )
+
+
+
 
             ################# Basic Movements #########################
             define 'target_move', ::AuvControl::SimplePosMove.use(
@@ -144,6 +168,11 @@ module DFKI
 
 
             ###     New Stuff not (yet) integrated #######################
+            define 'simple_move_new', AuvCont::MoveCmp.use(
+                'pose' => pose_estimator_def,
+                'command' => AuvControl::ConstantCommand,
+                'joint' => thruster_tag
+            )
             define 'target_move_new', AuvCont::PositionMoveCmp.use(
                 'pose' => localization_def, 
                 'command' => AuvControl::ConstantCommand, 
@@ -151,12 +180,12 @@ module DFKI
             )
             
             define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
-                'pose' => localization_def, 
+                'pose' => pose_estimator_blind_def, 
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => final_orientation_with_z_tag,
                         'dist' => altimeter_tag
-                    )
+                )
             )
             
             define 'structure_inspection', AuvCont::WorldAndXYVelocityCmp.use(
@@ -216,14 +245,6 @@ module DFKI
                 'joint' => thruster_tag,
                 'pose' => localization_def
             )
-
-            define 'pose_estimator', PoseAuv::PoseEstimator.use(
-                #'depth' => DepthReader::Task
-            )
-
-            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimator
-
-            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimator
 
         end
     end

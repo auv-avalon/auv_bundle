@@ -3,12 +3,41 @@ using_task_library "fog_kvh"
 using_task_library "orientation_estimator"
 #using_task_library "depth_reader"
 using_task_library "uw_particle_localization"
+using_task_library 'pose_estimation'
 
 
 require "rock/models/blueprints/pose"
 require "models/blueprints/auv.rb"
 
 module PoseAuv
+    class PoseEstimator < Syskit::Composition
+        add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
+        add OrientationEstimator::IKF, :as => 'ori'
+        add UwParticleLocalization::MotionModel, :as => 'model'
+        add UwParticleLocalization::Task, :as => 'localization'
+        add Base::ZProviderSrv, :as => 'depth'
+        add_optional Base::VelocitySrv, as: 'velocity'
+
+        if ::CONFIG_HACK == 'avalon'
+            pose_estimator_child.with_conf("default", "avalon", "sauce")
+        elsif ::CONFIG_HACK == 'simulation'
+            pose_estimator_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'dagon'
+            pose_estimator_child.with_conf("default", "dagon", "sauce")
+        end
+
+        connect ori_child => pose_estimator_child.orientation_samples_port
+        connect model_child => pose_estimator_child.model_velocity_samples_port
+        connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
+        connect depth_child => pose_estimator_child.depth_samples_port
+        connect velocity_child => pose_estimator_child.dvl_velocity_samples_port
+
+        export pose_estimator_child.pose_samples_port
+        provides Base::PoseSrv, :as => 'pose'
+
+        event :MISSING_TRANSFORMATION
+    end
+
     class DagonOrientationEstimator < Syskit::Composition
         add OrientationEstimator::BaseEstimator, :as => 'estimator'
         add UwParticleLocalization::OrientationCorrection, :as => 'correction'

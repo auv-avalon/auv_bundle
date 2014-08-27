@@ -217,6 +217,10 @@ module DFKI
                 'pose' => localization_def
             )
 
+            define 'pose_estimator', PoseAuv::PoseEstimator.use(
+                #'depth' => DepthReader::Task
+            )
+
         end
     end
 end

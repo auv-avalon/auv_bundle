@@ -221,6 +221,10 @@ module DFKI
                 #'depth' => DepthReader::Task
             )
 
+            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimator
+
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimator
+
         end
     end
 end

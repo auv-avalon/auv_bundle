@@ -4,12 +4,76 @@ using_task_library "orientation_estimator"
 #using_task_library "depth_reader"
 using_task_library "uw_particle_localization"
 using_task_library 'pose_estimation'
+using_task_library 'wall_orientation_correction'
 
 
 require "rock/models/blueprints/pose"
 require "models/blueprints/auv.rb"
 
 module PoseAuv
+
+    class InitialOrientationEstimator < Syskit::Composition
+        add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
+        add OrientationEstimator::IKF, :as => 'estimator'
+        add XsensImu::Task, :as => 'imu'
+        add FogKvh::Dsp3000Task, :as => 'fog'
+        add Base::SonarScanProviderSrv, :as => 'sonar'
+        add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
+
+        if ::CONFIG_HACK == 'avalon'
+            estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        elsif ::CONFIG_HACK == 'simulation'
+            estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        elsif ::CONFIG_HACK == 'dagon'
+            estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        end
+
+        wall_estimation_child.with_conf("default", "avalon", "wall_right")
+        sonar_child.with_conf("default", "hold_wall_right")
+
+        sonar_child.connect_to sonar_estimator_child
+        imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
+        fog_child.connect_to estimator_child.fog_samples_port
+        estimator_child.connect_to wall_estimation_child.orientation_samples_port
+        sonar_estimator_child.connect_to wall_estimation_child
+
+        #export wall_estimation.angle_in_world_port, :as => 'angle_samples'
+        #provides Base::OrientationSrv, :as => "angle_in_world"
+
+        event :MISSING_TRANSFORMATION
+        event :ESTIMATE_WALL_ORIENTATION
+        event :VALID_WALL_FIX
+    end
+
+    class IKFOrientationEstimator < Syskit::Composition
+        add_main OrientationEstimator::IKF, :as => 'estimator'
+        add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
+        add XsensImu::Task, :as => 'imu'
+        add FogKvh::Dsp3000Task, :as => 'fog'
+
+        if ::CONFIG_HACK == 'avalon'
+            estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        elsif ::CONFIG_HACK == 'simulation'
+            estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        elsif ::CONFIG_HACK == 'dagon'
+            estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+        end
+
+        imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
+        fog_child.connect_to estimator_child.fog_samples_port
+        estimator_child.connect_to ori_in_map_child.orientation_in_world_port
+
+        export ori_in_map_child.orientation_in_map_port, :as => 'orientation_samples'
+        provides Base::OrientationSrv, :as => "orientation"
+
+        event :INITIAL_NORTH_SEEKING
+        event :INITIAL_ALIGNMENT
+        event :MISSING_TRANSFORMATION
+        event :NAN_ERROR
+        event :ALIGNMENT_ERROR
+        event :CONFIGURATION_ERROR
+    end
+
     class PoseEstimator < Syskit::Composition
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add OrientationEstimator::IKF, :as => 'ori'

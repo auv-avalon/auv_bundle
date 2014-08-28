@@ -32,7 +32,9 @@ module DFKI
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
             tag 'dvl', ::Base::DVLSrv
-            
+
+
+
             
             ############### DEPRICATED ##########################
             # Define old ControlLoops
@@ -172,7 +174,7 @@ module DFKI
 
             ###     New Stuff not (yet) integrated #######################
             define 'simple_move_new', AuvCont::MoveCmp.use(
-                'pose' => pose_estimator_def,
+                'pose' => pose_estimator_blind_def,
                 'command' => AuvControl::ConstantCommand,
                 'joint' => thruster_tag
             )
@@ -183,7 +185,7 @@ module DFKI
             )
             
             define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
-                'pose' => pose_estimator_blind_def, 
+                'pose' => pose_estimator_def, 
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => final_orientation_with_z_tag,

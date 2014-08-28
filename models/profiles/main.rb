@@ -106,10 +106,10 @@ module DFKI
                 'pose' => localization_def
             )
 
-            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimator
-            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimator
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
+            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
 
-            define 'pose_estimator_blind', PoseAuv::PoseEstimator.use(
+            define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => final_orientation_with_z_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
@@ -118,7 +118,7 @@ module DFKI
 
             )
 
-            define 'pose_estimator', PoseAuv::PoseEstimator.use(
+            define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => final_orientation_with_z_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,

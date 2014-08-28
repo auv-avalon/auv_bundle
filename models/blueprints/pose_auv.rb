@@ -12,7 +12,7 @@ require "models/blueprints/auv.rb"
 
 module PoseAuv
 
-    class InitialOrientationEstimator < Syskit::Composition
+    class InitialOrientationEstimatorCmp < Syskit::Composition
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
         add OrientationEstimator::IKF, :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
@@ -45,7 +45,7 @@ module PoseAuv
         event :VALID_WALL_FIX
     end
 
-    class IKFOrientationEstimator < Syskit::Composition
+    class IKFOrientationEstimatorCmp < Syskit::Composition
         add_main OrientationEstimator::IKF, :as => 'estimator'
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
@@ -74,7 +74,7 @@ module PoseAuv
         event :CONFIGURATION_ERROR
     end
 
-    class PoseEstimator < Syskit::Composition
+    class PoseEstimatorCmp < Syskit::Composition
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add Base::OrientationSrv, :as => 'ori'#.prefer_deployed_task("ikf_orientation_estimator"), :as => 'ori'
         add Base::VelocitySrv, :as => 'model'
@@ -103,7 +103,7 @@ module PoseAuv
         event :MISSING_TRANSFORMATION
     end
 
-    class DagonOrientationEstimator < Syskit::Composition
+    class DagonOrientationEstimatorCmp < Syskit::Composition
         add OrientationEstimator::BaseEstimator, :as => 'estimator'
         add UwParticleLocalization::OrientationCorrection, :as => 'correction'
 

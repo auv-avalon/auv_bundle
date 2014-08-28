@@ -123,7 +123,14 @@ module DFKI
                 'localization' => localization_def,
                 'dvl' => dvl_tag
 
+            ).use_frames(
+                'lbl' => 'lbl',
+                'pressure_sensor' => 'pressure_sensor',
+                'body' => 'body',
+                'dvl' => 'dvl',
+                'imu' => 'imu'
             )
+
 
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => final_orientation_with_z_tag,

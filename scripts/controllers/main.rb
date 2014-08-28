@@ -1,7 +1,47 @@
 require 'highline'
+require 'gdal-ruby/ogr'
 CONSOLE = HighLine.new
 def color(string, *args)
     CONSOLE.color(string, *args)
+end
+
+# hafenbecken la spezia:
+# 44.095741, 9.865195     östliche Ecke
+
+def m2gps(x, y)
+    from = Gdal::Osr::SpatialReference.new
+    from.set_well_known_geog_cs('WGS84')
+    to = Gdal::Osr::SpatialReference.new
+    to.set_well_known_geog_cs('WGS84')
+    to.set_utm(39, 1)
+    
+    origin_coord = 9.865012886520264,44.09616855137776,0
+    q = Eigen::Quaternion.from_angle_axis( (230) / 180.0 * Math::PI, Eigen::Vector3.UnitZ )
+
+    transform = Gdal::Osr::CoordinateTransformation.new(to, from)
+    transform_inverse = Gdal::Osr::CoordinateTransformation.new(from, to)
+    origin = transform_inverse.transform_point(origin_coord[1],origin_coord[0],0)
+
+    v = Eigen::Vector3.new(x,y,0)
+    v = q* v
+    v = v + Eigen::Vector3.new(origin[0], origin[1],0)
+
+    erg = transform.transform_point(v[0].to_f, v[1].to_f,0)
+
+
+    return erg[0], erg[1]
+end
+
+def lat(x, y)
+    m2gps(x,y)[0]
+end
+
+def lon(x, y)
+    m2gps(x,y)[1]
+end
+
+def sauce_log
+    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{State.current_state[0]})\n"
 end
 
 def add_status(status, name, format, obj, field, *colors)
@@ -41,7 +81,6 @@ end
 
 
 def find_parent_task_for_task(current_task,task)
-#    STDOUT.puts "Called with #{task}"
     current_task.children.to_a.each do |child|
         if child == task
             return current_task
@@ -54,98 +93,30 @@ end
 
 @mission_cache = []
 
-#def create_modified_missions(missions,new_state,machine)
-#
-#    missions.each do |m|
-##        STDOUT.puts "Current: #{machine.current_task}, child: #{m.children.to_a[0]}"
-##        binding.pry
-#        #if machine.current_task == m.children.to_a[0]
-#        parent = find_parent_task_for_task(m,machine.current_task.task) 
-#        if parent
-##            parent.remove_dependency(machine.current_task.task)
-##            binding.pry
-##            machine.update_root_task parent
-##            machine.instanciate_state(new_state)
-##            STDOUT.puts "---------------------- new missions\n#{missions.size}\n-----------------"
-#            Roby.plan.prepare_switch(missions,[])
-##            binding.pry
-#            #STDOUT.puts "######################################### JEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAA #################################################### \n#{parent}"
-#        end
-#    end
-#end
-    
-
 def process_child_tasks(task)
-    task.children.each do |child|
-        process_child_tasks child
-    end
-    state_machines = Roby::Coordination.instances.select{|t| t.kind_of?(Roby::Coordination::ActionStateMachine)}
-    state_machines.each do |m|
-        if m.root_task == task
-            STDOUT.puts "Found state-machine #{m} in state #{m.current_task}"
-            STDOUT.puts "Possible followers: #{m.possible_following_states}"
-            m.possible_following_states.each do |s|
-
-                req_tasks_org = Roby.plan.find_local_tasks(Syskit::InstanceRequirementsTask).
-                    find_all do |req_task|
-                        !req_task.failed? && !req_task.pending? &&
-                            req_task.planned_task && !req_task.planned_task.finished?
-                    end
-                not_needed = Roby.plan.unneeded_tasks
-                req_tasks = req_tasks_org.dup
-                removed = "Removed\n "
-                req_tasks.delete_if do |t|
-                    #Removing the current object if t is the parent of the running task
-                    removed <<  "#{t}\n" if not_needed.include?(t) or t.parent_object?(m.current_task.task)
-                    not_needed.include?(t) or t.parent_object?(m.current_task.task) 
-                end
-
-                #Caching the FROM-> to transition for this state
-                next if @mission_cache.include?([req_tasks_org,s])
-                @mission_cache << [req_tasks_org,s]
-                
-                #@Sylvain is here anything else needed?
-                #I have a problem here, if i do the following line, the state is imidiatly executed.
-                #Avalon should pass the pipeline once and then turn to the other direction
-                #i i have the following line, then avalon directly follows the pipeline to the 
-                #second's state-direction
-                new = s.action.to_instance_requirements
-                STDOUT.puts "#{removed} Added: \n#{new}"
-                req_tasks << new
-                Roby.plan.prepare_switch(req_tasks)
+    task.coordination_objects.each do |m|
+        if m.kind_of? Roby::Coordination::ActionStateMachine
+            task.children.each do |child|
+                process_child_tasks child
+            end
+            if m.root_task == task
+                State.current_state_maschine << task.class.to_s.split('::')[1]
+                State.current_state << "#{task.class.to_s.split('::')[1]} (#{m.current_task.name})"
             end
         end
     end
 end
 
-@first=false
-=begin
 Roby.every(1, :on_error => :disable) do
-    #return
-    #Waiting until we start our search algorithm
-    #This is the 'core' basis of the realtime-adaptation
-    #this and the following functions are triing to calculate all 
-    #following states, and the needed transactions to transistion to them.
-    @i = @i+1
-    if @i > 20
-        if @first
-            STDOUT.puts "*******************************************************************************************"
-            STDOUT.puts "*********************************Starging precalculaion************************************"
-            STDOUT.puts "*******************************************************************************************"
-        end
-        STDOUT.puts "Searching for state_machines"
-        Roby.plan.missions.to_a.each do |t|
-            process_child_tasks(t)
-        end
-        if @first
-            STDOUT.puts "*******************************************************************************************"
-            STDOUT.puts "*********************************Finished precalculaion************************************"
-            STDOUT.puts "*******************************************************************************************"
-            @first = false
-        end
+    STDOUT.puts "Searching for state_machines"
+    State.current_state = []
+    State.current_state_maschine = []
+    Roby.plan.missions.to_a.each do |t|
+        process_child_tasks(t)
     end
+    State.current_state.reverse!
 end
-=end
+
 Roby.every(1, :on_error => :disable) do
     status = []
 
@@ -176,7 +147,28 @@ Roby.every(1, :on_error => :disable) do
         State.sv_task.create_output_port("delta_y","double")
         State.sv_task.create_output_port("delta_timeout","double")
         State.sv_task.create_output_port("timeout","double")
+        State.sv_task.create_output_port("current_state","/std/string")
+        State.sv_task.create_output_port("current_state_maschine","/std/string")
+        State.sv_task.create_output_port("current_mode","/std/string")
+        State.sv_task.create_output_port("current_submode","/std/string")
         State.sv_task.configure
         State.sv_task.start
+    end
+
+    current_state = State.sv_task.port('current_state')
+    current_state.write State.current_state.to_s
+    current_state_maschine = State.sv_task.port('current_state_maschine')
+    current_state_maschine.write State.current_state_maschine.to_s
+    current_mode = State.sv_task.port('current_mode')
+    current_mode.write State.current_mode.to_s
+    current_submode = State.sv_task.port('current_submode')
+    current_submode.write State.current_submode.to_s
+end
+
+logfile = "sauce-log-#{Time.now}.log"
+Roby.every(1, :on_error => :disable) do
+    State.time = State.time + 1
+    File.open(logfile, 'a+') do |file| 
+        file.write(sauce_log) 
     end
 end

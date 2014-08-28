@@ -1,6 +1,6 @@
 --- name:default
 # the global name that should be used for the internal map frame
-map_frame: map_sauce
+map_frame: map
 # the global name that should be used for the internal world frame
 world_frame: world_orientation
 # Time in s between orientation_in_world readings
@@ -9,3 +9,10 @@ orientation_in_world_period: 0.01
 transformer_max_latency: 0.2
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
+
+--- name:halle
+map_frame: map_halle
+
+--- name:sauce
+map_frame: map_sauce
+

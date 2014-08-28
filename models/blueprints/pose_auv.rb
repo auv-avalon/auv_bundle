@@ -52,10 +52,13 @@ module PoseAuv
         add FogKvh::Dsp3000Task, :as => 'fog'
 
         if ::CONFIG_HACK == 'avalon'
+            ori_in_map_child.with_conf("default", 'halle')
             estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         elsif ::CONFIG_HACK == 'simulation'
+            ori_in_map_child.with_conf("default", 'sauce')
             estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         elsif ::CONFIG_HACK == 'dagon'
+            ori_in_map_child.with_conf("default", 'halle')
             estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         end
 
@@ -76,7 +79,7 @@ module PoseAuv
 
     class PoseEstimatorCmp < Syskit::Composition
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
-        add Base::OrientationSrv, :as => 'ori'#.prefer_deployed_task("ikf_orientation_estimator"), :as => 'ori'
+        add Base::OrientationSrv, :as => 'ori'
         add Base::VelocitySrv, :as => 'model'
         add Base::ZProviderSrv, :as => 'depth'
         add_optional Base::PoseSrv, :as => 'localization'
@@ -84,11 +87,11 @@ module PoseAuv
         ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
         if ::CONFIG_HACK == 'avalon'
-            pose_estimator_child.with_conf("default", "avalon", "sauce")
+            pose_estimator_child.with_conf("default", "avalon", "halle")
         elsif ::CONFIG_HACK == 'simulation'
-            pose_estimator_child.with_conf("default")
+            pose_estimator_child.with_conf("default", 'avalon', 'sauce')
         elsif ::CONFIG_HACK == 'dagon'
-            pose_estimator_child.with_conf("default", "dagon", "sauce")
+            pose_estimator_child.with_conf("default", "dagon", "halle")
         end
 
         connect ori_child => pose_estimator_child.orientation_samples_port

@@ -53,3 +53,6 @@ lbl_frame: body
 
 --- name:sauce
 target_frame: map_sauce
+
+--- name:halle
+target_frame: map_halle

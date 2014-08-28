@@ -120,8 +120,6 @@ module DFKI
                 'depth' => final_orientation_with_z_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
-                'localization' => localization_def,
-                'dvl' => dvl_tag
 
             ).use_frames(
                 'lbl' => 'lbl',
@@ -136,7 +134,8 @@ module DFKI
                 'depth' => final_orientation_with_z_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
-
+                'dvl' => dvl_tag,
+                'localization' => localization_def
             ).use_frames(
                 'lbl' => 'lbl',
                 'pressure_sensor' => 'pressure_sensor',

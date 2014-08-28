@@ -179,6 +179,27 @@ class Main
 		transition(throught_becken.success_event,s1)
     end
 
+    describe("foo")
+    state_machine "trajectory_demo" do
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -7, :delta_timeout => 5, :timeout => 15, :speed_x => 0)
+        trajectory = state trajectory_move_def  #(:trajectory => ['default','hall_cool'])
+        pipe = state find_pipe_with_localization
+        pipeline1 = state pipeline_def(:depth=> -7, :heading => 0, :speed_x => 0.5, :turn_dir=> 1, :timeout => 120)
+        rescue_move = state target_move_def(:finish_when_reached => true, :heading => Math::PI, :depth => -6, :delta_timeout => 20, :x => 0.5, :y => 5.5, :speed_x => 0)
+        wall1 = state wall_right_def(:max_corners => 1)
+        wall2 = state wall_right_def(:timeout => 23)
+        start(init)
+        transition(init.success_event,trajectory)
+        transition(trajectory.reached_end_event,pipe)
+        transition(pipe.success_event,pipeline1)
+        transition(pipeline1.end_of_pipe_event,rescue_move)
+        transition(pipeline1.success_event,rescue_move)
+        transition(pipeline1.lost_pipe_event,rescue_move)
+        transition(rescue_move.success_event,wall1)
+        transition(wall1.success_event,wall2)
+        transition(wall2.success_event,trajectory)
+    end
+
     describe("Do the minimal demo for the halleneroeffnung, means pipeline, then do wall-following and back to pipe-origin")
     state_machine "advanced_demo" do
         init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -7, :delta_timeout => 5, :timeout => 15, :speed_x => 0)

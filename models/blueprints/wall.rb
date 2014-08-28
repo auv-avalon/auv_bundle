@@ -140,7 +140,7 @@ module Wall
 
                 if condition 
                     STDOUT.puts "Overriding sonar config to wall right"
-                    orocos_t.apply_conf(['default','wall_servoing_right'],true)
+                    orocos_t.apply_conf(['default','wall_right'],true)
                     @sonar_workaround = false
                 else
                     @sonar_workaround = false
@@ -234,7 +234,7 @@ module Wall
 
                 if condition 
                     STDOUT.puts "Overriding sonar config to wall right"
-                    orocos_t.apply_conf(['default','wall_servoing_right'],true)
+                    orocos_t.apply_conf(['default','wall_right'],true)
                     @sonar_workaround = false
                 else
                     @sonar_workaround = false

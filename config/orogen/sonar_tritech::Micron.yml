@@ -71,7 +71,7 @@ config:
   right_limit:
     rad: 0.0
 port: /dev/ttyS7
---- name:wall_servoing_right
+--- name:wall_right
 config:
   continous: 0
   gain: 0.2

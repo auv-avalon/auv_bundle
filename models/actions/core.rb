@@ -1,4 +1,4 @@
-require 'models/profiles/main'
+require 'auv/models/profiles/main'
 
 
 

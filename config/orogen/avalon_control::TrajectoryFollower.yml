@@ -8,9 +8,9 @@ geometrical_resolution: 0.1
 # if this is set, the value indicates the maximum-allowed jump-value on the spline. This means the spline is started at the beginning, and the allowed
 # next position on the spline cannot be more far away than this property. The result will be that the vehicle follows the complete spline from beginning to end
 # independant id another spoint of the spline is closer to the vehicle.
-max_spline_jump_distance: 3
+max_spline_jump_distance: 1
 # no documentation available for this property
-step_width: 2.0
+step_width: 0.5
 # no documentation available for this property
 timeout_at_end_before_mark_end_reached: 10.0
 # use the zero heading for debuggin, instead calculated heading
@@ -44,3 +44,40 @@ trajectory:
     - 6.0
     - -4.0
     - -4.0
+--- name:hall_cool
+trajectory:
+  speed: 0.0
+  spline:
+    geometric_resolution: 0.1
+    dimension: 3
+    curve_order: 3
+    kind: :POLYNOMIAL_BSPLINE
+    knots:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 11.129727453672533
+    - 18.63621260436668
+    - 24.5324501655617
+    - 35.23557061347258
+    - 35.23557061347258
+    - 35.23557061347258
+    vertices:
+    - 0.0
+    - 0.0
+    - -5.0
+    - 6.606085650125402
+    - 7.875698666175182
+    - -7.63787470315513
+    - -0.05324269401373716
+    - -4.895347123529618
+    - -1.2248929545147373
+    - -7.550125892585407
+    - -3.21439401481242
+    - -3.1982435293540887
+    - -3.237618872249391
+    - 8.041208784471431
+    - -6.625858046181266
+    - 0.0
+    - 0.0
+    - -1.0

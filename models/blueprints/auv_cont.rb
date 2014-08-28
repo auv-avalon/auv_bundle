@@ -313,7 +313,13 @@ module AuvCont
     end
    
     class Trajectory < WorldPositionCmp 
-        overload 'controller', AvalonControl::TrajectoryFollower 
+        event :reached_end
+        event :align_at_end
+        
+        
+        add_main  AvalonControl::TrajectoryFollower, :as => "main"
+        overload 'controller', main_child
+
         connect pose_child => controller_child 
     end
 

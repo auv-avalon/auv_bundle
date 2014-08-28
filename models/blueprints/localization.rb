@@ -31,7 +31,7 @@ module Localization
         elsif ::CONFIG_HACK == 'simulation'
             main_child.with_conf("sim_nurc")
         elsif ::CONFIG_HACK == 'dagon'
-            main_child.with_conf("default")
+            main_child.with_conf("dagon")
         end
 
 

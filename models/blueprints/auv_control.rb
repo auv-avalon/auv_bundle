@@ -255,16 +255,16 @@ module AuvControl
     
     
     class TrajectoryMove < ::Base::ControlLoop
-        overload 'controller', AvalonControl::TrajectoryFollower
-        argument :target, :default => "pipeline"
+#        argument :trajectory
+        add_main AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'), :as => "foo"
+        
+        overload 'controller', foo_child
         argument :timeout, :default => nil
         argument :event_on_timeout, :default => :success
    
         event :reached_end
         event :align_at_end
 
-        
-        add_main AvalonControl::TrajectoryFollower, :as => "foo"
 
         attr_reader :start_time
 
@@ -273,8 +273,8 @@ module AuvControl
 
         on :start do |ev|
                 @start_time = Time.now
+#                foo_child.conf(self.trajectory)
                 Robot.info "Starting Trajectory moving #{self}"
-                controller_child.update_target(target)
         end
         
         poll do

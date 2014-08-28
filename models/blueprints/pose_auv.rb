@@ -50,6 +50,7 @@ module PoseAuv
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
+        ori_in_map_child.use_frames('map' => 'map', 'world' => 'world')
 
         if ::CONFIG_HACK == 'avalon'
             ori_in_map_child.with_conf("default", 'halle')
@@ -86,7 +87,7 @@ module PoseAuv
         add_optional Base::DVLSrv, as: 'dvl'
         ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
-        if ::CONFIG_HACK == 'avalon'
+        if ::CONFIG_HACK == 'default'
             pose_estimator_child.with_conf("default", "avalon", "halle")
         elsif ::CONFIG_HACK == 'simulation'
             pose_estimator_child.with_conf("default", 'avalon', 'sauce')

@@ -99,16 +99,21 @@ module DFKI
                 Base::OrientationWithZSrv => final_orientation_with_z_tag, 
                 'hough' => hough_detector_def,
                 'hb' => thruster_feedback_tag,
-                'ori' => final_orientation_with_z_tag
+                'ori' => final_orientation_with_z_tag#,
+                #'velocity' => nil
             )
-            
+
             define 'position_control_loop', ::Base::ControlLoop.use(
                 'controller' =>  AvalonControl::PositionControlTask, 
                 'controlled_system' => base_loop_def,
                 'pose' => localization_def
             )
 
-            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp.use_frames(
+                'fog' => 'fog',
+                'imu' => 'imu',
+                'body' => 'body'
+            )
             define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
 
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
@@ -125,8 +130,14 @@ module DFKI
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
 
-
+            ).use_frames(
+                'lbl' => 'lbl',
+                'pressure_sensor' => 'pressure_sensor',
+                'body' => 'body',
+                'dvl' => 'dvl',
+                'imu' => 'imu'
             )
+            
 
 
 

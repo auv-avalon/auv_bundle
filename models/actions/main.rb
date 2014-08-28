@@ -275,7 +275,7 @@ class Main
         transition(blind1.success_event, blind2)
         forward blind2.success_event, success_event
     end
-
+=begin
     describe("We win the SAUC-E")
     state_machine "win" do
         dive = state simple_move_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0)
@@ -306,6 +306,7 @@ class Main
         transition(to_wall.success_event, wall)
         forward wall.success_event, success_event
     end
+=end
 
 
 #    describe("Workaround1")

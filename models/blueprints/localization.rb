@@ -22,6 +22,7 @@ module Localization
         add ::Base::OrientationWithZSrv, :as => 'ori'
         #add Dev::Sensors::Hbridge, :as => 'hb'
         add Base::JointsStatusSrv, :as => 'hb'
+        add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
         add_optional ::Base::VelocitySrv, as: 'velocity'
@@ -42,11 +43,15 @@ module Localization
         connect hb_child => main_child.thruster_samples_port
         connect hough_child => main_child.pose_update_port
         connect velocity_child.velocity_samples_port => main_child.speed_samples_port
+        connect main_child.pose_samples_port => sonar_detector_child.pose_samples_port
+        connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
 
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
         export main_child.dead_reckoning_samples_port, as: 'velocity_samples'
         provides Base::VelocitySrv, :as => 'velocity'
+        #export sonar_detector_child.next_target_port
+        #export sonar_detector_child.next_target_feature_port
 
 #        @position = :position2 
 #        

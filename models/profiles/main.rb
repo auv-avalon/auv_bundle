@@ -109,11 +109,8 @@ module DFKI
                 'pose' => localization_def
             )
 
-            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp.use_frames(
-                'fog' => 'fog',
-                'imu' => 'imu',
-                'body' => 'body'
-            )
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
+
             define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
 
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
@@ -121,12 +118,6 @@ module DFKI
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
 
-            ).use_frames(
-                'lbl' => 'lbl',
-                'pressure_sensor' => 'pressure_sensor',
-                'body' => 'body',
-                'dvl' => 'dvl',
-                'imu' => 'imu'
             )
 
 
@@ -136,12 +127,6 @@ module DFKI
                 'model' => motion_model_tag,
                 'dvl' => dvl_tag,
                 'localization' => localization_def
-            ).use_frames(
-                'lbl' => 'lbl',
-                'pressure_sensor' => 'pressure_sensor',
-                'body' => 'body',
-                'dvl' => 'dvl',
-                'imu' => 'imu'
             )
             
 

@@ -32,6 +32,7 @@ module DFKI
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
             tag 'dvl', ::Base::DVLSrv
+            tag 'depth', ::Base::ZProviderSrv
 
 
 
@@ -114,15 +115,14 @@ module DFKI
             define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
 
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
-                'depth' => final_orientation_with_z_tag,
+                'depth' => depth_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
 
             )
 
-
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
-                'depth' => final_orientation_with_z_tag,
+                'depth' => depth_tag,
                 'ori' => ikf_orientation_estimator_def,
                 'model' => motion_model_tag,
                 'dvl' => dvl_tag,

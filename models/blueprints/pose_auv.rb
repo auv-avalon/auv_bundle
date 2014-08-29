@@ -20,7 +20,7 @@ module PoseAuv
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
 
-        if ::CONFIG_HACK == 'avalon'
+        if ::CONFIG_HACK == 'default'
             estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         elsif ::CONFIG_HACK == 'simulation'
             estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
@@ -50,9 +50,8 @@ module PoseAuv
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
-        ori_in_map_child.use_frames('map' => 'map', 'world' => 'world')
 
-        if ::CONFIG_HACK == 'avalon'
+        if ::CONFIG_HACK == 'default'
             ori_in_map_child.with_conf("default", 'halle')
             estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         elsif ::CONFIG_HACK == 'simulation'

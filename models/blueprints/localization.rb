@@ -3,6 +3,7 @@ require 'models/blueprints/auv_control'
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'uw_particle_localization'
 using_task_library 'sonar_feature_estimator'
+using_task_library 'sonar_feature_detector'
 using_task_library 'hbridge'
 using_task_library 'sonar_wall_hough'
 

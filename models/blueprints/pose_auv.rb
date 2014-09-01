@@ -14,7 +14,7 @@ module PoseAuv
 
     class InitialOrientationEstimatorCmp < Syskit::Composition
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
-        add OrientationEstimator::IKF, :as => 'estimator'
+        add OrientationEstimator::IKF.prefer_deployed_tasks(/ikf_orientation_estimator/), :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
         add Base::SonarScanProviderSrv, :as => 'sonar'
@@ -46,7 +46,7 @@ module PoseAuv
     end
 
     class IKFOrientationEstimatorCmp < Syskit::Composition
-        add_main OrientationEstimator::IKF, :as => 'estimator'
+        add_main OrientationEstimator::IKF.prefer_deployed_tasks(/initial_orientation_estimator/), :as => 'estimator'
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'

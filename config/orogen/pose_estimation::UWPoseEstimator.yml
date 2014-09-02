@@ -38,7 +38,7 @@ depth_samples_period: 0.01
 # ******************************
 # ***** Filter Properties ******
 # ******************************
-filter_type: :UKF
+filter_type: :EKF
 # no documentation available for this property
 max_time_delta: 2.0
 

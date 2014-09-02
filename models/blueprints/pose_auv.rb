@@ -5,6 +5,7 @@ using_task_library "orientation_estimator"
 using_task_library "uw_particle_localization"
 using_task_library 'pose_estimation'
 using_task_library 'wall_orientation_correction'
+using_task_library 'wall_servoing'
 
 
 require "rock/models/blueprints/pose"
@@ -19,6 +20,7 @@ module PoseAuv
         add FogKvh::Dsp3000Task, :as => 'fog'
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
+        add WallServoing::SingleSonarServoing, :as => 'wall_servoing'
 
         if ::CONFIG_HACK == 'default'
             estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
@@ -28,17 +30,20 @@ module PoseAuv
             estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
         end
 
+        wall_servoing_child.with_conf("default", "hold_wall_right")
         wall_estimation_child.with_conf("default", "avalon", "wall_right")
         sonar_child.with_conf("default", "hold_wall_right")
 
         sonar_child.connect_to sonar_estimator_child
         imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
         fog_child.connect_to estimator_child.fog_samples_port
+        estimator_child.connect_to wall_servoing_child.orientation_sample_port
         estimator_child.connect_to wall_estimation_child.orientation_samples_port
         sonar_estimator_child.connect_to wall_estimation_child
+        sonar_estimator_child.connect_to wall_servoing_child
 
-        #export wall_estimation.angle_in_world_port, :as => 'angle_samples'
-        #provides Base::OrientationSrv, :as => "angle_in_world"
+        export wall_servoing_child.position_command_port
+        provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
 
         event :MISSING_TRANSFORMATION
         event :ESTIMATE_WALL_ORIENTATION

@@ -326,6 +326,7 @@ module AuvCont
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constand_command")
+        overload 'controller', command_child
         
         argument :heading, :default => 0
         argument :depth, :default => -4 

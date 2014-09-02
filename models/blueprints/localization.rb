@@ -6,6 +6,7 @@ using_task_library 'sonar_feature_estimator'
 using_task_library 'sonar_feature_detector'
 using_task_library 'hbridge'
 using_task_library 'sonar_wall_hough'
+using_task_library 'sonar_feature_detector'
 
 
 module Localization
@@ -26,10 +27,10 @@ module Localization
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
-        add_optional ::Base::VelocitySrv, as: 'velocity'
+#        add_optional ::Base::VelocitySrv, as: 'velocity'
 
         if ::CONFIG_HACK == 'default'
-            main_child.with_conf("default")
+            main_child.with_conf("default", "slam_testhalle")
         elsif ::CONFIG_HACK == 'simulation'
             main_child.with_conf("sim_nurc")
         elsif ::CONFIG_HACK == 'dagon'
@@ -40,10 +41,10 @@ module Localization
         connect sonar_child => sonar_estimator_child
         connect ori_child => sonar_estimator_child.orientation_sample_port
         connect ori_child => main_child.orientation_samples_port
-        connect sonar_estimator_child.new_feature_port => main_child
+        connect sonar_estimator_child.features_out_port => main_child
         connect hb_child => main_child.thruster_samples_port
         connect hough_child => main_child.pose_update_port
-        connect velocity_child.velocity_samples_port => main_child.speed_samples_port
+#        connect velocity_child.velocity_samples_port => main_child.speed_samples_port
         connect main_child.pose_samples_port => sonar_detector_child.pose_samples_port
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
 

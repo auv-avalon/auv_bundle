@@ -62,6 +62,7 @@ class AuvControl::ConstantCommand
         #constand_command_world.configure
 
     end
+       # provides Base::WorldXYZRollPitchYawControllerSrv , :as => "world_controller"
 
-#    provides Base::WorldXYZRollPitchYawControllerSrv, :as => 'world_cmd'
+    provides Base::WorldXYZRollPitchYawControllerSrv, :as => 'world_cmd'
 end

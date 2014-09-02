@@ -184,7 +184,7 @@ module AuvControl
         overload 'controller', AvalonControl::RelFakeWriter
 
         argument :heading, :default => 0
-        argument :depth, :default => -4 
+        argument :depth, :default => -6
         argument :x, :default => 0
         argument :y, :default => 0
         argument :timeout, :default => nil

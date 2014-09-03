@@ -49,6 +49,19 @@ filter_configuration:
   correction_frequency: 1.0
 initial_heading: 0.0 #override this on start
 
+--- name:dagon
+filter_configuration:
+  source_frame_name: 'body'
+  target_frame_name: 'world_orientation'
+  use_samples_as_theoretical_gravity: true
+  use_magnetometers: false
+  fog_type: :MULTI_AXIS
+  initial_heading_source: :INITIAL_HEADING_PARAMETER
+  substract_earth_rotation: true
+  initial_alignment_duration: 30.0
+  correction_frequency: 1.0
+initial_heading: 0.0 #override this on start
+
 --- name:simulation
 filter_configuration:
   substract_earth_rotation: false

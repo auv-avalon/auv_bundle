@@ -45,7 +45,7 @@ filter_configuration:
   fog_type: :SINGLE_AXIS
   initial_heading_source: :INITIAL_HEADING_PARAMETER
   substract_earth_rotation: true
-  initial_alignment_duration: 30.0
+  initial_alignment_duration: 0.0
   correction_frequency: 1.0
 initial_heading: 0.0 #override this on start
 

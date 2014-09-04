@@ -108,7 +108,7 @@ def process_child_tasks(task)
 end
 
 Roby.every(1, :on_error => :disable) do
-    STDOUT.puts "Searching for state_machines"
+    #STDOUT.puts "Searching for state_machines"
     State.current_state = []
     State.current_state_maschine = []
     Roby.plan.missions.to_a.each do |t|

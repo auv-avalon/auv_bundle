@@ -55,13 +55,39 @@ module Localization
         #export sonar_detector_child.next_target_port
         #export sonar_detector_child.next_target_feature_port
 
+        on :start do |ev|
+            @reader = main_child.pose_samples_port.reader
+        end
+
+        poll do 
+            if @reader 
+                if sample = @reader.read
+                    unless State.nil?
+                        State.position[:x] = sample.position.x
+                        State.position[:y] = sample.position.y
+                        State.position[:z] = sample.position.z
+                    end
+
+                end
+            end
+        end
 #        @position = :position2 
 #        
-#        on :start do |ev|
-#                @reader = main_child.pose_samples_port.reader
-#                emit @position if @position
-#        end
-#        poll do 
+        #on :start do |ev|
+        #        @reader = main_child.pose_samples_port.reader
+#       #         emit @position if @position
+        #end
+        #poll do 
+        #    if !log.nil? && log['particle_detector']
+        #        # We should log!
+        #        
+        #        if @reader 
+        #            if sample = @reader.read
+        #                log['particle_detector']['data'] = sample.position
+        #            end
+        #        end
+        #    end
+        #end
 #            if @reader
 #                if sample = @reader.read
 #                    col = nil

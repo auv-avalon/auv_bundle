@@ -15,27 +15,20 @@ module PoseAuv
 
     class InitialOrientationEstimatorCmp < Syskit::Composition
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
-        add OrientationEstimator::IKF.prefer_deployed_tasks(/initial_orientation_estimator/), :as => 'estimator'
+        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks(/initial_orientation_estimator/), :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         add WallServoing::SingleSonarServoing, :as => 'wall_servoing'
 
-        if ::CONFIG_HACK == 'default'
-            estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-        elsif ::CONFIG_HACK == 'simulation'
-            estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-        elsif ::CONFIG_HACK == 'dagon'
-            estimator_child.with_conf("default", "local_initial_estimator", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-        end
-
+        estimator_child.with_conf("default", "unknown_heading", "Bremen")
         wall_servoing_child.with_conf("default", "hold_wall_right")
         wall_estimation_child.with_conf("default", "avalon", "wall_right")
         sonar_child.with_conf("default", "hold_wall_right")
 
         sonar_child.connect_to sonar_estimator_child
-        imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
+        imu_child.connect_to estimator_child.imu_orientation_port
         fog_child.connect_to estimator_child.fog_samples_port
         estimator_child.connect_to wall_servoing_child.orientation_sample_port
         estimator_child.connect_to wall_estimation_child.orientation_samples_port
@@ -51,23 +44,28 @@ module PoseAuv
     end
 
     class IKFOrientationEstimatorCmp < Syskit::Composition
-        add_main OrientationEstimator::IKF.prefer_deployed_tasks(/ikf_orientation_estimator/), :as => 'estimator'
+        #add_main OrientationEstimator::IKF.prefer_deployed_tasks(/ikf_orientation_estimator/), :as => 'estimator'
+        add_main OrientationEstimator::BaseEstimator.prefer_deployed_tasks(/base_orientation_estimator/), :as => 'estimator'
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
 
         if ::CONFIG_HACK == 'default'
             ori_in_map_child.with_conf("default", 'halle')
-            estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            #estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            estimator_child.with_conf("default", "halle", "Bremen")
         elsif ::CONFIG_HACK == 'simulation'
             ori_in_map_child.with_conf("default", 'sauce')
-            estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            #estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            estimator_child.with_conf("default", "sauce", "Bremen")
         elsif ::CONFIG_HACK == 'dagon'
             ori_in_map_child.with_conf("default", 'halle')
-            estimator_child.with_conf("default", "dagon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            #estimator_child.with_conf("default", "dagon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
+            estimator_child.with_conf("default", "halle", "Bremen")
         end
 
-        imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
+        #imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
+        imu_child.connect_to estimator_child.imu_orientation_port
         fog_child.connect_to estimator_child.fog_samples_port
         estimator_child.connect_to ori_in_map_child.orientation_in_world_port
 

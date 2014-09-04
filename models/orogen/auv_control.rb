@@ -54,7 +54,6 @@ class AuvControl::ConstantCommand
     def update_config(options)
         @options = options
 
-        STDOUT.puts "Starting real Poisitioning task with options: #{@options}"
         cmd = orocos_task.cmd
         cmd.linear[0] = @options[:x];
         cmd.linear[1] = @options[:y];
@@ -64,10 +63,27 @@ class AuvControl::ConstantCommand
         cmd.angular[1] = 0;
         cmd.angular[2] = @options[:heading];
         orocos_task.cmd = cmd
-        #constand_command_world.configure
+        #constant_command_world.configure
 
     end
        # provides Base::WorldXYZRollPitchYawControllerSrv , :as => "world_controller"
 
     provides Base::WorldXYZRollPitchYawControllerSrv, :as => 'world_cmd'
 end
+
+class ConsWA < Syskit::Composition
+    add AuvControl::ConstantCommand, :as => 'controller_v'
+    #controller_v_child.prefer_deployed_tasks "constant_command_vel"
+    export controller_v_child.cmd_out_port
+end
+
+class ConstantWorldXYVelocityCommand < Syskit::Composition
+    add AuvControl::ConstantCommand, :as => 'controller_w'
+    controller_w_child.prefer_deployed_tasks "constant_command"
+    add ConsWA, as: 'controller_v' 
+    export controller_w_child.cmd_out_port, as: 'world_command'
+    export controller_v_child.cmd_out_port, as: 'aligned_velocity_command'
+    provides Base::WorldXYVelocityControllerSrv, as: 'controller'
+    
+end
+

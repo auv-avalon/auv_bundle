@@ -86,7 +86,7 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
     end
-    class WorldAndXYVelocityCmp < Syskit::Composition
+    class WorldXYVelocityCmp < Syskit::Composition
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
@@ -123,7 +123,7 @@ module AuvCont
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
         add Base::WorldXYVelocityControllerSrv, :as => "controller"
-#        command_child.prefer_deployed_tasks("constand_command")
+#        command_child.prefer_deployed_tasks("constant_command")
         
         #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
@@ -159,7 +159,7 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
     end
     
-    class WorldAndXYPositionCmp < Syskit::Composition
+    class WorldXYPositionCmp < Syskit::Composition
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
@@ -196,7 +196,7 @@ module AuvCont
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
 #        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
-#        command_child.prefer_deployed_tasks("constand_command")
+#        command_child.prefer_deployed_tasks("constant_command")
         
         #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
@@ -271,7 +271,7 @@ module AuvCont
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
 #        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
-#        command_child.prefer_deployed_tasks("constand_command")
+#        command_child.prefer_deployed_tasks("constant_command")
         
         #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
@@ -310,9 +310,9 @@ module AuvCont
     end
 
 #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
-    #::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldAndXYVelocityCmp
+    #::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldXYVelocityCmp
     #
-    class WorldAndYPositionAndXVelocityCmp < Syskit::Composition
+    class WorldYPositionXVelocityCmp < Syskit::Composition
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
@@ -349,7 +349,7 @@ module AuvCont
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
         add Base::WorldYPositionXVelocityControllerSrv, :as => "controller"
-#        command_child.prefer_deployed_tasks("constand_command")
+#        command_child.prefer_deployed_tasks("constant_command")
         
         #conf 'simulation',
         #conf 'simulation', 'aligned_position_controller' => ['position_simulation_parallel'],
@@ -388,19 +388,18 @@ module AuvCont
     end
    
     class Trajectory < WorldPositionCmp 
-        event :reached_end
-        event :align_at_end
-        
-        
         add_main  AvalonControl::TrajectoryFollower, :as => "main"
         overload 'controller', main_child
 
         connect pose_child => controller_child 
+        event :reached_end
+        event :align_at_end
+        
     end
 
     class PositionMoveCmp < WorldPositionCmp
         add AuvControl::ConstantCommand, :as => 'command'
-        command_child.prefer_deployed_tasks("constand_command")
+        command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
         argument :heading, :default => 0
@@ -471,9 +470,8 @@ module AuvCont
 
     end
 
-    class MoveCmp < WorldPositionCmp
-        add AuvControl::ConstantCommand, :as => 'command'
-        command_child.prefer_deployed_tasks("constand_command")
+    class MoveCmp < WorldXYVelocityCmp
+    #    controller_child.prefer_deployed_tasks("constant_command")
         
         argument :heading, :default => 0
         argument :depth, :default => -4 

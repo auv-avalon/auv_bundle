@@ -19,7 +19,7 @@ module Structure
         connect seg_child.binary_result_port => mosaic_child
         connect mosaic_child => detector_child
     
-        export detector_child.size_port, :as => "size"
+        #export detector_child.size_port, :as => "size"
         export detector_child.world_command_port, :as => "world_command"
         export detector_child.aligned_speed_command_port, :as => "speed_command"
         provides Base::WorldXYVelocityControllerSrv, :as => 'controller', "aligned_velocity_command" => "speed_command", "world_command" => "world_command" 

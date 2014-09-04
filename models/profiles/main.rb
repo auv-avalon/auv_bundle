@@ -96,7 +96,7 @@ module DFKI
             ############### /DEPRICATED #########################
             
 #            define 'world_controller', AuvCont::WorldPositionCmp
-            define 'world_and_xy_velo_controller', AuvCont::WorldAndXYVelocityCmp.use(
+            define 'world_and_xy_velo_controller', AuvCont::WorldXYVelocityCmp.use(
                     'joint' => thruster_tag
             )
 
@@ -181,19 +181,21 @@ module DFKI
             )
 
 
-            ###     New Stuff not (yet) integrated #######################
+            ###     New Stuff now integrated #######################
             define 'simple_move_new', AuvCont::MoveCmp.use(
                 'pose' => pose_blind_tag,
-                'command' => AuvControl::ConstantCommand,
+                #'controller' => AuvControl::ConstantCommand,
+                'controller' => ConstantWorldXYVelocityCommand,
                 'joint' => thruster_tag
             )
+
             define 'target_move_new', AuvCont::PositionMoveCmp.use(
                 'pose' => pose_tag,
                 'command' => AuvControl::ConstantCommand, 
                 'joint' => thruster_tag
             )
             
-            define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
+            define 'drive_simple_new', AuvCont::WorldXYVelocityCmp.use(
                 'pose' => pose_tag, #pose_estimator_def,
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
@@ -202,7 +204,7 @@ module DFKI
                 )
             )
             
-            define 'structure_inspection', AuvCont::WorldAndXYVelocityCmp.use(
+            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
                 'controller' => Structure::Detector.use(
@@ -241,13 +243,13 @@ module DFKI
                 'controlled_system' =>  relative_loop_def
             )
 
-            define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(
+            define 'pipeline_new', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => pipeline_detector_new_def,
                 'joint' => thruster_tag
             )
 
-            define 'wall_new_right', AuvCont::WorldAndXYPositionCmp.use(
+            define 'wall_new_right', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
@@ -264,12 +266,12 @@ module DFKI
             )
             define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
                 'detector' => wall_buoy_detector_def,
-                'pose' => localization_def,
+                'pose' => pose_tag,
                 'wall' => wall_detector_new_def 
             )
 
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
-                'pose' => localization_def,
+                'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
                 'joint' => thruster_tag
                 

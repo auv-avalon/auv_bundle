@@ -18,21 +18,58 @@ using_task_library 'auv_rel_pos_controller'
 
 module DFKI 
     module Profiles
-        profile "AUV" do
+        profile "PoseEstimation" do
+            tag 'depth', ::Base::ZProviderSrv
+            tag 'motion_model', ::Base::VelocitySrv
+            tag 'dvl', ::Base::DVLSrv
+            tag 'thruster_feedback',  ::Base::JointsStatusSrv
+            tag 'final_orientation_with_z', ::Base::OrientationWithZSrv
+
+            define 'hough_detector', Localization::HoughDetector.use(
+                Base::OrientationSrv => final_orientation_with_z_tag,
+                'dvl' => dvl_tag
+            )
+
+            define 'localization', Localization::ParticleDetector.use(
+                dvl_tag,
+                Base::OrientationWithZSrv => final_orientation_with_z_tag,
+                'hough' => hough_detector_def,
+                'hb' => thruster_feedback_tag,
+                'ori' => final_orientation_with_z_tag#,
+                #'velocity' => nil
+            )
+
+            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
+
+            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
+
+            define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
+                'depth' => depth_tag,
+                'ori' => ikf_orientation_estimator_def,
+                'model' => motion_model_tag,
+
+            )
+
+            define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
+                'depth' => depth_tag,
+                'ori' => ikf_orientation_estimator_def,
+                'model' => motion_model_tag,
+                'dvl' => dvl_tag,
+                'localization' => localization_def
+            )
 
             
-#            tag 'base_loop', ::Base::ControlLoop
-#            tag 'drive_simpe', ::Base::ControlLoop
+        end
+
+        profile "AUV" do
             tag 'final_orientation_with_z', ::Base::OrientationWithZSrv
             tag 'pose', ::Base::PoseSrv
+            tag 'pose_blind', ::Base::PoseSrv
             tag 'altimeter', ::Base::GroundDistanceSrv
             tag 'thruster',  ::Base::JointsControlledSystemSrv 
-            tag 'thruster_feedback',  ::Base::JointsStatusSrv 
             tag 'down_looking_camera',  ::Base::ImageProviderSrv
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
-            tag 'dvl', ::Base::DVLSrv
-            tag 'depth', ::Base::ZProviderSrv
 
 
 
@@ -90,45 +127,14 @@ module DFKI
             
             ############### Localization stuff  ######################
 
-            define 'hough_detector', Localization::HoughDetector.use(
-                Base::OrientationSrv => final_orientation_with_z_tag,
-                'dvl' => dvl_tag
-            )
 
-            define 'localization', Localization::ParticleDetector.use(
-                dvl_tag,
-                Base::OrientationWithZSrv => final_orientation_with_z_tag, 
-                'hough' => hough_detector_def,
-                'hb' => thruster_feedback_tag,
-                'ori' => final_orientation_with_z_tag#,
-                #'velocity' => nil
-            )
 
             define 'position_control_loop', ::Base::ControlLoop.use(
                 'controller' =>  AvalonControl::PositionControlTask, 
                 'controlled_system' => base_loop_def,
-                'pose' => localization_def
+                'pose' => pose_tag
             )
 
-            define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
-
-            define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
-
-            define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
-                'depth' => depth_tag,
-                'ori' => ikf_orientation_estimator_def,
-                'model' => motion_model_tag,
-
-            )
-
-            define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
-                'depth' => depth_tag,
-                'ori' => ikf_orientation_estimator_def,
-                'model' => motion_model_tag,
-                'dvl' => dvl_tag,
-                'localization' => localization_def
-            )
-            
 
 
 
@@ -136,7 +142,7 @@ module DFKI
             ################# Basic Movements #########################
             define 'target_move', ::AuvControl::SimplePosMove.use(
                 'controlled_system' => position_control_loop_def,
-                'pose' => localization_def
+                'pose' => pose_tag
             )
 
             define 'simple_move', ::AuvControl::SimpleMove.use(
@@ -165,7 +171,7 @@ module DFKI
             define 'trajectory_move', ::AuvControl::TrajectoryMove.use(
 #                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 position_control_loop_def, 
-                localization_def, 
+                pose_tag,
                 final_orientation_with_z_tag, 
             )
             
@@ -176,18 +182,18 @@ module DFKI
 
             ###     New Stuff not (yet) integrated #######################
             define 'simple_move_new', AuvCont::MoveCmp.use(
-                'pose' => pose_estimator_blind_def,
+                'pose' => pose_blind_tag,
                 'command' => AuvControl::ConstantCommand,
                 'joint' => thruster_tag
             )
             define 'target_move_new', AuvCont::PositionMoveCmp.use(
-                'pose' => localization_def, 
+                'pose' => pose_tag,
                 'command' => AuvControl::ConstantCommand, 
                 'joint' => thruster_tag
             )
             
             define 'drive_simple_new', AuvCont::WorldAndXYVelocityCmp.use(
-                'pose' => localization_def, #pose_estimator_def, 
+                'pose' => pose_tag, #pose_estimator_def,
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => final_orientation_with_z_tag,
@@ -196,7 +202,7 @@ module DFKI
             )
             
             define 'structure_inspection', AuvCont::WorldAndXYVelocityCmp.use(
-                'pose' => localization_def, 
+                'pose' => pose_tag,
                 'joint' => thruster_tag,
                 'controller' => Structure::Detector.use(
                         'camera' => forward_looking_camera_tag,
@@ -210,22 +216,22 @@ module DFKI
             )
 
 
-            define 'line_scanner', Pipeline::LineScanner.use(
-               LineScanner::Task.with_conf('default'),
-               'camera' => down_looking_camera_tag,
-               'motion_model' => localization_def,
-               #'motion_model' => motion_model_tag
-            )
+#            define 'line_scanner', Pipeline::LineScanner.use(
+#               LineScanner::Task.with_conf('default'),
+#               'camera' => down_looking_camera_tag,
+#               'motion_model' => pose_tag,
+#               #'motion_model' => motion_model_tag
+#            )
 
             define 'pipeline_detector', Pipeline::Detector.use(
                 'camera' => down_looking_camera_tag,
-                'laser_scanner' => line_scanner_def,
+#                'laser_scanner' => line_scanner_def,
                 'orientation_with_z' => final_orientation_with_z_tag
             )
 
             define 'pipeline_detector_new', Pipeline::Detector_new.use(
                 'camera' => down_looking_camera_tag,
-                'laser_scanner' => line_scanner_def,
+ #               'laser_scanner' => line_scanner_def,
                 'orientation_with_z' => final_orientation_with_z_tag
             )
             
@@ -235,13 +241,13 @@ module DFKI
             )
 
             define 'pipeline_new', AuvCont::WorldAndXYPositionCmp.use(
-                'pose' => localization_def,
+                'pose' => pose_tag,
                 'controller' => pipeline_detector_new_def,
                 'joint' => thruster_tag
             )
 
             define 'wall_new_right', AuvCont::WorldAndXYPositionCmp.use(
-                'pose' => localization_def,
+                'pose' => pose_tag,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
             )
@@ -249,7 +255,7 @@ module DFKI
             define 'trajectory', AuvCont::Trajectory.use(
 #                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
                 'joint' => thruster_tag,
-                'pose' => localization_def
+                'pose' => pose_tag
             )
 
         end

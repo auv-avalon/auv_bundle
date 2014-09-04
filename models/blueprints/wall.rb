@@ -1,5 +1,6 @@
 require 'models/blueprints/auv'
 require 'models/blueprints/localization'
+require 'models/orogen/wall'
 
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'wall_servoing'
@@ -67,6 +68,8 @@ module Wall
         export detector_child.world_command_port
         export detector_child.aligned_position_command_port
         provides Base::WorldXYPositionControllerSrv, :as => 'controller'
+        export detector_child.wall_port
+        provides Wall::WallOrientationSrv, as: 'wall_ori'
 
 
         event :wall_servoing

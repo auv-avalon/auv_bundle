@@ -1,6 +1,7 @@
 require "models/blueprints/auv"
 require "models/blueprints/pose_auv"
 require "models/blueprints/wall"
+require "models/blueprints/buoy_wall"
 require "models/blueprints/buoy"
 require "models/blueprints/pipeline"
 require "models/blueprints/structure"
@@ -250,6 +251,22 @@ module DFKI
 #                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
                 'joint' => thruster_tag,
                 'pose' => localization_def
+            )
+
+            define 'wall_buoy_detector', Buoy::DetectorNewCmp.use(
+                'front_camera' => forward_looking_camera_tag,
+            )
+            define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
+                'detector' => wall_buoy_detector_def,
+                'pose' => localization_def,
+                'wall' => wall_detector_new_def 
+            )
+
+            define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
+                'pose' => localization_def,
+                'controller' => wall_buoy_controller_def,
+                'joint' => thruster_tag
+                
             )
 
         end

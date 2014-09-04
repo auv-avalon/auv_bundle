@@ -1,0 +1,100 @@
+--- name:default
+# Latitude of Bremen in radians (equivalent to 53.083333 degrees).
+latitude: 0.926478944
+# Longitude of Bremen in radians (equivalent to 8.8 degrees).
+longitude: 0.153588974
+# Bremen magnetic declination in radians (equivalent to 1.35 degrees EAST).
+magnetic_declination: 0.023561944
+# The declination is positive when the magnetic north is east of true north
+# 1 is EAST, which means positive declination. 2 is WEST
+magnetic_declination_mode: 1
+# Altitude of Bremen in meters
+altitude: 12.0
+# Dip angle of Bremen in radians (equivalent to 68.05 degrees ).
+dip_angle: 1.187696556
+
+# true if initial heading parameter should be used.
+use_initial_heading: false
+# Initial heading in radians.
+initial_heading: 0.0
+
+gbiasof:
+  data:
+  - 6.8990327155863e-310
+  - 6.8990327155864e-310
+  - 0.0
+# override orientation covariance
+orientation_cov:
+  data:
+  - 3.5e-03
+  - 0.0
+  - 0.0
+  - 0.0
+  - 3.5e-03
+  - 0.0
+  - 0.0
+  - 0.0
+  - 3.5e-05
+# override angular velocity covariance
+angular_velocity_cov:
+  data:
+  - 4.76e-05
+  - 0.0
+  - 0.0
+  - 0.0
+  - 5.21e-05
+  - 0.0
+  - 0.0
+  - 0.0
+  - 1.74e-08
+
+# maximum latency, in seconds, of the stream aligner. The aligner will start dropping samples if the difference between the last output and last input is greater than this
+aggregator_max_latency: 0.3
+# minimum system time in s between two status readings
+stream_aligner_status_period: 1.0
+# minimum time, in s, between two sequential samples arrive on imu_orientation
+imu_orientation_period: 0.01
+# minimum time, in s, between two sequential samples arrive on fog_samples
+fog_samples_period: 0.01
+
+#******************************
+#** Override initial heading **
+#******************************
+--- name:halle
+# true if initial heading parameter should be used.
+use_initial_heading: true
+# Initial heading in radians.
+initial_heading: -2.03
+
+--- name:sauce
+# true if initial heading parameter should be used.
+use_initial_heading: true
+# Initial heading in radians.
+initial_heading: -1.26
+
+#******************************
+#***** Locataion Configs ******
+#******************************
+--- name:Bremen
+latitude: 0.926978312
+longitude: 0.154608945
+altitude: 12.0
+magnetic_declination: 0.03098929 
+magnetic_declination_mode: 1
+dip_angle: 1.187778974
+
+--- name:ESTEC
+latitude: 0.911367 #52deg 13min 03sec NORTH
+longitude: 0.07709999 # 4deg 25 min 03 sec EAST
+altitude: 0.0
+magnetic_declination: 0.006690428 #0 deg 23 min EAST
+magnetic_declination_mode: 1
+dip_angle: 0.00663
+
+--- name:sauce14
+latitude: 0.76961941 # 44deg 5min 45.4sec NORTH
+longitude: 0.172172367 # 9deg 51 min 53.1 sec EAST
+altitude: 0.0
+magnetic_declination: 0.037233685 # 2 deg 8 min EAST
+magnetic_declination_mode: 1
+dip_angle: 1.051037276

@@ -15,7 +15,7 @@ module PoseAuv
 
     class InitialOrientationEstimatorCmp < Syskit::Composition
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
-        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks(/initial_orientation_estimator/), :as => 'estimator'
+        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks("initial_orientation_estimator"), :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
         add Base::SonarScanProviderSrv, :as => 'sonar'
@@ -45,7 +45,7 @@ module PoseAuv
 
     class IKFOrientationEstimatorCmp < Syskit::Composition
         #add_main OrientationEstimator::IKF.prefer_deployed_tasks(/ikf_orientation_estimator/), :as => 'estimator'
-        add_main OrientationEstimator::BaseEstimator.prefer_deployed_tasks(/base_orientation_estimator/), :as => 'estimator'
+        add_main OrientationEstimator::BaseEstimator.prefer_deployed_tasks("base_orientation_estimator"), :as => 'estimator'
         add WallOrientationCorrection::OrientationInMap, :as => 'ori_in_map'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
@@ -110,7 +110,7 @@ module PoseAuv
     end
 
     class DagonOrientationEstimatorCmp < Syskit::Composition
-        add OrientationEstimator::BaseEstimator, :as => 'estimator'
+        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks("orientation_estimator"), :as => 'estimator'
         add UwParticleLocalization::OrientationCorrection, :as => 'correction'
 
         add Base::OrientationSrv, :as => 'imu'

@@ -19,51 +19,61 @@ using_task_library 'auv_rel_pos_controller'
 
 module DFKI 
     module Profiles
-        profile "PoseEstimation" do
-            tag 'depth', ::Base::ZProviderSrv
-            tag 'motion_model', ::Base::VelocitySrv
-            tag 'dvl', ::Base::DVLSrv
-            tag 'thruster_feedback',  ::Base::JointsStatusSrv
-            tag 'final_orientation_with_z', ::Base::OrientationWithZSrv
-
-            define 'hough_detector', Localization::HoughDetector.use(
-                Base::OrientationSrv => final_orientation_with_z_tag,
-                'dvl' => dvl_tag
-            )
-
-            define 'localization', Localization::ParticleDetector.use(
-                dvl_tag,
-                Base::OrientationWithZSrv => final_orientation_with_z_tag,
-                'hough' => hough_detector_def,
-                'hb' => thruster_feedback_tag,
-                'ori' => final_orientation_with_z_tag#,
-                #'velocity' => nil
+        profile "OrientationEstimation" do
+            tag 'imu', ::Base::OrientationSrv
+            
+            
+            define "old_orientation_estimator", PoseAuv::DagonOrientationEstimatorCmp.use(
+                'imu' => imu_tag
             )
 
             define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
 
             define 'initial_orientation_estimator', PoseAuv::InitialOrientationEstimatorCmp
-
+        end
+        
+        profile "PoseEstimation" do
+            tag 'depth', ::Base::ZProviderSrv
+            tag 'motion_model', ::Base::VelocitySrv
+            tag 'orientation', ::Base::OrientationWithZSrv
+            tag 'dvl', ::Base::DVLSrv
+            tag 'motion_model', ::Base::VelocitySrv
+            tag 'thruster_feedback',  ::Base::JointsStatusSrv
+            
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
-                'ori' => ikf_orientation_estimator_def,
+                'ori' => orientation_tag,
                 'model' => motion_model_tag,
+            )
+            
+            
+            define 'hough_detector', Localization::HoughDetector.use(
+                Base::OrientationSrv => orientation_tag,
+                'dvl' => dvl_tag
+            )
 
+            define 'localization', Localization::ParticleDetector.use(
+                dvl_tag,
+                Base::OrientationWithZSrv => orientation_tag,
+                'hough' => hough_detector_def,
+                'hb' => thruster_feedback_tag#,
+#                'ori' => orientation_with_z_tag#,
+                #'velocity' => nil
             )
 
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
-                'ori' => ikf_orientation_estimator_def,
+                'ori' => orientation_tag,
                 'model' => motion_model_tag,
                 'dvl' => dvl_tag,
                 'localization' => localization_def
             )
-
             
+
         end
 
         profile "AUV" do
-            tag 'final_orientation_with_z', ::Base::OrientationWithZSrv
+            tag 'orientation_with_z', ::Base::OrientationWithZSrv
             tag 'pose', ::Base::PoseSrv
             tag 'pose_blind', ::Base::PoseSrv
             tag 'altimeter', ::Base::GroundDistanceSrv
@@ -78,7 +88,7 @@ module DFKI
             ############### DEPRICATED ##########################
             # Define old ControlLoops
             define 'base_loop', Base::ControlLoop.use(
-                Base::OrientationWithZSrv => final_orientation_with_z_tag,
+                Base::OrientationWithZSrv => orientation_with_z_tag,
                 'dist' => altimeter_tag,
                 'controller' => AvalonControl::MotionControlTask,
                 'controlled_system' => thruster_tag
@@ -90,7 +100,7 @@ module DFKI
 
             define 'relative_heading_loop', ::Base::ControlLoop.use(
                 'controlled_system' => base_loop_def,
-                'orientation_with_z' => final_orientation_with_z_tag,
+                'orientation_with_z' => orientation_with_z_tag,
                 'controller' => AuvRelPosController::Task.with_conf('default','relative_heading')
             )
             ############### /DEPRICATED #########################
@@ -102,13 +112,13 @@ module DFKI
 
 
             define 'relative_loop', Base::ControlLoop.use(
-                    'orientation_with_z' => final_orientation_with_z_tag,
+                    'orientation_with_z' => orientation_with_z_tag,
                     'controlled_system' => base_loop_def, 
                     'controller' => AuvRelPosController::Task.with_conf('default','relative_heading')
             )
 
             define 'absolute_loop', Base::ControlLoop.use(
-                    'orientation_with_z' => final_orientation_with_z_tag,
+                    'orientation_with_z' => orientation_with_z_tag,
                     'controlled_system' => base_loop_def, 
                     'controller' => AuvRelPosController::Task.with_conf('default','absolute_heading')
             )
@@ -119,7 +129,7 @@ module DFKI
 
             define('drive_simple', ::Base::ControlLoop).use(
                 AuvControl::JoystickCommandCmp.use(
-                    "orientation_with_z" => final_orientation_with_z_tag,
+                    "orientation_with_z" => orientation_with_z_tag,
                     "dist" => altimeter_tag
                 ), 
                 'controlled_system' => base_loop_def    
@@ -148,18 +158,18 @@ module DFKI
 
             define 'simple_move', ::AuvControl::SimpleMove.use(
                 base_loop_def,
-                'reading' => final_orientation_with_z_tag
+                'reading' => orientation_with_z_tag
             )
 
             define 'wall_detector', Wall::Detector.use(
                 WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
-                "orientation_with_z" => final_orientation_with_z_tag,
+                "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )
 
             define 'wall_detector_new', Wall::DetectorNew.use(
 		WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
-                "orientation_with_z" => final_orientation_with_z_tag,
+                "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )
 
@@ -173,7 +183,7 @@ module DFKI
 #                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 position_control_loop_def, 
                 pose_tag,
-                final_orientation_with_z_tag, 
+                orientation_with_z_tag, 
             )
             
             define 'buoy_detector', Buoy::DetectorCmp.use(
@@ -199,7 +209,7 @@ module DFKI
                 'pose' => pose_tag, #pose_estimator_def,
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
-                        'orientation_with_z' => final_orientation_with_z_tag,
+                        'orientation_with_z' => orientation_with_z_tag,
                         'dist' => altimeter_tag
                 )
             )
@@ -209,13 +219,13 @@ module DFKI
                 'joint' => thruster_tag,
                 'controller' => Structure::Detector.use(
                         'camera' => forward_looking_camera_tag,
-                        'ori' => final_orientation_with_z_tag
+                        'ori' => orientation_with_z_tag
                     )
             )
 
             define 'structure_detector_down',Structure::Detector.use(
                 'camera' => down_looking_camera_tag,
-                'ori' => final_orientation_with_z_tag
+                'ori' => orientation_with_z_tag
             )
 
 
@@ -229,13 +239,13 @@ module DFKI
             define 'pipeline_detector', Pipeline::Detector.use(
                 'camera' => down_looking_camera_tag,
 #                'laser_scanner' => line_scanner_def,
-                'orientation_with_z' => final_orientation_with_z_tag
+                'orientation_with_z' => orientation_with_z_tag
             )
 
             define 'pipeline_detector_new', Pipeline::Detector_new.use(
                 'camera' => down_looking_camera_tag,
  #               'laser_scanner' => line_scanner_def,
-                'orientation_with_z' => final_orientation_with_z_tag
+                'orientation_with_z' => orientation_with_z_tag
             )
             
             define 'pipeline', Pipeline::Follower.use(

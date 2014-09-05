@@ -104,11 +104,11 @@ module AuvControl
         add ::Base::ZProviderSrv, :as => 'z'
         add ::Base::OrientationSrv, :as => 'ori'
         add AuvHelper::DepthAndOrientationFusion, :as => 'task'
-	add ::Base::GroundDistanceSrv, :as => 'echo'
+	#add ::Base::GroundDistanceSrv, :as => 'echo'
     
         connect z_child => task_child.depth_samples_port
         connect ori_child => task_child.orientation_samples_port
-	connect echo_child => task_child.ground_distance_port
+	#connect echo_child => task_child.ground_distance_port
     
         export task_child.pose_samples_port
         provides ::Base::OrientationWithZSrv, :as => "orientation_with_z"

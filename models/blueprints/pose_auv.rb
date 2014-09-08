@@ -14,6 +14,10 @@ require "models/blueprints/auv.rb"
 module PoseAuv
 
     class InitialOrientationEstimatorCmp < Syskit::Composition
+        event :MISSING_TRANSFORMATION
+        event :ESTIMATE_WALL_ORIENTATION
+        event :VALID_WALL_FIX
+
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
         add OrientationEstimator::BaseEstimator.prefer_deployed_tasks("initial_orientation_estimator"), :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
@@ -38,9 +42,19 @@ module PoseAuv
         export wall_servoing_child.position_command_port
         provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
 
-        event :MISSING_TRANSFORMATION
-        event :ESTIMATE_WALL_ORIENTATION
-        event :VALID_WALL_FIX
+
+        add IKFOrientationEstimatorCmp, :as => "slave"
+
+        on :start do |ev|
+            @reader = main_child.angle_in_world_port.reader
+        end
+
+        on :VALID_WALL_FIX do |e|
+            @reader
+            sample = @reader.readNewest
+            slave_child.main_child.reset_heading sample.rad 
+            e
+        end
     end
 
     class IKFOrientationEstimatorCmp < Syskit::Composition

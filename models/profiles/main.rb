@@ -23,9 +23,9 @@ module DFKI
             tag 'imu', ::Base::OrientationSrv
             
             
-            define "old_orientation_estimator", PoseAuv::DagonOrientationEstimatorCmp.use(
-                'imu' => imu_tag
-            )
+#            define "old_orientation_estimator", PoseAuv::DagonOrientationEstimatorCmp.use(
+#                'imu' => imu_tag
+#            )
 
             define 'ikf_orientation_estimator', PoseAuv::IKFOrientationEstimatorCmp
 
@@ -177,6 +177,7 @@ module DFKI
                 wall_detector_def,
                 'controlled_system' => relative_heading_loop_def
             )
+
 
             ################ HighLevelController ######################
             define 'trajectory_move', ::AuvControl::TrajectoryMove.use(

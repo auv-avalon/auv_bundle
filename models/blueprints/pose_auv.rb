@@ -102,7 +102,7 @@ module PoseAuv
         add Base::ZProviderSrv, :as => 'depth'
         add_optional Base::PoseSrv, :as => 'localization'
         add_optional Base::DVLSrv, as: 'dvl'
-        ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
+        #ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
         if ::CONFIG_HACK == 'default'
             pose_estimator_child.with_conf("default", "avalon", "halle")

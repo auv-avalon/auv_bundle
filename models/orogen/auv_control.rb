@@ -55,19 +55,19 @@ class AuvControl::ConstantCommand
         @options = options
 
         cmd = orocos_task.cmd
-        cmd.linear[0]  = 0
-        cmd.linear[1]  = 0
-        cmd.linear[2]  = 0
-        cmd.angular[0] = 0
-        cmd.angular[1] = 0
-        cmd.angular[2] = 0
+        cmd.linear[0]  = NaN
+        cmd.linear[1]  = NaN
+        cmd.linear[2]  = NaN
+        cmd.angular[0] = NaN
+        cmd.angular[1] = NaN
+        cmd.angular[2] = NaN
 
         cmd.linear[0] = @options[:x] if @options[:x]
         cmd.linear[1] = @options[:y] if @options[:y]
         cmd.linear[2] = @options[:depth] if @options[:depth]
 
-        cmd.angular[0] = 0
-        cmd.angular[1] = 0
+        cmd.angular[0] = @options[:roll] if @options[:roll] 
+        cmd.angular[1] = @options[:pitch] if @options[:pitch]
         cmd.angular[2] = @options[:heading] if @options[:heading]
         orocos_task.cmd = cmd
         #constant_command_world.configure
@@ -99,7 +99,7 @@ class ConstantWorldXYVelocityCommand < Syskit::Composition
                 
     
     def update_config(options)
-        controller_w_child.update_config(:heading => options[:heading], :depth => options[:depth])
+        controller_w_child.update_config(:heading => options[:heading], :depth => options[:depth], :pitch => 0, :roll => 0)
         controller_v_child.update_config(:x => options[:x], :y => options[:y])
     end
     

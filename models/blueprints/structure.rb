@@ -4,6 +4,7 @@ require 'models/blueprints/localization'
 using_task_library 'structure_servoing'
 using_task_library 'image_preprocessing'
 using_task_library 'hsv_mosaicing'
+using_task_library 'sonar_structure_servoing'
 
 module Structure 
     class Detector < Syskit::Composition
@@ -105,6 +106,41 @@ module Structure
 #            end
 #        end
     end
+
+
+    class SonarStructureServoingComp < Syskit::Composition
+        add_main SonarStructureServoing::Task, :as => 'detector'
+        add Base::SonarScanProviderSrv, :as => 'sonar'
+        add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
+        add Base::PoseSrv, :as => 'pose_blind'
+
+        if ::CONFIG_HACK == 'default'
+            detector_child.with_conf("default", 'move_left')
+        elsif ::CONFIG_HACK == 'simulation'
+            detector_child.with_conf("default", 'simulation', 'move_left')
+        elsif ::CONFIG_HACK == 'dagon'
+            detector_child.with_conf("default", 'move_left')
+        end
+        sonar_child.with_conf("default", 'structure_servoing_front')
+
+        connect sonar_child => sonar_estimator_child
+        connect sonar_estimator_child => detector_child
+	    connect pose_blind_child => detector_child.odometry_samples_port
+
+        export detector_child.world_command_port
+        export detector_child.aligned_position_command_port
+        provides Base::WorldXYPositionControllerSrv, :as => 'controller'
+
+        export detector_child.position_command_port
+        provides Base::AUVRelativeMotionControllerSrv, :as => 'old_controller'
+
+        event :MISSING_TRANSFORMATION
+        event :SEARCHING_STRUCTURE
+        event :VALIDATING_STRUCTURE
+        event :INSPECTING_STRUCTURE
+
+    end
+
 end
 
 

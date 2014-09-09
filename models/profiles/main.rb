@@ -178,6 +178,21 @@ module DFKI
                 'controlled_system' => relative_heading_loop_def
             )
 
+            define 'sonar_structure_detector', Structure::SonarStructureServoingComp.use(
+                'pose_blind' => pose_blind_tag,
+            ).use_frames(
+                'body' => 'body',
+                'odometry' => 'odometry',
+                'sonar' => 'sonar'
+            )
+
+            define 'sonar_structure_servoing', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_blind_tag,
+                'controller' => sonar_structure_detector_def,
+                'joint' => thruster_tag
+            )
+
+
 
             ################ HighLevelController ######################
             define 'trajectory_move', ::AuvControl::TrajectoryMove.use(

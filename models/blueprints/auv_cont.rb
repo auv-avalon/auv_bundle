@@ -398,7 +398,7 @@ module AuvCont
     end
 
     class PositionMoveCmp < WorldPositionCmp
-        add AuvControl::ConstantCommand, :as => 'command'
+        add ConstantWorldXYVelocityCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
@@ -471,7 +471,9 @@ module AuvCont
     end
 
     class MoveCmp < WorldXYVelocityCmp
-    #    controller_child.prefer_deployed_tasks("constant_command")
+        add AuvControl::ConstantCommand, :as => 'command'
+        command_child.prefer_deployed_tasks("constant_command")
+        overload 'controller', command_child
         
         argument :heading, :default => 0
         argument :depth, :default => -4 

@@ -196,7 +196,7 @@ module DFKI
             define 'simple_move_new', AuvCont::MoveCmp.use(
                 'pose' => pose_blind_tag,
                 #'controller' => AuvControl::ConstantCommand,
-                'controller' => ConstantWorldXYVelocityCommand,
+                #'controller' => ConstantWorldXYVelocityCommand,
                 'joint' => thruster_tag
             )
 

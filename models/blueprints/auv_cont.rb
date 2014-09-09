@@ -398,7 +398,7 @@ module AuvCont
     end
 
     class PositionMoveCmp < WorldPositionCmp
-        add ConstantWorldXYVelocityCommand, :as => 'command'
+        add AuvControl::ConstantCommand, :as => 'command'
         command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
@@ -431,7 +431,7 @@ module AuvCont
                 @reader = reader_port.reader 
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
-                command_child.update_config(:x => x, :heading => heading, :depth=> -depth, :y => y)
+                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
                 @last_invalid_post = Time.new
         end
         
@@ -471,8 +471,8 @@ module AuvCont
     end
 
     class MoveCmp < WorldXYVelocityCmp
-        add AuvControl::ConstantCommand, :as => 'command'
-        command_child.prefer_deployed_tasks("constant_command")
+        add ConstantWorldXYVelocityCommand, :as => 'command'
+#        command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
         argument :heading, :default => 0
@@ -504,7 +504,7 @@ module AuvCont
                 @reader = reader_port.reader 
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
-                command_child.update_config(:x => x, :heading => heading, :depth=> -depth, :y => y)
+                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
                 @last_invalid_post = Time.new
         end
         

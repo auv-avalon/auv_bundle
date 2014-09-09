@@ -84,6 +84,12 @@ class ConstantWorldXYVelocityCommand < Syskit::Composition
     export controller_w_child.cmd_out_port, as: 'world_command'
     export controller_v_child.cmd_out_port, as: 'aligned_velocity_command'
     provides Base::WorldXYVelocityControllerSrv, as: 'controller'
+                
+    
+    def update_config(options)
+        controller_w_child.update_config(:heading => options[:heading], :depth => options[:depth])
+        controller_v_child.update_config(:x => options[:x], :y => options[:y])
+    end
     
 end
 

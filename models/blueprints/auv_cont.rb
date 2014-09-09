@@ -504,7 +504,7 @@ module AuvCont
                 @reader = reader_port.reader 
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
-                command_child.update_config(:x => x, :heading => heading, :depth=> -depth, :y => y)
+                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
                 @last_invalid_post = Time.new
         end
         

@@ -1,0 +1,17 @@
+--- name:default
+# The desired command
+cmd:
+  time:
+    microseconds: 0
+  linear:
+    data:
+    - .nan
+    - .nan
+    - .nan
+  angular:
+    data:
+    - .nan
+    - .nan
+    - .nan
+--- name:dummy1
+--- name:dummy2

@@ -55,13 +55,20 @@ class AuvControl::ConstantCommand
         @options = options
 
         cmd = orocos_task.cmd
-        cmd.linear[0] = @options[:x];
-        cmd.linear[1] = @options[:y];
-        cmd.linear[2] = @options[:depth];
+        cmd.linear[0]  = 0
+        cmd.linear[1]  = 0
+        cmd.linear[2]  = 0
+        cmd.angular[0] = 0
+        cmd.angular[1] = 0
+        cmd.angular[2] = 0
 
-        cmd.angular[0] = 0;
-        cmd.angular[1] = 0;
-        cmd.angular[2] = @options[:heading];
+        cmd.linear[0] = @options[:x] if @options[:x]
+        cmd.linear[1] = @options[:y] if @options[:y]
+        cmd.linear[2] = @options[:depth] if @options[:depth]
+
+        cmd.angular[0] = 0
+        cmd.angular[1] = 0
+        cmd.angular[2] = @options[:heading] if @options[:heading]
         orocos_task.cmd = cmd
         #constant_command_world.configure
 
@@ -73,13 +80,18 @@ end
 
 class ConsWA < Syskit::Composition
     add AuvControl::ConstantCommand, :as => 'controller_v'
-    #controller_v_child.prefer_deployed_tasks "constant_command_vel"
+    controller_v_child.prefer_deployed_tasks "constant_command_vel"
     export controller_v_child.cmd_out_port
+    controller_v_child.with_conf('dummy2')
+    def update_config(options)
+        controller_v_child.update_config(:x => options[:x], :y => options[:y])
+    end
 end
 
 class ConstantWorldXYVelocityCommand < Syskit::Composition
     add AuvControl::ConstantCommand, :as => 'controller_w'
     controller_w_child.prefer_deployed_tasks "constant_command"
+    controller_w_child.with_conf('dummy1')
     add ConsWA, as: 'controller_v' 
     export controller_w_child.cmd_out_port, as: 'world_command'
     export controller_v_child.cmd_out_port, as: 'aligned_velocity_command'

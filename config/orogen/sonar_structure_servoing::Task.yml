@@ -1,0 +1,54 @@
+--- name:default
+## Controller config
+# in this direction the wall be if the wall servoing is performed, default is 0 than the wall is in front
+servoing_direction: 0.0
+# opening angle to the left of the supposed wall direction, always positive
+left_opening_angle: 1.01
+# opening angle to the right of the supposed wall direction, always positive
+right_opening_angle: 1.01
+# reference depth
+fixed_depth: -2.0
+# reference distance to structure in body frame
+servoing_distance: 2.5
+# sets relative distance, which will result in a certain speed
+servoing_speed: 0.0
+
+## Detector config
+# the angular resolution of the sonar
+angular_resolution_sonar: 0.019638
+# epsilon of the db scan clustering
+dbscan_epsilon: 10.0
+# expected diameter of the structure
+expected_structure_diameter: 3.0
+# max allowed mahalanobis distance of two consecutive structure candidates
+max_mahalanobis_distance: 1.0
+# minimum amount of valid candidates, after the inspection is started
+min_valid_cadidate_count: 3
+
+## Transfomer config
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal odometry frame
+odometry_frame: odometry
+# the global name that should be used for the internal sonar frame
+sonar_frame: sonar
+# Time in s between odometry_samples readings
+odometry_samples_period: 0.01
+# Time in s between sonarbeam_feature readings
+sonarbeam_feature_period: 0.1
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.5
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+
+enable_debug: true
+
+
+--- name:simulation
+fixed_depth: -10.0
+
+--- name:move_right
+servoing_speed: -0.5
+
+--- name:move_left
+servoing_speed: 0.5

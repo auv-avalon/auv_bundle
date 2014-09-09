@@ -26,7 +26,6 @@ module Localization
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
-#        add_optional ::Base::VelocitySrv, as: 'velocity'
 
         if ::CONFIG_HACK == 'default'
             main_child.with_conf("default", "slam_testhalle")
@@ -43,7 +42,10 @@ module Localization
         connect sonar_estimator_child.features_out_port => main_child
         connect hb_child => main_child.thruster_samples_port
         connect hough_child => main_child.pose_update_port
-#        connect velocity_child.velocity_samples_port => main_child.speed_samples_port
+        if ::CONFIG_HACK == 'dagon'
+            add_optional ::Base::VelocitySrv, as: 'velocity'
+            connect velocity_child.velocity_samples_port => main_child.speed_samples_port
+        end
         connect main_child.pose_samples_port => sonar_detector_child.pose_samples_port
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
 
@@ -120,6 +122,13 @@ module Localization
 	add UwParticleLocalization::MotionModel, :as => 'main'
 	add ::Base::OrientationWithZSrv, :as => 'ori'
 	add Base::JointsStatusSrv, :as => 'hb'
+        if ::CONFIG_HACK == 'default'
+            main_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'simulation'
+            main_child.with_conf("default")
+        elsif ::CONFIG_HACK == 'dagon'
+            main_child.with_conf("dagon")
+        end
 	
 	connect ori_child => main_child
 	connect hb_child => main_child

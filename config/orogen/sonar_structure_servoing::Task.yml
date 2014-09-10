@@ -7,7 +7,7 @@ left_opening_angle: 1.01
 # opening angle to the right of the supposed wall direction, always positive
 right_opening_angle: 1.01
 # reference depth
-fixed_depth: -2.0
+fixed_depth: -6.5
 # reference distance to structure in body frame
 servoing_distance: 2.5
 # sets relative distance, which will result in a certain speed
@@ -19,7 +19,7 @@ angular_resolution_sonar: 0.019638
 # epsilon of the db scan clustering
 dbscan_epsilon: 10.0
 # expected diameter of the structure
-expected_structure_diameter: 3.0
+expected_structure_diameter: 1.5 #3.0
 # max allowed mahalanobis distance of two consecutive structure candidates
 max_mahalanobis_distance: 1.0
 # minimum amount of valid candidates, after the inspection is started

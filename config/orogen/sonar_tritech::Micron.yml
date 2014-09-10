@@ -129,7 +129,7 @@ config:
 config:
   continous: 0
   gain: 0.2
-  max_distance: 10.0
+  max_distance: 6.0
   resolution: 0.1
   left_limit:
     rad: 1.01

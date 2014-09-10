@@ -17,23 +17,23 @@ module Pipeline
 #    end
 
 
-    class LineScanner < Syskit::Composition
-
-        add PipelineInspection::Inspection, :as => 'inspection'
-        add Base::ImageProviderSrv, :as => 'camera'
-        add OffshorePipelineDetector::Task, :as => 'offshore_pipeline_detector'
-        add Base::VelocitySrv, :as => 'motion_model'
-        add ::LineScanner::Task, :as => 'line_scan'
-
-
-        connect camera_child => line_scan_child
-        connect line_scan_child => inspection_child.laserPointCloud_port
-        connect offshore_pipeline_detector_child => inspection_child
-        connect motion_model_child => inspection_child
-
-#        export inspection_child.inspectionStatus_port
-#        export inspection_child.pipeMap_port
-   end
+#    class LineScanner < Syskit::Composition
+#
+#        add PipelineInspection::Inspection, :as => 'inspection'
+#        add Base::ImageProviderSrv, :as => 'camera'
+#        add OffshorePipelineDetector::Task, :as => 'offshore_pipeline_detector'
+#        add Base::VelocitySrv, :as => 'motion_model'
+#        add ::LineScanner::Task, :as => 'line_scan'
+#
+#
+#        connect camera_child => line_scan_child
+#        connect line_scan_child => inspection_child.laserPointCloud_port
+#        connect offshore_pipeline_detector_child => inspection_child
+#        connect motion_model_child => inspection_child
+#
+##        export inspection_child.inspectionStatus_port
+##        export inspection_child.pipeMap_port
+#   end
 
         
     class Detector_new < Syskit::Composition 
@@ -56,7 +56,7 @@ module Pipeline
         add Base::ImageProviderSrv, :as => 'camera'
 #        add ImagePreprocessing::HSVSegmentationAndBlur, :as => 'blur'
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
-	add Pipeline::LineScanner, :as => "laser_scanner"
+#	add Pipeline::LineScanner, :as => "laser_scanner"
 
         orientation_with_z_child.connect_to offshorePipelineDetector_child.orientation_sample_port
         camera_child.frame_port.connect_to offshorePipelineDetector_child
@@ -133,7 +133,7 @@ module Pipeline
         add Base::ImageProviderSrv, :as => 'camera'
 #        add ImagePreprocessing::HSVSegmentationAndBlur, :as => 'blur'
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
-	add Pipeline::LineScanner, :as => "laser_scanner"
+#	add Pipeline::LineScanner, :as => "laser_scanner"
 
         orientation_with_z_child.connect_to offshorePipelineDetector_child.orientation_sample_port
         camera_child.frame_port.connect_to offshorePipelineDetector_child

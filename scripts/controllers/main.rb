@@ -165,6 +165,8 @@ Roby.every(1, :on_error => :disable) do
     current_submode.write State.current_submode.to_s
 end
 
+
+State.time = 0
 logfile = "sauce-log-#{Time.now}.log"
 Roby.every(1, :on_error => :disable) do
     State.time = State.time + 1

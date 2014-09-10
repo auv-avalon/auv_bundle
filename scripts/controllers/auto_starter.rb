@@ -10,7 +10,6 @@ State.last_navigation_task = nil
 State.localization_task = nil
 State.lowlevel_substate  = -1
 State.lowlevel_state = -1
-State.time = 0
 State.position = {:x => 0, :y => 0, :z => 0}
 State.current_action = nil
 State.current_state = ["Initializing"]

@@ -182,7 +182,7 @@ module DFKI
                 'pose_blind' => pose_blind_tag,
             ).use_frames(
                 'body' => 'body',
-                'odometry' => 'odometry',
+                'odometry' => 'map_halle',
                 'sonar' => 'sonar'
             )
 
@@ -282,7 +282,7 @@ module DFKI
             )
 
             define 'trajectory', AuvCont::Trajectory.use(
-#                AvalonControl::TrajectoryFollower.with_conf('default','hall_square'),
+                AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 'joint' => thruster_tag,
                 'pose' => pose_tag
             )

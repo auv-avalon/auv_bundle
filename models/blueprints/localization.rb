@@ -63,7 +63,7 @@ module Localization
         poll do 
             if @reader 
                 if sample = @reader.read
-                    unless State.nil?
+                    unless State.nil? and unless State.position.nil?
                         State.position[:x] = sample.position.x
                         State.position[:y] = sample.position.y
                         State.position[:z] = sample.position.z

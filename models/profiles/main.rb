@@ -286,6 +286,13 @@ module DFKI
                 'joint' => thruster_tag,
                 'pose' => pose_tag
             )
+            
+            a = define 'blind_circle', AuvCont::Trajectory.use(
+                AvalonControl::TrajectoryFollower.with_conf('default','circle'),
+                'joint' => thruster_tag,
+                'pose' => pose_blind_tag#.with_arguments(:reset => true)
+            )
+
 
             define 'wall_buoy_detector', Buoy::DetectorNewCmp.use(
                 'front_camera' => forward_looking_camera_tag,

@@ -203,7 +203,8 @@ module DFKI
             )
             
             define 'buoy_detector', Buoy::DetectorCmp.use(
-                'camera' => forward_looking_camera_tag 
+                'camera' => forward_looking_camera_tag, 
+                'orientation_with_z' => orientation_with_z_tag
             )
 
 
@@ -290,6 +291,7 @@ module DFKI
             define 'wall_buoy_detector', Buoy::DetectorNewCmp.use(
                 'front_camera' => forward_looking_camera_tag,
             )
+
             define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
                 'detector' => wall_buoy_detector_def,
                 'pose' => pose_tag,

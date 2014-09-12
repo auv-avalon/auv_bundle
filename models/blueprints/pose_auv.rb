@@ -96,6 +96,8 @@ module PoseAuv
     end
 
     class PoseEstimatorCmp < Syskit::Composition
+        argument :reset, :default => false
+
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add Base::OrientationSrv, :as => 'ori'
         add Base::VelocitySrv, :as => 'model'
@@ -120,6 +122,11 @@ module PoseAuv
 
         export pose_estimator_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
+        on :start do |e|
+            if self.reset
+                pose_estimator_child.orocos_task.resetState
+            end
+        end
 
         event :MISSING_TRANSFORMATION
     end

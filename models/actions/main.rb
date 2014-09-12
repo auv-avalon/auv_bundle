@@ -19,6 +19,22 @@ end
 
 
 class Main
+    describe("align on wall to estimate the initial heading")
+    state_machine "reset_heading_on_wall" do
+        
+        wall = state wall_right_hold_pos_def
+        heading_estimator = state initial_orientation_estimator_def
+
+        start(wall)
+        transition(wall.wall_servoing_event, wall)
+        transition(wall.wall_servoing_event, heading_estimator)
+        
+        forward heading_estimator.failed_event, failed_event
+        forward wall.failed_event, failed_event
+        forward heading_estimator.success_event, success_event
+
+     end
+
     describe("ping-pong-pipe-wall-back-to-pipe")
     state_machine "ping_pong_pipe_wall_back_to_pipe" do
         ping_pong = state pipe_ping_pong

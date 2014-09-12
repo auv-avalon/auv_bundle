@@ -229,20 +229,23 @@ module DFKI
                         'dist' => altimeter_tag
                 )
             )
-            
-            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
-                'pose' => pose_tag,
-                'joint' => thruster_tag,
-                'controller' => Structure::Detector.use(
-                        'camera' => forward_looking_camera_tag,
-                        'ori' => orientation_with_z_tag
-                    )
+           
+            define 'structure_detector', Structure::Detector.use(
+                'camera' => forward_looking_camera_tag,
+                'ori' => orientation_with_z_tag
             )
-
+            
             define 'structure_detector_down',Structure::Detector.use(
                 'camera' => down_looking_camera_tag,
                 'ori' => orientation_with_z_tag
             )
+
+            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
+                'pose' => pose_tag,
+                'joint' => thruster_tag,
+                'controller' => structure_detector_def
+            )
+
 
 
 #            define 'line_scanner', Pipeline::LineScanner.use(

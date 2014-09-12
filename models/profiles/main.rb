@@ -312,6 +312,13 @@ module DFKI
                 'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
                 'joint' => thruster_tag
+            )
+
+            define 'wall_right_hold_pos', AuvCont::WorldXYPositionCmp.use(
+	            WallServoing::SingleSonarServoing.with_conf('default','hold_wall_right'),
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def,
+                'joint' => thruster_tag
                 
             )
 

@@ -240,6 +240,10 @@ module DFKI
                 'camera' => down_looking_camera_tag,
                 'ori' => orientation_with_z_tag
             )
+            
+            define 'structure_align_detector',Structure::Alignment.use(
+                'camera' => down_looking_camera_tag,
+            )
 
             define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
                 'pose' => pose_tag,
@@ -247,6 +251,11 @@ module DFKI
                 'controller' => structure_detector_def
             )
 
+            define 'structure_alignment', AuvCont::WorldXYVelocityCmp.use(
+                'pose' => pose_tag,
+                'joint' => thruster_tag,
+                'controller' => structure_align_detector_def
+            )
 
 
 #            define 'line_scanner', Pipeline::LineScanner.use(

@@ -1,5 +1,23 @@
 require 'models/actions/core'
 
+MISSION = "TESTBED"
+
+
+START_MOVE = Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0})
+ALIGN_TO_GATE = Hash.new({:timeout => 5, :heading => 3.14, :depth => -6, :speed_x => 0})
+THROUGHT_GATE =   Hash.new({:timeout => 20, :heading => 3.14, :speed_x => 2, :depth => -6})
+ALIGN_FROM_GATE = Hash.new({:timeout => 5, :heading => 0, :depth => -6,:speed_x => 0})
+BACK_FROM_GATE =  Hash.new({:timeout => 20, :heading => 0, :speed_x => 2, :depth => -6})
+
+if MISSION == "SAUCE"
+    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 }
+elsif MISSION == "TESTBED"
+    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => 50, :y => 0}
+elsif
+    raise "Invalid mission selection"
+end
+
+
 class Main
     describe("ping-pong-pipe-wall-back-to-pipe")
     state_machine "ping_pong_pipe_wall_back_to_pipe" do
@@ -275,26 +293,25 @@ class Main
         transition(blind1.success_event, blind2)
         forward blind2.success_event, success_event
     end
-=begin
+
     describe("We win the SAUC-E")
     state_machine "win" do
-        dive = state simple_move_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0)
-        search_structure = state structure_detector_down_def
+        dive = state simple_move_def(START_MOVE)
+        search_structure = state  structure_detector_down_def
         fusel = search_structure.find_port("size")
-        STDOUT.puts "Founr here a #{fusel}"
-        search_structure.monitor(
+        fusel.monitor(
             'foo', #the Name
-            search_structure.find_port('size') #The name is missleading, speed defines how much we see in our image
-        ).trigger_on do |speed|
-                speed > 0.1
+            search_structure.find_port('size') 
+        ).trigger_on do |size|
+                size > 0.1 
          end.emit search_structure.success_event
 
-        align_to_gate = state simple_move_def(:timeout => 5, :heading => 3.14, :depth => -6, :speed_x => 0)
-        throught_gate = state simple_move_def(:timeout => 20, :heading => 3.14, :speed_x => 2, :depth => -6)
-        align_from_gate = state simple_move_def(:timeout => 5, :heading => 0, :depth => -6,:speed_x => 0)
-        back_from_gate= state simple_move_def(:timeout => 20, :heading => 0, :speed_x => 2, :depth => -6)
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 )
-        wall  = state wall_new_right_def
+        align_to_gate = state simple_move_def(ALIGN_TO_GATE)
+        throught_gate = state simple_move_def(THROUGHT_GATE)
+        align_from_gate = state simple_move_def(ALIGN_FROM_GATE)
+        back_from_gate= state simple_move_def(BACK_FROM_GATE)
+        to_wall = state target_move_new_def(WALL_START_MOVE) 
+        wall  = state wall_new_right_def(:num_corners => 1)
 
         start(dive)
         transition(dive.success_event, search_structure)
@@ -306,7 +323,6 @@ class Main
         transition(to_wall.success_event, wall)
         forward wall.success_event, success_event
     end
-=end
 
 
 #    describe("Workaround1")

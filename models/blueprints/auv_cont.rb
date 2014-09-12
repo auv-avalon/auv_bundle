@@ -388,6 +388,8 @@ module AuvCont
     end
    
     class Trajectory < WorldPositionCmp 
+        argument :reset, :default => false
+
         add_main  AvalonControl::TrajectoryFollower, :as => "main"
         overload 'controller', main_child
 

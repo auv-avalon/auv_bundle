@@ -7,7 +7,7 @@ left_opening_angle: 1.01
 # opening angle to the right of the supposed wall direction, always positive
 right_opening_angle: 1.01
 # reference depth
-fixed_depth: -6.5
+fixed_depth: -5.0
 # reference distance to structure in body frame
 servoing_distance: 2.5
 # sets relative distance, which will result in a certain speed

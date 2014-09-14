@@ -124,6 +124,25 @@ class Main < Roby::Actions::Interface
         transition(s5.success_event,s6)
         forward s6.success_event, success_event
     end
+    
+    
+    describe("This is a workaaround for the monitor usage")
+    state_machine "wall_and_buoy" do
+        wall = state wall_right_new_def
+        detector = state wall_buoy_detector_def 
+        wall.depends_on detector, :role => "detector"
+        start(wall)
+        forward detector_child.buoy_found_event, success_event
+    end
+    
+    #TODO sicherheitsnets
+    describe("buoy wall")
+    state_machine "buoy_wall" do
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        start search
+        transition(search.success_event, buoy)
+    end
 
 
     describe("dive_and_localize")

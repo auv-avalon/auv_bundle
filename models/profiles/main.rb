@@ -288,7 +288,7 @@ module DFKI
                 'joint' => thruster_tag
             )
 
-            define 'wall_new_right', AuvCont::WorldXYPositionCmp.use(
+            define 'wall_right_new', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag

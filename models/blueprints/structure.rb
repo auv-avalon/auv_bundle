@@ -8,6 +8,10 @@ using_task_library 'sonar_structure_servoing'
 
 module Structure 
     class Alignment < Syskit::Composition
+        event :aligning
+        event :aligned
+        event :no_structure
+
         add_main StructureServoing::Alignment , :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
         add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 

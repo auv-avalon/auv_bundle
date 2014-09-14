@@ -9,12 +9,22 @@ using_task_library 'buoy'
 
 module Buoy
   class DetectorNewCmp < Syskit::Composition
+      event :buoy_found
+
       add_main Buoy::Detector, as: 'main'
       add Base::ImageProviderSrv, as: 'front_camera'
 
       connect front_camera_child => main_child
-
       export main_child.buoy_port
+
+      on :buoy_found do |e| 
+        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
+        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
+        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
+        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
+        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
+        e
+      end
   end
 
   class ControllerNewCmp < Syskit::Composition

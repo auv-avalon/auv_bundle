@@ -3,11 +3,8 @@ require 'models/actions/core'
 MISSION = "TESTBED"
 
 
-START_MOVE = Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0})
-ALIGN_TO_GATE = Hash.new({:timeout => 5, :heading => 3.14, :depth => -6, :speed_x => 0})
-THROUGHT_GATE =   Hash.new({:timeout => 20, :heading => 3.14, :speed_x => 2, :depth => -6})
-ALIGN_FROM_GATE = Hash.new({:timeout => 5, :heading => 0, :depth => -6,:speed_x => 0})
-BACK_FROM_GATE =  Hash.new({:timeout => 20, :heading => 0, :speed_x => 2, :depth => -6})
+START_MOVE =   Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0})
+TO_STRUCTURE = Hash.new({:timeout => 300, :depth => -2.5, :x => 3.0, :y=> 0})
 
 if MISSION == "SAUCE"
     WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 }
@@ -310,35 +307,36 @@ class Main
         forward blind2.success_event, success_event
     end
 
-#    describe("We win the SAUC-E")
-#    state_machine "win" do
-#        dive = state simple_move_def(START_MOVE)
-#        search_structure = state  structure_detector_down_def
-#        fusel = search_structure.find_port("size")
-#        fusel.monitor(
-#            'foo', #the Name
-#            search_structure.find_port('size') 
-#        ).trigger_on do |size|
-#                size > 0.1 
-#         end.emit search_structure.success_event
-#
-#        align_to_gate = state simple_move_def(ALIGN_TO_GATE)
-#        throught_gate = state simple_move_def(THROUGHT_GATE)
-#        align_from_gate = state simple_move_def(ALIGN_FROM_GATE)
-#        back_from_gate= state simple_move_def(BACK_FROM_GATE)
-#        to_wall = state target_move_new_def(WALL_START_MOVE) 
-#        wall  = state wall_right_new_def(:num_corners => 1)
-#
-#        start(dive)
-#        transition(dive.success_event, search_structure)
-#        transition(search_structure.success_event, align_to_gate)
-#        transition(align_to_gate.success_event, throught_gate)
-#        transition(throught_gate.success_event, align_from_gate)
-#        transition(align_from_gate.success_event, back_from_gate)
-#        transition(back_from_gate.success_event, to_wall)
-#        transition(to_wall.success_event, wall)
-#        forward wall.success_event, success_event
-#    end
+    describe("search for structure and align on it")
+    state_machine "search_structure" do
+        to_structure = state target_move_new_def(TO_STRUCTURE)
+        search_structure = state structure_align_detector_def
+        to_structure.depends_on search_structure
+        start(to_structure)
+        #TODO kacke
+     #   aligner = state structure_alignment_def
+#        aligner.depends_on search_structure
+    #    transition(search_structure.aligning_event, aligner)
+        
+        #forward aligner.aligned_event, success_event
+        forward search_structure.aligned_event, success_event
+    end
+
+    describe("We win the SAUC-E")
+    state_machine "win" do
+        dive = state simple_move_new_def(START_MOVE)
+        s_search_structure = state search_structure
+        gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
+        to_wall = state target_move_new_def(WALL_START_MOVE) 
+        wall  = state wall_right_new_def(:num_corners => 1)
+
+        start(dive)
+        transition(dive.success_event, s_search_structure)
+        transition(s_search_structure.success_event, gate_passing)
+        transition(gate_passing.success_event, to_wall)
+        transition(to_wall.success_event, wall)
+        forward wall.success_event, success_event
+    end
 
 
 #    describe("Workaround1")

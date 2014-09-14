@@ -19,6 +19,22 @@ end
 
 
 class Main
+#    describe("align on wall to estimate the initial heading")
+#    state_machine "reset_heading_on_wall" do
+#        
+#        wall = state wall_right_hold_pos_def
+#        heading_estimator = state initial_orientation_estimator_def
+#
+#        start(wall)
+#        transition(wall.detector_child.wall_servoing_event, wall)
+#        transition(wall.detector_child.wall_servoing_event, heading_estimator)
+#        
+#        forward heading_estimator.failed_event, failed_event
+#        forward wall.failed_event, failed_event
+#        forward heading_estimator.success_event, success_event
+#
+#     end
+
     describe("ping-pong-pipe-wall-back-to-pipe")
     state_machine "ping_pong_pipe_wall_back_to_pipe" do
         ping_pong = state pipe_ping_pong
@@ -294,37 +310,36 @@ class Main
         forward blind2.success_event, success_event
     end
 
-=begin
-    describe("We win the SAUC-E")
-    state_machine "win" do
-        dive = state simple_move_def(START_MOVE)
-        search_structure = state  structure_detector_down_def
-        fusel = search_structure.find_port("size")
-        fusel.monitor(
-            'foo', #the Name
-            search_structure.find_port('size') 
-        ).trigger_on do |size|
-                size > 0.1 
-         end.emit search_structure.success_event
+#    describe("We win the SAUC-E")
+#    state_machine "win" do
+#        dive = state simple_move_def(START_MOVE)
+#        search_structure = state  structure_detector_down_def
+#        fusel = search_structure.find_port("size")
+#        fusel.monitor(
+#            'foo', #the Name
+#            search_structure.find_port('size') 
+#        ).trigger_on do |size|
+#                size > 0.1 
+#         end.emit search_structure.success_event
+#
+#        align_to_gate = state simple_move_def(ALIGN_TO_GATE)
+#        throught_gate = state simple_move_def(THROUGHT_GATE)
+#        align_from_gate = state simple_move_def(ALIGN_FROM_GATE)
+#        back_from_gate= state simple_move_def(BACK_FROM_GATE)
+#        to_wall = state target_move_new_def(WALL_START_MOVE) 
+#        wall  = state wall_right_new_def(:num_corners => 1)
+#
+#        start(dive)
+#        transition(dive.success_event, search_structure)
+#        transition(search_structure.success_event, align_to_gate)
+#        transition(align_to_gate.success_event, throught_gate)
+#        transition(throught_gate.success_event, align_from_gate)
+#        transition(align_from_gate.success_event, back_from_gate)
+#        transition(back_from_gate.success_event, to_wall)
+#        transition(to_wall.success_event, wall)
+#        forward wall.success_event, success_event
+#    end
 
-        align_to_gate = state simple_move_def(ALIGN_TO_GATE)
-        throught_gate = state simple_move_def(THROUGHT_GATE)
-        align_from_gate = state simple_move_def(ALIGN_FROM_GATE)
-        back_from_gate= state simple_move_def(BACK_FROM_GATE)
-        to_wall = state target_move_new_def(WALL_START_MOVE) 
-        wall  = state wall_new_right_def(:num_corners => 1)
-
-        start(dive)
-        transition(dive.success_event, search_structure)
-        transition(search_structure.success_event, align_to_gate)
-        transition(align_to_gate.success_event, throught_gate)
-        transition(throught_gate.success_event, align_from_gate)
-        transition(align_from_gate.success_event, back_from_gate)
-        transition(back_from_gate.success_event, to_wall)
-        transition(to_wall.success_event, wall)
-        forward wall.success_event, success_event
-    end
-=end
 
 #    describe("Workaround1")
 #    state_machine "wa1" do

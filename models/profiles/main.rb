@@ -230,19 +230,31 @@ module DFKI
                         'dist' => altimeter_tag
                 )
             )
-            
-            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
-                'pose' => pose_tag,
-                'joint' => thruster_tag,
-                'controller' => Structure::Detector.use(
-                        'camera' => forward_looking_camera_tag,
-                        'ori' => orientation_with_z_tag
-                    )
+           
+            define 'structure_detector', Structure::Detector.use(
+                'camera' => forward_looking_camera_tag,
+                'ori' => orientation_with_z_tag
             )
-
+            
             define 'structure_detector_down',Structure::Detector.use(
                 'camera' => down_looking_camera_tag,
                 'ori' => orientation_with_z_tag
+            )
+            
+            define 'structure_align_detector',Structure::Alignment.use(
+                'camera' => down_looking_camera_tag,
+            )
+
+            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
+                'pose' => pose_tag,
+                'joint' => thruster_tag,
+                'controller' => structure_detector_def
+            )
+
+            define 'structure_alignment', AuvCont::WorldXYVelocityCmp.use(
+                'pose' => pose_tag,
+                'joint' => thruster_tag,
+                'controller' => structure_align_detector_def
             )
 
 
@@ -276,7 +288,7 @@ module DFKI
                 'joint' => thruster_tag
             )
 
-            define 'wall_new_right', AuvCont::WorldXYPositionCmp.use(
+            define 'wall_right_new', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
@@ -308,6 +320,13 @@ module DFKI
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
+                'joint' => thruster_tag
+            )
+
+            define 'wall_right_hold_pos', AuvCont::WorldXYPositionCmp.use(
+	            WallServoing::SingleSonarServoing.with_conf('default','hold_wall_right'),
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
                 
             )

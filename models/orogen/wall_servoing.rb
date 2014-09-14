@@ -1,6 +1,6 @@
-module Wall
+module WallServoing
     data_service_type 'WallOrientationSrv' do
-        output_port 'wall', 'sonar_detectors/Wall'
+        output_port 'wall', '/sonar_detectors/Wall'
     end
 end
 

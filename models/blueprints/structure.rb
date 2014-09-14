@@ -7,6 +7,23 @@ using_task_library 'hsv_mosaicing'
 using_task_library 'sonar_structure_servoing'
 
 module Structure 
+    class Alignment < Syskit::Composition
+        add_main StructureServoing::Alignment , :as => 'detector'
+        add HsvMosaicing::Task, :as => "mosaic" 
+        add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
+        add Base::ImageProviderSrv, :as => 'camera'
+
+        connect camera_child => seg_child
+        connect seg_child.binary_result_port => mosaic_child
+        connect mosaic_child => detector_child
+    
+        #export detector_child.size_port, :as => "size"
+        export detector_child.world_command_port, :as => "world_command"
+        export detector_child.aligned_speed_command_port, :as => "speed_command"
+        provides Base::WorldXYVelocityControllerSrv, :as => 'controller', "aligned_velocity_command" => "speed_command", "world_command" => "world_command" 
+    end
+
+
     class Detector < Syskit::Composition
         add_main StructureServoing::Task, :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 

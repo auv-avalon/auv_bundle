@@ -1,6 +1,6 @@
 require 'models/blueprints/auv'
 require 'models/blueprints/localization'
-require 'models/orogen/wall'
+#require 'models/orogen/wall'
 
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'wall_servoing'
@@ -19,7 +19,7 @@ module Buoy
 
   class ControllerNewCmp < Syskit::Composition
       add_main Buoy::ServoingOnWall, as: 'main'
-      add Wall::WallOrientationSrv, as: 'wall'
+      add WallServoing::WallOrientationSrv, as: 'wall'
       add Base::OrientationSrv, as: 'pose'
       add Buoy::DetectorNewCmp, as: 'detector'
 

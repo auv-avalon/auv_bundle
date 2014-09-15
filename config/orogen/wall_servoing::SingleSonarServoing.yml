@@ -31,6 +31,11 @@ right_opening_angle: 0.785
 wait_until_start: 3.0
 right_front_angle: 0.0
 left_front_angle: 0.0
+--- name:simulation
+# fading out factor for the features in center wall estimator
+fading_out_factor: 0.028
+
+    
 --- name:wall_front
 servoing_wall_direction: 0.0
 servoing_speed: 0.0
@@ -56,7 +61,7 @@ right_opening_angle: 1.57
 --- name:wall_right
 servoing_wall_direction: -1.57
 initial_wall_direction: -1.57
-servoing_speed: 0.5
+servoing_speed: 0.1
 left_opening_angle: 1.57
 right_opening_angle: 1.1
 --- name:hold_wall_right

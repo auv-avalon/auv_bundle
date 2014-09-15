@@ -10,7 +10,18 @@ module Wall
     class Detector < Syskit::Composition
 
 
-        add_main WallServoing::SingleSonarServoing, :as => 'detector'
+        sonar_conf = Array.new
+        
+        if ::CONFIG_HACK == 'default'
+            sonar_conf = ['default','wall_right']
+        elsif ::CONFIG_HACK == 'simulation'
+            sonar_conf = ['default','simulation','wall_right']
+        elsif ::CONFIG_HACK == 'dagon'
+            sonar_conf = ['default','wall_right']
+        end
+        
+        add_main WallServoing::SingleSonarServoing.with_conf(sonar_conf), :as => 'detector'
+
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         connect sonar_child => sonar_estimator_child
@@ -147,7 +158,7 @@ module Wall
                     @sonar_workaround = false
                 else
                     @sonar_workaround = false
-                    STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
+                    #STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
                 end
             end
         end

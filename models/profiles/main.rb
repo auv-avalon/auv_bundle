@@ -37,7 +37,6 @@ module DFKI
             tag 'motion_model', ::Base::VelocitySrv
             tag 'orientation', ::Base::OrientationWithZSrv
             tag 'dvl', ::Base::DVLSrv
-            tag 'motion_model', ::Base::VelocitySrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
             
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
@@ -161,14 +160,16 @@ module DFKI
                 'reading' => orientation_with_z_tag
             )
 
+
+
             define 'wall_detector', Wall::Detector.use(
-                WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
+                WallServoing::SingleSonarServoing,
                 "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )
 
             define 'wall_detector_new', Wall::DetectorNew.use(
-		WallServoing::SingleSonarServoing.with_conf('default','wall_right'),
+		WallServoing::SingleSonarServoing,
                 "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
             )

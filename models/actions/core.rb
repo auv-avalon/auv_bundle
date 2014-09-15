@@ -1,6 +1,17 @@
 require 'auv/models/profiles/main'
 
 
+class Float
+    def normHeading heading
+        if heading > Math::PI
+            return heading - 2.0 * Math::PI
+        end
+        if heading < Math::PI
+            return heading + 2.0 * Math::PI
+        end
+
+    end
+end
 
 #include Main
 
@@ -40,6 +51,24 @@ class Main < Roby::Actions::Interface
         forward s10.success_event,success_event
     end
 
+    describe("Blind forward move , turn, wait and back, useful for gate-passing").
+	required_arg('time', 'The time for blind forward move').
+	required_arg('speed', 'The time for blind forward move').
+	required_arg('heading', 'The angle for gate passing').
+	required_arg('depth', 'The depth for gate passing')
+    state_machine "blind_forward_and_back" do
+
+        throught_gate = state simple_move_new_def(:timeout => time, :heading => heading, :speed_x => speed, :depth => depth)
+        wait_1  = state simple_move_new_def(:timeout => 5, :heading =>  heading, :depth => depth ,:speed_x => 0)
+        align_from_gate = state simple_move_new_def(:timeout => 5, :heading => (heading + Math::PI), :depth => depth ,:speed_x => 0)
+        back_from_gate= state simple_move_new_def(:timeout => time, :heading => (heading + Math::PI), :speed_x => speed, :depth => depth)
+    
+        start(throught_gate)
+        transition(throught_gate.success_event, wait_1)
+        transition(wait_1.success_event, align_from_gate)
+        transition(align_from_gate.success_event, back_from_gate)
+        forward back_from_gate.success_event, success_event
+    end
 
     describe("intelligend follow-pipe, only emitting weak_signal if heading is correkt").
 	optional_arg('turn_dir', 'the turn direction').
@@ -123,6 +152,25 @@ class Main < Roby::Actions::Interface
         transition(s4.success_event,s5)
         transition(s5.success_event,s6)
         forward s6.success_event, success_event
+    end
+    
+    
+    describe("This is a workaaround for the monitor usage")
+    state_machine "wall_and_buoy" do
+        wall = state wall_right_new_def
+        detector = state wall_buoy_detector_def 
+        detector.depends_on wall, :role => "detector"
+        start(detector)
+        forward detector.buoy_found_event, success_event
+    end
+    
+    #TODO sicherheitsnets
+    describe("buoy wall")
+    state_machine "buoy_wall" do
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        start search
+        transition(search.success_event, buoy)
     end
 
 

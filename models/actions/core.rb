@@ -161,7 +161,7 @@ class Main < Roby::Actions::Interface
         detector = state wall_buoy_detector_def 
         detector.depends_on wall, :role => "detector"
         start(detector)
-        forward detector_child.buoy_found_event, success_event
+        forward detector.buoy_found_event, success_event
     end
     
     #TODO sicherheitsnets

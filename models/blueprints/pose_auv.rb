@@ -23,7 +23,7 @@ module PoseAuv
         if ::CONFIG_HACK == 'default'
             ori_in_map_child.with_conf("default", 'halle')
             #estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-            estimator_child.with_conf("default", "halle", "Bremen")
+            estimator_child.with_conf("default", "avalon", "halle", "Bremen")
         elsif ::CONFIG_HACK == 'simulation'
             ori_in_map_child.with_conf("default", 'sauce')
             #estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
@@ -31,7 +31,7 @@ module PoseAuv
         elsif ::CONFIG_HACK == 'dagon'
             ori_in_map_child.with_conf("default", 'halle')
             #estimator_child.with_conf("default", "dagon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-            estimator_child.with_conf("default", "halle", "Bremen")
+            estimator_child.with_conf("default", "dagon", "halle", "Bremen")
         end
 
         #imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port

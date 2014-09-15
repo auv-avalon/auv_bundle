@@ -59,6 +59,19 @@ imu_orientation_period: 0.01
 # minimum time, in s, between two sequential samples arrive on fog_samples
 fog_samples_period: 0.01
 
+--- name:avalon
+gbiasof:
+  data:
+  - -0.0115354
+  - -0.00189338
+  - 2.00386e-05
+--- name:dagon
+gbiasof:
+  data:
+  - 0.0
+  - 0.0
+  - 0.0
+
 #******************************
 #** Override initial heading **
 #******************************

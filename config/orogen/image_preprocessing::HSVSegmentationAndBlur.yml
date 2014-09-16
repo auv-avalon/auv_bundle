@@ -41,3 +41,11 @@ vMin: 2
 vMax: 254
 blur: 123
 #minFilled: 0.55
+--- name:structure_simulation
+hMin:  40
+hMax: 110
+sMin:  40
+sMax: 110
+vMin:  66
+vMax: 206
+blur: 149

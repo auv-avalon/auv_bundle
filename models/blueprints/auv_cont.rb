@@ -440,8 +440,8 @@ module AuvCont
         poll do
             @last_invalid_pose = Time.new if @last_invalid_pose.nil?
             @start_time = Time.now if @start_time.nil?
-            if @start_time.my_timeout?(self.timeout)
-                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + self.timeout}"
+            if @start_time.my_timeout?(timeout)
+                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + timeout}"
                 emit event_on_timeout 
             end
 
@@ -514,7 +514,7 @@ module AuvCont
             @last_invalid_pose = Time.new if @last_invalid_pose.nil?
             @start_time = Time.now if @start_time.nil?
             if @start_time.my_timeout?(self.timeout)
-                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + self.timeout}"
+                Robot.info  "Finished Simple Move because time is over! #{@start_time} #{@start_time + timeout}"
                 emit event_on_timeout 
             end
 

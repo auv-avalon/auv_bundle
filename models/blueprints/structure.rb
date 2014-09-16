@@ -14,7 +14,14 @@ module Structure
 
         add_main StructureServoing::Alignment , :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
-        add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
+        add ImagePreprocessing::HSVSegmentationAndBlur, :as => "seg" 
+        if  ::CONFIG_HACK == 'default'
+            seg_child.with_conf("structure")
+        elsif ::CONFIG_HACK == 'simulation'
+            seg_child.with_conf("structure_simulation")
+        elsif ::CONFIG_HACK == 'dagon'
+            seg_child.with_conf('structure')
+        end
         add Base::ImageProviderSrv, :as => 'camera'
 
         connect camera_child => seg_child

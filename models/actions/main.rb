@@ -3,7 +3,7 @@ require 'models/actions/core'
 MISSION = "TESTBED"
 
 
-START_MOVE =   Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0})
+START_MOVE =   Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout_s => 30})
 TO_STRUCTURE = Hash.new({:timeout => 300, :depth => -2.5, :x => 3.0, :y=> 0})
 
 if MISSION == "SAUCE"
@@ -309,7 +309,7 @@ class Main
 
     describe("search for structure and align on it")
     state_machine "search_structure" do
-        to_structure = state target_move_new_def(TO_STRUCTURE)
+        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45, :y=> 25, heading: 90)
         search_structure = state structure_align_detector_def
         to_structure.depends_on search_structure
         start(to_structure)
@@ -324,7 +324,8 @@ class Main
 
     describe("We win the SAUC-E")
     state_machine "win" do
-        dive = state simple_move_new_def(START_MOVE)
+        #dive = state simple_move_new_def(START_MOVE)
+        dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
         s_search_structure = state search_structure
         gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
         to_wall = state target_move_new_def(WALL_START_MOVE) 

@@ -545,6 +545,25 @@ module AuvCont
 
     end
 
+
+    class StructureCmp < WorldXYVelocityCmp 
+
+        event :aligned
+        event :aligning
+
+        on :aligned do
+            emit aligned_event
+        end
+
+        on :aligning do
+            emit aligning_event
+        end
+
+
+        
+    end
+
+
 end
     
 

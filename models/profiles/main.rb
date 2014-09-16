@@ -252,7 +252,7 @@ module DFKI
                 'controller' => structure_detector_def
             )
 
-            define 'structure_alignment', AuvCont::WorldXYVelocityCmp.use(
+            define 'structure_alignment', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
                 'controller' => structure_align_detector_def

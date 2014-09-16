@@ -307,36 +307,66 @@ class Main
         forward blind2.success_event, success_event
     end
 
-    describe("search for structure and align on it")
-    state_machine "search_structure" do
-        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45, :y=> 25, heading: 90)
-        search_structure = state structure_align_detector_def
-        to_structure.depends_on search_structure
-        start(to_structure)
+    #describe("search for structure and align on it")
+    #state_machine "search_structure" do
+    #    to_structure = state target_move_new_def(TO_STRUCTURE)
+    #    searching_structure = state structure_align_detector_def
+    #    aligner = state structure_alignment_def
+
+        #to_structure.depends_on search_structure, :role => "search_structure"
+    #    searching_structure.depends_on to_structure
+        #to = search_structure.to_structure_task
+        #searching_structure.on :stop do |event|
+        #    to.remove_planned_task(to.to_task)
+        #end
+
+        #start(searching_structure)
         #TODO kacke
-     #   aligner = state structure_alignment_def
 #        aligner.depends_on search_structure
-    #    transition(search_structure.aligning_event, aligner)
+        #transition(searching_structure.aligning_event, aligner)
         
-        #forward aligner.aligned_event, success_event
-        forward search_structure.aligned_event, success_event
+        #forward search_structure.aligned_event, success_event
+        #forward aligner, aligner.aligned_event, success_event
+        #forward search_structure.aligned_event, success_event
+    #end
+
+    #describe("Passing validation-gate with localization")
+    #state_machine "gate_with_localization" do 
+#
+#    end
+
+    describe("Passing validation-gate without localization")
+    state_machine "gate_without_localization" do
+        dive = state simple_move_new_def(START_MOVE)
+        #s_search_structure = state search_structure
+        #gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
+        #to_wall = state target_move_new_def(WALL_START_MOVE) 
+        #wall  = state wall_right_new_def(:num_corners => 1)
+
+        start(dive)
+        #transition(dive.success_event, s_search_structure)
+        #transition(s_search_structure.success_event, gate_passing)
+        #transition(gate_passing.success_event, to_wall)
+        #transition(to_wall.success_event, wall)
+        #forward wall.success_event, success_event
     end
 
     describe("We win the SAUC-E")
     state_machine "win" do
+<<<<<<< HEAD
         #dive = state simple_move_new_def(START_MOVE)
         dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
         s_search_structure = state search_structure
         gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
         to_wall = state target_move_new_def(WALL_START_MOVE) 
         wall  = state wall_right_new_def(:num_corners => 1)
+=======
+        gate = state gate_without_localization
 
-        start(dive)
-        transition(dive.success_event, s_search_structure)
-        transition(s_search_structure.success_event, gate_passing)
-        transition(gate_passing.success_event, to_wall)
-        transition(to_wall.success_event, wall)
-        forward wall.success_event, success_event
+        start(gate)
+
+>>>>>>> e7ef8fab98a894d233d2e20a8f03f023b96eee9a
+
     end
 
 

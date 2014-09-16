@@ -60,8 +60,8 @@ class Main < Roby::Actions::Interface
 
         throught_gate = state simple_move_new_def(:timeout => time, :heading => heading, :speed_x => speed, :depth => depth)
         wait_1  = state simple_move_new_def(:timeout => 5, :heading =>  heading, :depth => depth ,:speed_x => 0)
-        align_from_gate = state simple_move_new_def(:timeout => 5, :heading => (heading + Math::PI), :depth => depth ,:speed_x => 0)
-        back_from_gate= state simple_move_new_def(:timeout => time, :heading => (heading + Math::PI), :speed_x => speed, :depth => depth)
+        align_from_gate = state simple_move_new_def(:timeout => 5, :heading => heading + Math::PI, :depth => depth ,:speed_x => 0)
+        back_from_gate= state simple_move_new_def(:timeout => time, :heading => heading + Math::PI, :speed_x => speed, :depth => depth)
     
         start(throught_gate)
         transition(throught_gate.success_event, wait_1)
@@ -171,6 +171,7 @@ class Main < Roby::Actions::Interface
         buoy = state wall_buoy_survey_def 
         start search
         transition(search.success_event, buoy)
+        forward buoy.success_event, success_event
     end
 
 

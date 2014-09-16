@@ -2,13 +2,13 @@
 # no documentation available for this property
 align_threashold: 0.2
 # no documentation available for this property
-align_time: 2.0
+align_time: 20.0
 # no documentation available for this property
 depth: -8.0
 # no documentation available for this property
 heading: 0.0
 # no documentation available for this property
-lost_threashold: 0.2
+lost_threashold: 0.1
 # no documentation available for this property
 lost_timeout: 5.0
 # no documentation available for this property

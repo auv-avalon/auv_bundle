@@ -64,7 +64,17 @@ module Wall
     end
 
     class DetectorNew < Syskit::Composition
-        add_main WallServoing::SingleSonarServoing, :as => 'detector'
+        wall_conf = Array.new
+        
+        if ::CONFIG_HACK == 'default'
+            wall_conf = ['default','wall_front_left']
+        elsif ::CONFIG_HACK == 'simulation'
+            wall_conf = ['default','simulation','wall_front_left']
+        elsif ::CONFIG_HACK == 'dagon'
+            wall_conf = ['default','wall_front_left']
+        end
+        
+        add_main WallServoing::SingleSonarServoing.with_conf(*wall_conf), :as => 'detector'
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         connect sonar_child => sonar_estimator_child
@@ -154,7 +164,7 @@ module Wall
 
                 if condition 
                     STDOUT.puts "Overriding sonar config to wall right"
-                    orocos_t.apply_conf(['default','wall_right'],true)
+                    orocos_t.apply_conf(['default','wall_front'],true)
                     @sonar_workaround = false
                 else
                     @sonar_workaround = false

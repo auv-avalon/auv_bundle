@@ -5,6 +5,7 @@ using_task_library 'structure_servoing'
 using_task_library 'image_preprocessing'
 using_task_library 'hsv_mosaicing'
 using_task_library 'sonar_structure_servoing'
+using_task_library 'structure_reconstruction'
 
 module Structure 
     class Alignment < Syskit::Composition
@@ -160,6 +161,17 @@ module Structure
         event :VALIDATING_STRUCTURE
         event :INSPECTING_STRUCTURE
 
+    end
+
+    class StructureReconstructionComp < Syskit::Composition
+        add_main StructureReconstruction::Task, :as => 'image_saver'
+        add Base::ImageProviderSrv, :as => 'front_camera'
+        add Base::ImageProviderSrv, :as => 'bottom_camera'
+
+        connect front_camera_child => image_saver_child.front_camera_port
+        connect bottom_camera_child => image_saver_child.bottom_camera_port
+        
+        event :MISSING_TRANSFORMATION
     end
 
 end

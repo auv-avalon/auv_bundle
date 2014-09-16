@@ -259,6 +259,16 @@ module DFKI
             )
 
 
+            define 'structure_reconstruction', Structure::StructureReconstructionComp.use(
+                'front_camera' => forward_looking_camera_tag,
+                'bottom_camera' => down_looking_camera_tag
+            ).use_frames(
+                'body' => 'body',
+                'world' => 'map_halle',
+                'front_camera' => 'front_camera',
+                'bottom_camera' => 'bottom_camera'
+            )
+
 #            define 'line_scanner', Pipeline::LineScanner.use(
 #               LineScanner::Task.with_conf('default'),
 #               'camera' => down_looking_camera_tag,

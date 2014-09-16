@@ -353,19 +353,9 @@ class Main
 
     describe("We win the SAUC-E")
     state_machine "win" do
-<<<<<<< HEAD
-        #dive = state simple_move_new_def(START_MOVE)
-        dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
-        s_search_structure = state search_structure
-        gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
-        to_wall = state target_move_new_def(WALL_START_MOVE) 
-        wall  = state wall_right_new_def(:num_corners => 1)
-=======
         gate = state gate_without_localization
 
         start(gate)
-
->>>>>>> e7ef8fab98a894d233d2e20a8f03f023b96eee9a
 
     end
 

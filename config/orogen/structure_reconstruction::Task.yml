@@ -3,7 +3,7 @@
 # translation delta after which a new set of camera images is captured.
 translation_delta: 0.4
 # rotation delta after which a new set of camera images is captured.
-rotation_delta: 0.15 //less then 10°
+rotation_delta: 0.15 #less then 10°
 # time delta after which a new set of camera images is captured.
 time_delta: 1.0
 # folder where the images and their positions should be stored.

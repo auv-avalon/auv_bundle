@@ -227,6 +227,43 @@ class Main < Roby::Actions::Interface
         forward s2.success_event, success_event
     end
 
+    describe("hack")
+    action_script "fix_map_hack" do
+      
+      map_fix = fix_map_def()
+      execute map_fix
+      
+      emit success_event
+    end
+    
+    describe("find_blackbox")
+    state_machine "find_blackbox" do
+      
+      #create multiple waypoints to explore the environment
+      s1 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 10.0)
+      s2 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 40.0)
+      s3 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -10, :y => 40.0)
+      surface = state target_move_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
+      map_fix = state fix_map_hack()
+      
+      buoy_detector = state buoy_detector_def
+      localization = state localization_def           
+      
+      s1.depends_on localization, :role => "detector" 
+      s3.depends_on buoy_detector, :role => "detector"
+      map_fix.depends_on buoy_detector
+      
+      start(s1)
+      transition(s1.success_event,s2)
+      transition(s2.success_event,s3)
+      transition(s3.success_event, map_fix)
+      transition(map_fix.success_event, buoy_detector)
+      transition(buoy_detector.buoy_detected_event, surface)      
+      
+      forward surface.success_event, success_event
+      
+    end
+      
 
     describe("Find_pipe_with_localization").
         optional_arg("check_pipe_angle",false)

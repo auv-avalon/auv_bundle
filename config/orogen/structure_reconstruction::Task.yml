@@ -1,0 +1,28 @@
+--- name:default
+# Image capturing config
+# translation delta after which a new set of camera images is captured.
+translation_delta: 0.4
+# rotation delta after which a new set of camera images is captured.
+rotation_delta: 0.15 #less then 10°
+# time delta after which a new set of camera images is captured.
+time_delta: 1.0
+# folder where the images and their positions should be stored.
+target_folder: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/structure_reconstruction_out/"
+
+## Transformer config
+# the global name that should be used for the internal world frame
+world_frame: map_halle #map_sauce
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal bottom_camera frame
+bottom_camera_frame: bottom_camera
+# the global name that should be used for the internal front_camera frame
+front_camera_frame: front_camera
+# Time in s between front_camera readings
+front_camera_period: 0.1
+# Time in s between bottom_camera readings
+bottom_camera_period: 0.1
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.2
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0

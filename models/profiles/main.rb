@@ -223,7 +223,7 @@ module DFKI
             )
             
             define 'drive_simple_new', AuvCont::WorldXYVelocityCmp.use(
-                'pose' => pose_tag, #pose_estimator_def,
+                'pose' => pose_blind_tag, #pose_estimator_def,
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => orientation_with_z_tag,

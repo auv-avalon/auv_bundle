@@ -11,6 +11,7 @@ config:
   max_distance: 60.0
   min_distance: 0.25
   resolution: 0.1
+  invert: true
   speed_of_sound: 1539.0
   gain: 0.9
   low_resolution: 0

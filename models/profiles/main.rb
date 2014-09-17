@@ -245,15 +245,17 @@ module DFKI
                 'camera' => down_looking_camera_tag,
             )
 
-            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
+            define 'structure_inspection', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
-                'controller' => structure_detector_def
+                'controller' => structure_detector_def,
+                'main' => structure_detector_def
             )
 
-            define 'structure_alignment', AuvCont::WorldXYVelocityCmp.use(
+            define 'structure_alignment', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
+                'main' => structure_align_detector_def,
                 'controller' => structure_align_detector_def
             )
 
@@ -307,6 +309,18 @@ module DFKI
             define 'wall_left_new', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def.with_conf('wall_left'),
+                'joint' => thruster_tag
+            )
+
+            define 'wall_front_left_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_left'),
+                'joint' => thruster_tag
+            )
+
+            define 'wall_front_right_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_right'),
                 'joint' => thruster_tag
             )
 

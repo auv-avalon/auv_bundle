@@ -71,3 +71,76 @@ vSmooth: 13
 vValueMax: 255
 # Buoy hue value.
 vValueMin: 200
+--- name:simulation
+# radius of the buoy in m
+buoy_radius: 0.05
+# number of frames a buoy is not detected in order to set BUOY_LOST
+buoy_timeout: 20
+# debugging or not?
+debug: true
+# Sets test mode.
+debug_gui: true
+# the time in s how long a buoy of the past is noticed by the filter.
+filter_timeout: 1.5
+# Hough threshold.
+hHoughAccumulatorThreshold: 25
+# Hough threshold.
+hHoughEdgeThreshold: 25
+# no documentation available for this property
+hSmooth: 17
+# Buoy hue value.
+hValueMax: 255
+# Buoy hue value.
+hValueMin: 55
+# Buoy saturation value.
+houghMaxCircle: 55
+# Buoy hue value.
+houghMinCircle: 10
+# no documentation available for this property
+hough_debug_h: false
+# no documentation available for this property
+hough_debug_s: false
+# no documentation available for this property
+hough_debug_v: false
+# no documentation available for this property
+hsv_gray: 0
+# no documentation available for this property
+metadata:
+  metadata: []
+  properties: []
+  input_ports: []
+  output_ports: []
+# for light detection: retion of interrest height
+roi_height: 3.0
+# for light detection: retion of interrest width
+roi_width: 3.0
+# for light detection: relative region of interrest koordinate as factor of buoy-radius
+roi_x: 0.0
+# for light detection: relative region of interrest koordinate as factor of buoy-radius
+roi_y: 0.2
+# Hough threshold.
+sHoughAccumulatorThreshold: 25
+# Hough threshold.
+sHoughEdgeThreshold: 25
+# no documentation available for this property
+sSmooth: 17
+# Buoy saturation value.
+sValueMax: 255
+# Buoy saturation value.
+sValueMin: 153
+# no documentation available for this property
+use_h: true
+# no documentation available for this property
+use_s: false
+# no documentation available for this property
+use_v: false
+# Hough threshold.
+vHoughAccumulatorThreshold: 25
+# Hough threshold.
+vHoughEdgeThreshold: 25
+# no documentation available for this property
+vSmooth: 13
+# Buoy hue value.
+vValueMax: 255
+# Buoy hue value.
+vValueMin: 200

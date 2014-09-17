@@ -204,7 +204,18 @@ module Localization
         export main_child.position_quality_port, as: 'ori_drift'
         provides HoughSrv, as: 'hough'
     end
-               
+ 
+    class FixMapHack < Syskit::Composition
+
+        add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
+
+        on :start do |e|
+            sonar_detector_child.fix_map()
+            emit :success
+            e
+        end
+    end    
+    
 #    class HoughParticleDetector < Syskit::Composition
 #        add ParticleDetector.use(Localization::HoughDetector), :as => 'main'
 #        #add Localization::HoughDetector.use(Localization::ParticleDetector), as: 'hough'

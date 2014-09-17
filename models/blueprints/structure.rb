@@ -15,7 +15,14 @@ module Structure
 
         add_main StructureServoing::Alignment , :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
-        add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
+        add ImagePreprocessing::HSVSegmentationAndBlur, :as => "seg" 
+        if  ::CONFIG_HACK == 'default'
+            seg_child.with_conf("structure")
+        elsif ::CONFIG_HACK == 'simulation'
+            seg_child.with_conf("structure_simulation")
+        elsif ::CONFIG_HACK == 'dagon'
+            seg_child.with_conf('structure')
+        end
         add Base::ImageProviderSrv, :as => 'camera'
 
         connect camera_child => seg_child
@@ -46,6 +53,9 @@ module Structure
         export detector_child.world_command_port, :as => "world_command"
         export detector_child.aligned_speed_command_port, :as => "speed_command"
         provides Base::WorldXYVelocityControllerSrv, :as => 'controller', "aligned_velocity_command" => "speed_command", "world_command" => "world_command" 
+
+        event :servoing
+        event :no_structure
 
 #
 #        event :wall_servoing

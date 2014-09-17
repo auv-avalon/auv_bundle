@@ -311,6 +311,18 @@ module DFKI
                 'joint' => thruster_tag
             )
 
+            define 'wall_front_left_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_left'),
+                'joint' => thruster_tag
+            )
+
+            define 'wall_front_right_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_right'),
+                'joint' => thruster_tag
+            )
+
             define 'trajectory', AuvCont::Trajectory.use(
                 AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 'joint' => thruster_tag,

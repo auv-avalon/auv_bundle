@@ -11,7 +11,11 @@ module Wall
     class Detector < Syskit::Composition
 
         add_main WallServoing::SingleSonarServoing, :as => 'detector'
-        add SonarTritech::Micron, :as => 'sonar'   
+        if ::CONFIG_HACK == 'simulation'
+            add Base::SonarScanProviderSrv, :as => 'sonar'
+        else 
+            add SonarTritech::Micron, :as => 'sonar'
+        end
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         connect sonar_child => sonar_estimator_child.sonar_input_port
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
@@ -70,7 +74,11 @@ module Wall
     class DetectorNew < Syskit::Composition
         add_main WallServoing::SingleSonarServoing, :as => 'detector'
         #add Base::SonarScanProviderSrv, :as => 'sonar'
-        add SonarTritech::Micron, :as => 'sonar'        
+        if ::CONFIG_HACK == 'simulation'
+            add Base::SonarScanProviderSrv, :as => 'sonar'
+        else 
+            add SonarTritech::Micron, :as => 'sonar'
+        end      
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         connect sonar_child => sonar_estimator_child.sonar_input_port
         add Base::OrientationWithZSrv, :as => "orientation_with_z"

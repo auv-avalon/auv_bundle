@@ -1,12 +1,12 @@
 --- name:default
 # no documentation available for this property
-align_threashold: 0.2
+align_threashold: 0.4
 # no documentation available for this property
 align_time: 20.0
 # no documentation available for this property
 depth: -8.0
 # no documentation available for this property
-heading: 0.0
+heading: 3.14 #PI
 # no documentation available for this property
 lost_threashold: 0.1
 # no documentation available for this property

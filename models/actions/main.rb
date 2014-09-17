@@ -309,20 +309,17 @@ class Main
 
     describe("search for structure and align on it")
     state_machine "search_structure" do
-        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45.0, :y=> 25, :heading => 90)
+        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45.0, :y=> 25, :heading => Math::PI/2)
         searching_structure = state structure_align_detector_def
         aligner = state structure_alignment_def
 
         to_structure.depends_on searching_structure, :role => "search_structure"
 
         start(to_structure)
-        #TODO kacke
-#        aligner.depends_on search_structure
-        #transition(searching_structure.aligning_event, aligner)
+        transition(to_structure, searching_structure.aligning_event, aligner)
         
+        forward aligner.aligned_event, success_event
         forward to_structure, searching_structure.aligned_event, success_event
-        #forward aligner, aligner.aligned_event, success_event
-        #forward search_structure.aligned_event, success_event
     end
 
     #describe("Passing validation-gate with localization")
@@ -336,7 +333,7 @@ class Main
         dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
         s_search_structure = state search_structure
         #TODO Avalon does not seems to pass the gate
-        gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
+        gate_passing = state blind_forward_and_back(:time => 20, :speed => 1.0, :heading => -Math::PI, :depth => -4)
 
         start(dive)
         transition(dive.success_event, s_search_structure)
@@ -350,19 +347,41 @@ class Main
     describe("Moving to wall and start wall_servoing")
     state_machine "wall_with_localization" do
         #TODO not working here, input missing on controlchain
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 ) 
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => 0, :depth => -1.5, :delta_timeout => 5, :x => -3, :y => 25 ) 
         wall  = state buoy_wall
+
         start(to_wall)
         transition(to_wall.success_event, wall)
+        forward wall.success_event
+    end
+
+
+    describe("Structure_inspection_dummy")
+    state_machine "structure_inspection" do
+        dummy = state simple_move_def(:depth => -7, :timeout => 1))
+
+        start dummy
+        forward dummy.success_event
     end
 
     describe("We win the SAUC-E")
     state_machine "win" do
+
         gate = state gate_without_localization
+        #gate = state gate_with_localization
+
+        structure = state structure_inspection
+
         wall = state wall_with_localization
-        start(gate)
-        transition(gate.success_event, wall)
-        forward wall.success_event, success_event
+
+        black_box = state blackbox_finding
+
+        start gate
+        transition gate.success_event, structure
+        transition structure.success_event, wall
+        transition wall_success_event, blackbox_finding
+
+        forward blackbox_finding.success_event, success_event
     end
 
 

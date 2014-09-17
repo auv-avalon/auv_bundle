@@ -255,6 +255,7 @@ module DFKI
             define 'structure_alignment', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
+                'main' => structure_align_detector_def,
                 'controller' => structure_align_detector_def
             )
 

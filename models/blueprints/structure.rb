@@ -37,6 +37,8 @@ module Structure
 
 
     class Detector < Syskit::Composition
+        argument :rounds, :default => 0.1
+
         add_main StructureServoing::Task, :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
         add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
@@ -56,6 +58,38 @@ module Structure
 
         event :servoing
         event :no_structure
+
+        on :start do |event|
+            Robot.info "Starting Structure Servoing"
+            @start_time = Time.now
+            
+            angle_port = nil
+            if detector_child.has_port?('servoed_angle')
+                angle_port = detector_child.servoed_angle_port
+            else
+                detector_child.each_child do |c| 
+                    if c.has_port?('servoed_angle')
+                        angle_port = c.servoed_angle_port
+                        break
+                    end
+                end
+            end
+            @reader = angle_port.reader 
+            
+        end
+
+        poll do
+                if @reader
+                    if angle = @reader.read
+                        if angle > 2*Math::PI * rounds
+                            Robot.info "Finished Structure Inspection"
+                            emit :success
+                        end
+                    end
+                end
+        end
+
+    end
 
 #
 #        event :wall_servoing
@@ -137,7 +171,7 @@ module Structure
 #                end
 #            end
 #        end
-    end
+#    end
 
 
     class SonarStructureServoingComp < Syskit::Composition
@@ -170,6 +204,37 @@ module Structure
         event :SEARCHING_STRUCTURE
         event :VALIDATING_STRUCTURE
         event :INSPECTING_STRUCTURE
+        event :SUCCESS
+
+        on :start do |event|
+            Robot.info "Starting Structure Servoing"
+            @start_time = Time.now
+            
+            angle_port = nil
+            if detector_child.has_port?('servoed_angle')
+                angle_port = detector_child.servoed_angle_port
+            else
+                detector_child.each_child do |c| 
+                    if c.has_port?('servoed_angle')
+                        angle_port = c.servoed_angle_port
+                        break
+                    end
+                end
+            end
+            @reader = angle_port.reader 
+            
+        end
+
+        poll do
+                if @reader
+                    if angle = @reader.read
+                        if angle > 2*Math::PI
+                            Robot.info "Finished Structure Inspection"
+                            emit :success
+                        end
+                    end
+                end
+        end
 
     end
 

@@ -307,6 +307,11 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+
+        on :success do |event|
+            emit :success
+        end
+
     end
 
 #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp

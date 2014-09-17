@@ -395,7 +395,7 @@ class Main
 
     describe("Structure_inspection_dummy")
     state_machine "structure_inspection" do
-        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 20) 
+        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
         inspection = state structure_inspection_def
 
         find = state structure_detector_def

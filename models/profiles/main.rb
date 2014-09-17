@@ -161,18 +161,17 @@ module DFKI
             )
 
 
-
             define 'wall_detector', Wall::Detector.use(
-                WallServoing::SingleSonarServoing,
                 "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
-            )
+            ).with_conf('wall_right')
+
 
             define 'wall_detector_new', Wall::DetectorNew.use(
-		WallServoing::SingleSonarServoing,
                 "orientation_with_z" => orientation_with_z_tag,
                 "dead_reckoning" => motion_model_tag
-            )
+            ).with_conf('wall_right')
+
 
             define 'wall_right', Wall::Follower.use(
                 wall_detector_def,
@@ -260,6 +259,16 @@ module DFKI
             )
 
 
+            define 'structure_reconstruction', Structure::StructureReconstructionComp.use(
+                'front_camera' => forward_looking_camera_tag,
+                'bottom_camera' => down_looking_camera_tag
+            ).use_frames(
+                'body' => 'body',
+                'world' => 'map_halle',
+                'front_camera' => 'front_camera',
+                'bottom_camera' => 'bottom_camera'
+            )
+
 #            define 'line_scanner', Pipeline::LineScanner.use(
 #               LineScanner::Task.with_conf('default'),
 #               'camera' => down_looking_camera_tag,
@@ -292,7 +301,13 @@ module DFKI
 
             define 'wall_right_new', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
-                'controller' => wall_detector_new_def,
+                'controller' => wall_detector_new_def.with_conf('wall_right'),
+                'joint' => thruster_tag
+            )
+
+            define 'wall_left_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_left'),
                 'joint' => thruster_tag
             )
 
@@ -316,7 +331,7 @@ module DFKI
             define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
                 'detector' => wall_buoy_detector_def,
                 'pose' => pose_tag,
-                'wall' => wall_detector_new_def 
+                'wall' => wall_detector_new_def.with_conf('wall_front_left'),
             )
 
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
@@ -326,11 +341,9 @@ module DFKI
             )
 
             define 'wall_right_hold_pos', AuvCont::WorldXYPositionCmp.use(
-	            WallServoing::SingleSonarServoing.with_conf('default','hold_wall_right'),
                 'pose' => pose_tag,
-                'controller' => wall_detector_new_def,
+                'controller' => wall_detector_new_def.with_conf('hold_wall_right'),
                 'joint' => thruster_tag
-                
             )
 
         end

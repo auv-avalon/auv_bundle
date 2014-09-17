@@ -16,21 +16,25 @@ MISSION = "TESTBED"
 
 
 class Main
-#    describe("align on wall to estimate the initial heading")
-#    state_machine "reset_heading_on_wall" do
-#        
-#        wall = state wall_right_hold_pos_def
-#        heading_estimator = state initial_orientation_estimator_def
-#
-#        start(wall)
-#        transition(wall.detector_child.wall_servoing_event, wall)
-#        transition(wall.detector_child.wall_servoing_event, heading_estimator)
-#        
-#        forward heading_estimator.failed_event, failed_event
-#        forward wall.failed_event, failed_event
-#        forward heading_estimator.success_event, success_event
-#
-#     end
+    describe("align on wall to estimate the initial heading")
+    state_machine "reset_heading_on_wall" do
+        
+        detector = state wall_detector_new_def.with_conf('hold_wall_right')
+        init_wall = state wall_right_hold_pos_def
+        hold_wall = state wall_right_hold_pos_def
+        init_wall.depends_on detector, :role => "foo"
+        heading_estimator = state initial_orientation_estimator_def
+        heading_estimator.depends_on hold_wall, :role => "fasel"
+
+        start(init_wall)
+        transition(init_wall, detector.wall_servoing_event, heading_estimator)
+        
+        forward heading_estimator.failed_event, failed_event
+        forward init_wall.failed_event, failed_event
+        forward hold_wall.failed_event, failed_event
+        forward heading_estimator.success_event, success_event
+
+    end
 
     describe("ping-pong-pipe-wall-back-to-pipe")
     state_machine "ping_pong_pipe_wall_back_to_pipe" do

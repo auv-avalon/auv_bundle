@@ -4,27 +4,20 @@ require 'models/blueprints/localization'
 
 using_task_library 'auv_rel_pos_controller'
 using_task_library 'wall_servoing'
+using_task_library 'sonar_tritech'
 using_task_library 'sonar_feature_estimator'
 
 module Wall
     class Detector < Syskit::Composition
 
-
-        sonar_conf = Array.new
-        
-        if ::CONFIG_HACK == 'default'
-            sonar_conf = ['default','wall_right']
-        elsif ::CONFIG_HACK == 'simulation'
-            sonar_conf = ['default','simulation','wall_right']
-        elsif ::CONFIG_HACK == 'dagon'
-            sonar_conf = ['default','wall_right']
+        add_main WallServoing::SingleSonarServoing, :as => 'detector'
+        if ::CONFIG_HACK == 'simulation'
+            add Base::SonarScanProviderSrv, :as => 'sonar'
+        else 
+            add SonarTritech::Micron, :as => 'sonar'
         end
-        
-        add_main WallServoing::SingleSonarServoing.with_conf(sonar_conf), :as => 'detector'
-
-        add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
-        connect sonar_child => sonar_estimator_child
+        connect sonar_child => sonar_estimator_child.sonar_input_port
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
 	add_optional Base::VelocitySrv, :as => "dead_reckoning"
         connect orientation_with_z_child => detector_child.orientation_sample_port
@@ -36,6 +29,21 @@ module Wall
         export detector_child.position_command_port
         provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
 
+        conf 'wall_front_left',
+             sonar_child => ['default', 'wall_front'],
+             detector_child => ['default', 'wall_front_left']
+        conf 'wall_front_right',
+             sonar_child => ['default', 'wall_front'],
+             detector_child => ['default', 'wall_front_right']
+        conf 'wall_right',
+             sonar_child => ['default', 'wall_right'],
+             detector_child => ['default', 'wall_right']
+        conf 'wall_left',
+             sonar_child => ['default', 'wall_left'],
+             detector_child => ['default', 'wall_left']
+        conf 'hold_wall_right',
+             sonar_child => ['default', 'wall_right'],
+             detector_child => ['default', 'hold_wall_right']
 
         event :wall_servoing
         event :searching_wall
@@ -65,9 +73,14 @@ module Wall
 
     class DetectorNew < Syskit::Composition
         add_main WallServoing::SingleSonarServoing, :as => 'detector'
-        add Base::SonarScanProviderSrv, :as => 'sonar'
+        #add Base::SonarScanProviderSrv, :as => 'sonar'
+        if ::CONFIG_HACK == 'simulation'
+            add Base::SonarScanProviderSrv, :as => 'sonar'
+        else 
+            add SonarTritech::Micron, :as => 'sonar'
+        end      
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
-        connect sonar_child => sonar_estimator_child
+        connect sonar_child => sonar_estimator_child.sonar_input_port
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
 	add_optional Base::VelocitySrv, :as => "dead_reckoning"
         connect orientation_with_z_child => detector_child.orientation_sample_port
@@ -82,6 +95,21 @@ module Wall
         export detector_child.wall_port
         provides WallServoing::WallOrientationSrv, as: 'wall_ori'
 
+        conf 'wall_front_left',
+             sonar_child => ['default', 'wall_front'],
+             detector_child => ['default', 'wall_front_left']
+        conf 'wall_front_right',
+             sonar_child => ['default', 'wall_front'],
+             detector_child => ['default', 'wall_front_right']
+        conf 'wall_right',
+             sonar_child => ['default', 'wall_right'],
+             detector_child => ['default', 'wall_right']
+        conf 'wall_left',
+             sonar_child => ['default', 'wall_left'],
+             detector_child => ['default', 'wall_left']
+        conf 'hold_wall_right',
+             sonar_child => ['default', 'wall_right'],
+             detector_child => ['default', 'hold_wall_right']
 
         event :wall_servoing
         event :searching_wall
@@ -94,6 +122,8 @@ module Wall
         argument :max_corners, :default => nil
 
         attr_accessor :num_corners
+        
+                
 
         on :start do |event|
             Robot.info "Starting Wall Servoing"
@@ -101,14 +131,14 @@ module Wall
             @start_time = Time.now
             
             
-            Robot.info "Starting wall detector reconfiguring sonar to wall_right"
-            @sonar_workaround = true 
-            if sonar_child.respond_to?(:orocos_task)
-                @old_sonar_conf = sonar_child.conf
-            else
-                #Simulation special case
-                @old_sonar_conf = sonar_child.children.to_a[1].conf
-            end
+#            Robot.info "Starting wall detector reconfiguring sonar to wall_right"
+#            @sonar_workaround = true 
+#            if sonar_child.respond_to?(:orocos_task)
+#                @old_sonar_conf = sonar_child.conf
+#            else
+#                #Simulation special case
+#                @old_sonar_conf = sonar_child.children.to_a[1].conf
+#            end
         end
 
         def corner_passed!
@@ -134,33 +164,33 @@ module Wall
                 end
             end
 
-            #Workaround sonar configs
-            orocos_t = nil
-            if sonar_child.respond_to?(:orocos_task)
-                orocos_t = sonar_child.orocos_task
-            else
-                #Simulation special case
-                orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
-            end
-
-            if orocos_t.state == :RUNNING and @sonar_workaround
-                condition = true
-                if sonar_child.respond_to?(:orocos_task)
-                    condition = orocos_t.config.continous == 1
-                else
-                    condition = orocos_t.ping_pong_mode == false
-                    #Nothing for sim, workarounding always
-                end
-
-                if condition 
-                    STDOUT.puts "Overriding sonar config to wall right"
-                    orocos_t.apply_conf(['default','wall_right'],true)
-                    @sonar_workaround = false
-                else
-                    @sonar_workaround = false
-                    #STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
-                end
-            end
+#            #Workaround sonar configs
+#            orocos_t = nil
+#            if sonar_child.respond_to?(:orocos_task)
+#                orocos_t = sonar_child.orocos_task
+#            else
+#                #Simulation special case
+#                orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
+#            end
+#
+#            if orocos_t.state == :RUNNING and @sonar_workaround
+#                condition = true
+#                if sonar_child.respond_to?(:orocos_task)
+#                    condition = orocos_t.config.continous == 1
+#                else
+#                    condition = orocos_t.ping_pong_mode == false
+#                    #Nothing for sim, workarounding always
+#                end
+#
+#                if condition 
+#                    STDOUT.puts "Overriding sonar config to wall right"
+#                    orocos_t.apply_conf(['default','wall_right'],true)
+#                    @sonar_workaround = false
+#                else
+#                    @sonar_workaround = false
+#                    STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
+#                end
+#            end
         end
 
     end
@@ -192,27 +222,27 @@ module Wall
             @start_time = Time.now
             
             
-            Robot.info "Starting wall detector reconfiguring sonar to wall_right"
-            @sonar_workaround = true 
-            if controller_local_child.sonar_child.respond_to?(:orocos_task)
-                @old_sonar_conf = controller_local_child.sonar_child.conf
-            else
-                #Simulation special case
-                @old_sonar_conf = controller_local_child.sonar_child.children.to_a[1].conf
-            end
+#            Robot.info "Starting wall detector reconfiguring sonar to wall_right"
+#            @sonar_workaround = true 
+#            if controller_local_child.sonar_child.respond_to?(:orocos_task)
+#                @old_sonar_conf = controller_local_child.sonar_child.conf
+#            else
+#                #Simulation special case
+#                @old_sonar_conf = controller_local_child.sonar_child.children.to_a[1].conf
+#            end
         end
         
-        on :stop do |e|
-            if not @sonar_workaround
-                Robot.info "Stopping Wall Servoing, reconfigure it in prev_state"
-                if controller_local_child.sonar_child.respond_to?(:orocos_task)
-                    controller_local_child.sonar_child.orocos_task.apply_conf(@old_sonar_conf,true)
-                else
-                    #Simulation special case
-                    controller_local_child.sonar_child.children.to_a[1].orocos_task.apply_conf(@old_sonar_conf,true)
-                end
-            end
-        end
+#        on :stop do |e|
+#            if not @sonar_workaround
+#                Robot.info "Stopping Wall Servoing, reconfigure it in prev_state"
+#                if controller_local_child.sonar_child.respond_to?(:orocos_task)
+#                    controller_local_child.sonar_child.orocos_task.apply_conf(@old_sonar_conf,true)
+#                else
+#                    #Simulation special case
+#                    controller_local_child.sonar_child.children.to_a[1].orocos_task.apply_conf(@old_sonar_conf,true)
+#                end
+#            end
+#        end
 
         poll do
             if(self.timeout)
@@ -229,32 +259,32 @@ module Wall
             end
 
             #Workaround sonar configs
-            orocos_t = nil
-            if controller_local_child.sonar_child.respond_to?(:orocos_task)
-                orocos_t = controller_local_child.sonar_child.orocos_task
-            else
-                #Simulation special case
-                orocos_t = controller_local_child.sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
-            end
-
-            if orocos_t.state == :RUNNING and @sonar_workaround
-                condition = true
-                if controller_local_child.sonar_child.respond_to?(:orocos_task)
-                    condition = orocos_t.config.continous == 1
-                else
-                    condition = orocos_t.ping_pong_mode == false
-                    #Nothing for sim, workarounding always
-                end
-
-                if condition 
-                    STDOUT.puts "Overriding sonar config to wall right"
-                    orocos_t.apply_conf(['default','wall_right'],true)
-                    @sonar_workaround = false
-                else
-                    @sonar_workaround = false
-                    STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
-                end
-            end
+#            orocos_t = nil
+#            if controller_local_child.sonar_child.respond_to?(:orocos_task)
+#                orocos_t = controller_local_child.sonar_child.orocos_task
+#            else
+#                #Simulation special case
+#                orocos_t = controller_local_child.sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
+#            end
+#
+#            if orocos_t.state == :RUNNING and @sonar_workaround
+#                condition = true
+#                if controller_local_child.sonar_child.respond_to?(:orocos_task)
+#                    condition = orocos_t.config.continous == 1
+#                else
+#                    condition = orocos_t.ping_pong_mode == false
+#                    #Nothing for sim, workarounding always
+#                end
+#
+#                if condition 
+#                    STDOUT.puts "Overriding sonar config to wall right"
+#                    orocos_t.apply_conf(['default','wall_right'],true)
+#                    @sonar_workaround = false
+#                else
+#                    @sonar_workaround = false
+#                    STDOUT.puts "Sonar config is fine did you solved the config issues? #{orocos_t.config.continous}"
+#                end
+#            end
         end
         
         

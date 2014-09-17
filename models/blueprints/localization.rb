@@ -58,6 +58,7 @@ module Localization
 
         on :start do |ev|
             @reader = main_child.pose_samples_port.reader
+            @sonar_in_use = true
         end
 
         poll do 
@@ -72,6 +73,32 @@ module Localization
                     end
                 end
             end
+
+            wall_servoing = TaskContext.get 'wall_servoing'
+            sonar_structure_servoing = TaskContext.get 'sonar_structure_servoing'
+
+            if(wall_servoing.running? && !@sonar_in_use)
+                @sonar_in_use = true
+            end
+
+            if(sonar_structure_servoing.running? && !@sonar_in_use)
+                @sonar_in_use = true
+            end
+
+            if(@sonar_in_use && !wall_servoing.running? && !sonar_structure_servoing.running?)
+                #reset sonar config
+                @sonar_in_use = false
+                orocos_t = nil
+                if sonar_child.respond_to?(:orocos_task)
+                    orocos_t = sonar_child.orocos_task
+                else
+                    #Simulation special case
+                    orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
+                end
+
+                orocos_t.apply_conf(['default','maritime_hall'],true)
+            end
+            
         end
 #        @position = :position2 
 #        
@@ -154,7 +181,18 @@ module Localization
         export main_child.position_quality_port, as: 'ori_drift'
         provides HoughSrv, as: 'hough'
     end
-               
+ 
+    class FixMapHack < Syskit::Composition
+
+        add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
+
+        on :start do |e|
+            sonar_detector_child.fix_map()
+            emit :success
+            e
+        end
+    end    
+    
 #    class HoughParticleDetector < Syskit::Composition
 #        add ParticleDetector.use(Localization::HoughDetector), :as => 'main'
 #        #add Localization::HoughDetector.use(Localization::ParticleDetector), as: 'hough'

@@ -63,8 +63,8 @@ module PoseAuv
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
 
         estimator_child.with_conf("default", "unknown_heading", "Bremen")
-        wall_estimation_child.with_conf("default", "avalon", "wall_right")
-        sonar_child.with_conf("default", "hold_wall_right")
+        wall_estimation_child.with_conf("default", "wall_right")
+        sonar_child.with_conf("default", "wall_right")
 
         sonar_child.connect_to sonar_estimator_child
         imu_child.connect_to estimator_child.imu_orientation_port

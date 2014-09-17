@@ -23,6 +23,7 @@ module Localization
     
 
     class ParticleDetector < Syskit::Composition
+              
         add UwParticleLocalization::Task, :as => 'main'
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
@@ -207,7 +208,7 @@ module Localization
  
     class FixMapHack < Syskit::Composition
 
-        add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
+        add SonarFeatureDetector::Task, :as => 'sonar_detector'
 
         on :start do |e|
             sonar_detector_child.fix_map()
@@ -215,6 +216,17 @@ module Localization
             e
         end
     end    
+    
+    class SonarTargetMove < Syskit::Composition
+      event :reached_target
+      
+      add SonarFeatureDetector::Task, :as => 'sonar_detector'      
+      
+      export sonar_detector_child.next_target_command_port, :as => "world_command"
+      provides Base::WorldXYZRollPitchYawControllerSrv , :as => 'controller'
+    end
+      
+    
     
 #    class HoughParticleDetector < Syskit::Composition
 #        add ParticleDetector.use(Localization::HoughDetector), :as => 'main'

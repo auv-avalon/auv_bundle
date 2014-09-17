@@ -325,6 +325,39 @@ class Main
         forward aligner.aligned_event, success_event
         forward to_structure, searching_structure.aligned_event, success_event
     end
+    
+    describe("find_blackbox")
+    state_machine "find_blackbox" do
+      
+      #create multiple waypoints to explore the environment
+      explore = state explore_map()
+      surface = state target_move_new_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
+      map_fix = state fix_map_hack()
+      search = state search_blackbox()
+      
+      buoy_detector = state buoy_detector_def
+      localization = state localization_def
+      sonar_target_move = state sonar_target_move_def, :role => "sonar_detector"
+      
+      search.depends_on localization
+      search.depends_on buoy_detector
+      explore.depends_on localization
+      map_fix.depends_on localization
+      sonar_target_move.depends_on localization      
+      
+      start(explore)
+      
+      transition(explore.success_event, map_fix)
+      transition(map_fix.success_event, sonar_target_move)
+      transition(sonar_target_move.reached_target_event, search)
+      transition(search.success_event, sonar_target_move)
+      
+      transition(search, buoy_detector.buoy_detected_event, surface)
+            
+      forward surface.success_event, success_event
+      
+    end    
+    
 
     #describe("Passing validation-gate with localization")
     #state_machine "gate_with_localization" do 

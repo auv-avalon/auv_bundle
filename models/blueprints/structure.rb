@@ -37,6 +37,8 @@ module Structure
 
 
     class Detector < Syskit::Composition
+        argument :rounds, :default => 0.1
+
         add_main StructureServoing::Task, :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
         add ImagePreprocessing::HSVSegmentationAndBlur.with_conf('structure'), :as => "seg" 
@@ -56,7 +58,6 @@ module Structure
 
         event :servoing
         event :no_structure
-        event :success
 
         on :start do |event|
             Robot.info "Starting Structure Servoing"
@@ -80,9 +81,9 @@ module Structure
         poll do
                 if @reader
                     if angle = @reader.read
-                        if angle > 2*Math::PI
+                        if angle > 2*Math::PI * rounds
                             Robot.info "Finished Structure Inspection"
-                            emit :success_event
+                            emit :success
                         end
                     end
                 end
@@ -229,7 +230,7 @@ module Structure
                     if angle = @reader.read
                         if angle > 2*Math::PI
                             Robot.info "Finished Structure Inspection"
-                            emit :success_event
+                            emit :success
                         end
                     end
                 end

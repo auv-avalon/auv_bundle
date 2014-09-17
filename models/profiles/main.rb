@@ -350,6 +350,7 @@ module DFKI
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
+                #'main' => wall_buoy_controller_def,
                 'joint' => thruster_tag
             )
 

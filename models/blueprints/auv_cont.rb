@@ -308,8 +308,8 @@ module AuvCont
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
-        on :success do |event|
-            emit :success
+        on :start do |event|
+            controller_child.success_event.forward_to success_event
         end
 
     end
@@ -538,18 +538,32 @@ module AuvCont
 
         on :aligned do
             ::Robot.info "ALIGNED!!!!!"
-            ::Robot.info "ALIGNED!!!!!"
-            ::Robot.info "ALIGNED!!!!!"
-            ::Robot.info "ALIGNED!!!!!"
-            ::Robot.info "ALIGNED!!!!!"
             emit aligned_event
         end
 
         on :aligning do
             ::Robot.info "-------------ALIGNING!!!!!"
-            ::Robot.info "-------------ALIGNING!!!!!"
-            ::Robot.info "-------------ALIGNING!!!!!"
-            ::Robot.info "-------------ALIGNING!!!!!"
+            emit aligning_event
+        end
+
+
+        
+    end
+
+    class BuoyWallCmp < WorldXYZPositionCmp 
+        event :aligned
+        event :aligning
+
+        add_main Base::WorldXYZPositionControllerSrv, as: 'main'
+        overload 'controller', main_child
+
+
+        on :aligned do
+            ::Robot.info "ALIGNED!!!!!"
+            emit aligned_event
+        end
+
+        on :aligning do
             ::Robot.info "-------------ALIGNING!!!!!"
             emit aligning_event
         end

@@ -8,6 +8,12 @@ using_task_library 'sonar_wall_hough'
 using_task_library 'sonar_feature_detector'
 
 
+class TaskDummy
+    def running?
+        false
+    end
+end
+
 module Localization
 
     data_service_type 'HoughSrv' do
@@ -74,9 +80,19 @@ module Localization
                 end
             end
 
-            wall_servoing = TaskContext.get 'wall_servoing'
-            sonar_structure_servoing = TaskContext.get 'sonar_structure_servoing'
+            begin
 
+            wall_servoing = TaskDummy.new
+            sonar_structure_servoing = TaskDummy.new
+            begin
+                wall_servoing = Orocos::TaskContext.get 'wall_servoing'
+            rescue Exception => e
+            end
+            begin
+                sonar_structure_servoing = Orocos::TaskContext.get 'sonar_structure_servoing'
+            rescue Exception => e
+            end
+            
             if(wall_servoing.running? && !@sonar_in_use)
                 @sonar_in_use = true
             end
@@ -84,6 +100,8 @@ module Localization
             if(sonar_structure_servoing.running? && !@sonar_in_use)
                 @sonar_in_use = true
             end
+            
+
 
             if(@sonar_in_use && !wall_servoing.running? && !sonar_structure_servoing.running?)
                 #reset sonar config
@@ -97,6 +115,11 @@ module Localization
                 end
 
                 orocos_t.apply_conf(['default','maritime_hall'],true)
+            end
+
+            rescue Exception => e
+                ::Robot::error "Something went wrong here, debug this for sonar reconfig hack"
+                ::Robot::error e
             end
             
         end

@@ -35,6 +35,7 @@ module Buoy
   end
 
   class ControllerNewCmp < Syskit::Composition
+      argument :timeout, :default => 5
       add_main Buoy::ServoingOnWall, as: 'main'
       add WallServoing::WallOrientationSrv, as: 'wall'
       add Base::OrientationSrv, as: 'pose'
@@ -50,5 +51,27 @@ module Buoy
 
       event :passive_buoy_searching
       event :buoy_servoing
+      event :aligned
+
+      on :start do |event|
+          @timer = 0
+      end
+
+      on :aligned do |event|
+          if @timer == 0
+                @timer = Time.new
+          end
+      end
+
+      poll do
+          if @timer != 0
+            Robot.info self.timeout.to_s + " < " + (@timer - Time.new ).to_s
+            if @timer.my_timeout? self.timeout 
+                Robot.info "Buoy aligned"
+                emit :success
+            end
+          end
+      end
+
   end
 end

@@ -237,7 +237,51 @@ class Main < Roby::Actions::Interface
       emit success_event
     end
     
-
+    describe("search blackbox")
+    state_machine "search_blackbox" do
+      
+      time = 10
+      depth = -1
+      speed = 3
+      
+      
+      search1 = state simple_move_new_def(:timeout => time, :heading => 0, :speed_x => 0, :depth => depth)
+      search2 = state simple_move_new_def(:timeout => time, :heading => 0, :speed_x => speed, :depth => depth)
+      search3 = state simple_move_new_def(:timeout => time, :heading => Math::PI*0.5 , :speed_x => 0, :depth => depth)
+      search4 = state simple_move_new_def(:timeout => time, :heading => Math::PI*0.5, :speed_x => speed, :depth => depth)
+      search5 = state simple_move_new_def(:timeout => time, :heading => Math::PI*1.0, :speed_x => 0, :depth => depth)
+      search6 = state simple_move_new_def(:timeout => time, :heading => Math::PI*1.0, :speed_x => speed, :depth => depth)
+      search7 = state simple_move_new_def(:timeout => time, :heading => Math::PI*1.5, :speed_x => 0, :depth => depth)
+      search8 = state simple_move_new_def(:timeout => time, :heading => Math::PI*1.5, :speed_x => speed, :depth => depth)
+      
+      start(search1)
+      transition(search1.success_event, search2)
+      transition(search2.success_event, search3)
+      transition(search3.success_event, search4)
+      transition(search4.success_event, search5)
+      transition(search5.success_event, search6)
+      transition(search6.success_event, search7)
+      transition(search7.success_event, search8)
+      
+      forward search8.success_event, success_event
+      
+    end
+    
+    describe("Explore map")
+    state_machine "explore_map" do
+      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -30, :y => 10.0)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :heading => Math::PI*0.5, :x => -30, :y => 40.0)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -10, :y => 40.0)
+      
+      start(explore1)
+      
+      transition(explore1.success_event, explore2)
+      transition(explore2.success_event, explore3)
+      
+      forward explore3.success_event, success_event
+      
+    end    
+    
     describe("Find_pipe_with_localization").
         optional_arg("check_pipe_angle",false)
     action_state_machine "find_pipe_with_localization" do

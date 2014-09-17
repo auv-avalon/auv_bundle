@@ -59,6 +59,10 @@ module DFKI
 #                'ori' => orientation_with_z_tag#,
                 #'velocity' => nil
             )
+            
+            define 'sonar_target_move', Localization::SonarTargetMove.use(
+            
+            )
 
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
@@ -144,8 +148,6 @@ module DFKI
                 'controlled_system' => base_loop_def,
                 'pose' => pose_tag
             )
-
-
 
 
 
@@ -350,6 +352,7 @@ module DFKI
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
+                #'main' => wall_buoy_controller_def,
                 'joint' => thruster_tag
             )
 

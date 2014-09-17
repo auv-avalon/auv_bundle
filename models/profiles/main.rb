@@ -245,10 +245,11 @@ module DFKI
                 'camera' => down_looking_camera_tag,
             )
 
-            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
+            define 'structure_inspection', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
-                'controller' => structure_detector_def
+                'controller' => structure_detector_def,
+                'main' => structure_detector_def
             )
 
             define 'structure_alignment', AuvCont::StructureCmp.use(

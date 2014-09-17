@@ -54,6 +54,9 @@ module Structure
         export detector_child.aligned_speed_command_port, :as => "speed_command"
         provides Base::WorldXYVelocityControllerSrv, :as => 'controller', "aligned_velocity_command" => "speed_command", "world_command" => "world_command" 
 
+        event :servoing
+        event :no_structure
+
 #
 #        event :wall_servoing
 #        event :searching_wall

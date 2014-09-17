@@ -30,10 +30,6 @@ module Buoy
 
       on :buoy_found do |e| 
         ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
         e
       end
   end

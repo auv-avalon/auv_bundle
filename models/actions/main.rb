@@ -351,22 +351,67 @@ class Main
     describe("Moving to wall and start wall_servoing")
     state_machine "wall_with_localization" do
         #TODO not working here, input missing on controlchain
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => 0, :depth => -1.5, :delta_timeout => 5, :x => -3, :y => 25 ) 
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => 0, :depth => -1.5, :delta_timeout => 5, :x => -3, :y => 25)#, :delta_xy => 3 ) 
         wall  = state buoy_wall
 
         start(to_wall)
         transition(to_wall.success_event, wall)
-        forward wall.success_event
+        forward wall.success_event, success_event
     end
 
 
     describe("Structure_inspection_dummy")
     state_machine "structure_inspection" do
-        dummy = state simple_move_def(:depth => -7, :timeout => 1))
+        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 20) 
+        inspection = state structure_inspection_def
 
-        start dummy
-        forward dummy.success_event
+        find = state structure_detector_def
+
+        back_off.depends_on find
+
+        #inspection.monitor(
+        #    'round',
+        #    inspection.find_port('pose'),
+        #    :rounds => 1).
+        #    trigger_on do |pose|
+        #        pos = pose.yaw
+        #        pos > 1.9 * Math::PI
+        #    end.
+        #    emit inspection.success_event
+
+        start back_off
+        transition back_off, find.servoing_event, inspection
+        forward inspection.success_event, success_event
     end
+
+    describe("find_blackbox")
+    state_machine "find_blackbox" do
+      
+      #create multiple waypoints to explore the environment
+      s1 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 10.0)
+      s2 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 40.0)
+      s3 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -10, :y => 40.0)
+      surface = state target_move_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
+      map_fix = state fix_map_hack()
+      
+      buoy_detector = state buoy_detector_def
+      localization = state localization_def           
+      
+      s1.depends_on localization, :role => "detector" 
+      s3.depends_on buoy_detector, :role => "detector"
+      map_fix.depends_on buoy_detector
+      
+      start(s1)
+      transition(s1.success_event,s2)
+      transition(s2.success_event,s3)
+      transition(s3.success_event, map_fix)
+      transition(map_fix.success_event, buoy_detector)
+      transition(buoy_detector.buoy_detected_event, surface)      
+      
+      forward surface.success_event, success_event
+      
+    end
+      
 
     describe("We win the SAUC-E")
     state_machine "win" do
@@ -378,14 +423,14 @@ class Main
 
         wall = state wall_with_localization
 
-        black_box = state blackbox_finding
+        blackbox = state find_blackbox
 
         start gate
         transition gate.success_event, structure
         transition structure.success_event, wall
-        transition wall_success_event, blackbox_finding
+        transition wall.success_event, blackbox
 
-        forward blackbox_finding.success_event, success_event
+        forward blackbox.success_event, success_event
     end
 
 

@@ -11,17 +11,24 @@ module Buoy
   class DetectorNewCmp < Syskit::Composition
       event :buoy_found
 
-      add_main Buoy::Detector, as: 'main'
+
+        if ::CONFIG_HACK == 'default'
+            buoy_conf = ['default']
+        elsif ::CONFIG_HACK == 'simulation'
+            buoy_conf = ['simulation']
+        elsif ::CONFIG_HACK == 'dagon'
+            buoy_conf = ['default']
+        end
+        
+
+
+      add_main Buoy::Detector.with_conf(*buoy_conf), as: 'main'
       add Base::ImageProviderSrv, as: 'front_camera'
 
       connect front_camera_child => main_child
       export main_child.buoy_port
 
       on :buoy_found do |e| 
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
-        ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
         ::Robot.info "FOUND BUOY!!!!!!!!!!!!!!!!!!!!!!!"
         e
       end

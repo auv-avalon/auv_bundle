@@ -60,8 +60,8 @@ class Main < Roby::Actions::Interface
 
         throught_gate = state simple_move_new_def(:timeout => time, :heading => heading, :speed_x => speed, :depth => depth)
         wait_1  = state simple_move_new_def(:timeout => 5, :heading =>  heading, :depth => depth ,:speed_x => 0)
-        align_from_gate = state simple_move_new_def(:timeout => 5, :heading => (heading + Math::PI), :depth => depth ,:speed_x => 0)
-        back_from_gate= state simple_move_new_def(:timeout => time, :heading => (heading + Math::PI), :speed_x => speed, :depth => depth)
+        align_from_gate = state simple_move_new_def(:timeout => 15, :heading => heading + Math::PI, :depth => depth ,:speed_x => 0)
+        back_from_gate= state simple_move_new_def(:timeout => time, :heading => heading + Math::PI, :speed_x => speed, :depth => depth)
     
         start(throught_gate)
         transition(throught_gate.success_event, wait_1)
@@ -157,7 +157,7 @@ class Main < Roby::Actions::Interface
     
     describe("This is a workaaround for the monitor usage")
     state_machine "wall_and_buoy" do
-        wall = state wall_right_new_def
+        wall = state wall_front_left_new_def
         detector = state wall_buoy_detector_def 
         detector.depends_on wall, :role => "detector"
         start(detector)
@@ -171,6 +171,7 @@ class Main < Roby::Actions::Interface
         buoy = state wall_buoy_survey_def 
         start search
         transition(search.success_event, buoy)
+        forward buoy.success_event, success_event
     end
 
 
@@ -236,34 +237,6 @@ class Main < Roby::Actions::Interface
       emit success_event
     end
     
-    describe("find_blackbox")
-    state_machine "find_blackbox" do
-      
-      #create multiple waypoints to explore the environment
-      s1 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 10.0)
-      s2 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 40.0)
-      s3 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -10, :y => 40.0)
-      surface = state target_move_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
-      map_fix = state fix_map_hack()
-      
-      buoy_detector = state buoy_detector_def
-      localization = state localization_def           
-      
-      s1.depends_on localization, :role => "detector" 
-      s3.depends_on buoy_detector, :role => "detector"
-      map_fix.depends_on buoy_detector
-      
-      start(s1)
-      transition(s1.success_event,s2)
-      transition(s2.success_event,s3)
-      transition(s3.success_event, map_fix)
-      transition(map_fix.success_event, buoy_detector)
-      transition(buoy_detector.buoy_detected_event, surface)      
-      
-      forward surface.success_event, success_event
-      
-    end
-      
 
     describe("Find_pipe_with_localization").
         optional_arg("check_pipe_angle",false)

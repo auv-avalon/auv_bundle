@@ -211,9 +211,8 @@ module Localization
         add SonarFeatureDetector::Task, :as => 'sonar_detector'
 
         on :start do |e|
-            sonar_detector_child.fix_map()
+            sonar_detector_child.fix
             emit :success
-            e
         end
     end    
     

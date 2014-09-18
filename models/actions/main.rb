@@ -330,10 +330,10 @@ class Main
     state_machine "find_blackbox" do
       
       #create multiple waypoints to explore the environment
-      explore = state explore_map()
+      explore = state explore_map
       surface = state target_move_new_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
-      map_fix = state fix_map_hack()
-      search = state search_blackbox()
+      map_fix = state fix_map_hack
+      search = state search_blackbox
       
       buoy_detector = state buoy_detector_def
       localization = state localization_def
@@ -345,14 +345,14 @@ class Main
       map_fix.depends_on localization
       sonar_target_move.depends_on localization      
       
-      start(explore)
+      start explore
       
-      transition(explore.success_event, map_fix)
-      transition(map_fix.success_event, sonar_target_move)
-      transition(sonar_target_move.reached_target_event, search)
-      transition(search.success_event, sonar_target_move)
+      transition explore.success_event, map_fix
+      transition map_fix.success_event, sonar_target_move 
+      transition sonar_target_move.reached_target_event, search 
+      transition search.success_event, sonar_target_move 
       
-      transition(search, buoy_detector.buoy_detected_event, surface)
+      transition search, buoy_detector.buoy_detected_event, surface 
             
       forward surface.success_event, success_event
       
@@ -416,35 +416,6 @@ class Main
         transition back_off, find.servoing_event, inspection
         forward inspection.success_event, success_event
     end
-
-    describe("find_blackbox")
-    state_machine "find_blackbox" do
-      
-      #create multiple waypoints to explore the environment
-      s1 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 10.0)
-      s2 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -30, :y => 40.0)
-      s3 = state target_move_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 10, :x => -10, :y => 40.0)
-      surface = state target_move_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
-      map_fix = state fix_map_hack()
-      
-      buoy_detector = state buoy_detector_def
-      localization = state localization_def           
-      
-      s1.depends_on localization, :role => "detector" 
-      s3.depends_on buoy_detector, :role => "detector"
-      map_fix.depends_on buoy_detector
-      
-      start(s1)
-      transition(s1.success_event,s2)
-      transition(s2.success_event,s3)
-      transition(s3.success_event, map_fix)
-      transition(map_fix.success_event, buoy_detector)
-      transition(buoy_detector.buoy_detected_event, surface)      
-      
-      forward surface.success_event, success_event
-      
-    end
-      
 
     describe("We win the SAUC-E")
     state_machine "win" do

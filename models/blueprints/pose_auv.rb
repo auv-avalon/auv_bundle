@@ -62,7 +62,7 @@ module PoseAuv
         add Base::SonarScanProviderSrv, :as => 'sonar'
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
 
-        estimator_child.with_conf("default", "unknown_heading", "Bremen")
+        estimator_child.with_conf("default", "local_initial_estimator", "Bremen")
         wall_estimation_child.with_conf("default", "wall_right")
         sonar_child.with_conf("default", "wall_right")
 
@@ -75,13 +75,13 @@ module PoseAuv
         add IKFOrientationEstimatorCmp, :as => "slave"
 
         on :start do |ev|
-            @reader = main_child.angle_in_world_port.reader
+            @reader = wall_estimation_child.angle_in_world_port.reader
         end
 
         on :VALID_WALL_FIX do |e|
             @reader
             sample = @reader.readNewest
-            slave_child.main_child.reset_heading sample.rad 
+            slave_child.estimator_child.reset_heading sample.rad 
             emit :success
             e
         end

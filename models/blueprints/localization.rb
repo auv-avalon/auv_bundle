@@ -35,11 +35,11 @@ module Localization
         add_optional ::Localization::HoughSrv, as: 'hough'
 
         if ::CONFIG_HACK == 'default'
-            main_child.with_conf("sauce", "slam_testhalle")
+            main_child.with_conf("nurc", "slam_testhalle")
         elsif ::CONFIG_HACK == 'simulation'
             main_child.with_conf("sim_nurc", 'slam_testhalle')
         elsif ::CONFIG_HACK == 'dagon'
-            main_child.with_conf("sauce_dagon", 'slam_testhalle') #TODO sauce_dagon erstellen!
+            main_child.with_conf("nurc_dagon", 'slam_testhalle') #TODO sauce_dagon erstellen!
         end
 
 

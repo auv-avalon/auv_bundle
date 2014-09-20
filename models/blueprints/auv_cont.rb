@@ -102,11 +102,22 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
         event :reached_target
+        event :servoing_finished
+        event :not_enough_targets
 
         on :start do |event|
             if controller_child.respond_to? 'reached_target_event'
                 controller_child.reached_target_event.forward_to reached_target_event
             end
+            
+            if controller_child.respond_to? 'servoing_finished_event'
+              controller_child.servoing_finished_event.forward_to servoing_finished_event
+            end
+            
+            if controller_child.respond_to? 'not_enough_targets_event'
+              controller_child.not_enough_targets_event.forward_to not_enough_targets_event
+            end
+            
         end
 
     end

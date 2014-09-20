@@ -35,11 +35,11 @@ module Localization
         add_optional ::Localization::HoughSrv, as: 'hough'
 
         if ::CONFIG_HACK == 'default'
-            main_child.with_conf("default", "slam_testhalle")
+            main_child.with_conf("sauce", "slam_testhalle")
         elsif ::CONFIG_HACK == 'simulation'
-            main_child.with_conf("sim_nurc")
+            main_child.with_conf("sim_nurc", 'slam_testhalle')
         elsif ::CONFIG_HACK == 'dagon'
-            main_child.with_conf("dagon")
+            main_child.with_conf("sauce_dagon", 'slam_testhalle') #TODO sauce_dagon erstellen!
         end
 
 
@@ -115,7 +115,7 @@ module Localization
                     orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
                 end
 
-                orocos_t.apply_conf(['default','maritime_hall'],true)
+                orocos_t.apply_conf(['default','sauce'],true)
             end
 
             rescue Exception => e
@@ -196,6 +196,14 @@ module Localization
         add_optional Base::DVLSrv, as: 'dvl'
         add_optional UwParticleLocalization::OrientationCorrection, :as => 'correction'
 
+        if ::CONFIG_HACK == 'default'
+            main_child.with_conf("sauce")
+        elsif ::CONFIG_HACK == 'simulation'
+            main_child.with_conf("simulation")
+        elsif ::CONFIG_HACK == 'dagon'
+            main_child.with_conf("sauce")
+        end
+
         connect sonar_child => main_child
         connect ori_child => main_child
         connect dvl_child => main_child.pose_samples_port
@@ -216,13 +224,24 @@ module Localization
         end
     end    
     
-    class SonarTargetMove < Syskit::Composition
-      event :reached_target
+    class SonarFeatureDetectorCmp < Syskit::Composition
+        event :reached_target
+        event :servoing_finished
+        event :not_enough_targets
+
+        add_main SonarFeatureDetector::Task, :as => 'sonar_detector'      
       
-      add SonarFeatureDetector::Task, :as => 'sonar_detector'      
-      
-      export sonar_detector_child.next_target_command_port, :as => "world_command"
-      provides Base::WorldXYZRollPitchYawControllerSrv , :as => 'controller'
+        export sonar_detector_child.next_target_command_port, :as => "world_command"
+        provides Base::WorldXYZRollPitchYawControllerSrv , :as => 'controller'
+
+
+        on :start do |event|
+            Robot.info "Starting SonarFeatureDetectorCmp"
+        end
+
+        on :reached_target do |event|
+            Robot.info "REACHED TARGET!!!!!!!!!!!!!!!!!!!!!!"
+        end
     end
       
     

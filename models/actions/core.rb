@@ -240,7 +240,7 @@ class Main < Roby::Actions::Interface
     describe("search blackbox")
     state_machine "search_blackbox" do
       
-      time = 10
+      time = 4
       depth = -1
       speed = 3
       
@@ -270,16 +270,15 @@ class Main < Roby::Actions::Interface
     describe("Explore map")
     state_machine "explore_map" do
       explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -30, :y => 10.0)
-      #explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :heading => Math::PI*0.5, :x => -30, :y => 40.0)
-      #explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -10, :y => 40.0)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :heading => Math::PI*0.5, :x => -30, :y => 40.0)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -10, :y => 40.0)
       
       start(explore1)
       
-      #transition(explore1.success_event, explore2)
-      #transition(explore2.success_event, explore3)
+      transition(explore1.success_event, explore2)
+      transition(explore2.success_event, explore3)
       
-      #forward explore3.success_event, success_event
-      forward explore1.success_event, success_event
+      forward explore3.success_event, success_event
       
     end    
     

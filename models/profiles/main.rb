@@ -184,7 +184,7 @@ module DFKI
                 'pose_blind' => pose_blind_tag,
             ).use_frames(
                 'body' => 'body',
-                'odometry' => 'map_halle',
+                'odometry' => 'map_sauce',
                 'sonar' => 'sonar'
             )
 
@@ -267,7 +267,7 @@ module DFKI
                 'bottom_camera' => down_looking_camera_tag
             ).use_frames(
                 'body' => 'body',
-                'world' => 'map_halle',
+                'world' => 'map_sauce',
                 'front_camera' => 'front_camera',
                 'bottom_camera' => 'bottom_camera'
             )

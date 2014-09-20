@@ -21,17 +21,17 @@ module PoseAuv
         add FogKvh::Dsp3000Task, :as => 'fog'
 
         if ::CONFIG_HACK == 'default'
-            ori_in_map_child.with_conf("default", 'halle')
-            #estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-            estimator_child.with_conf("default", "avalon", "halle", "Bremen")
+            ori_in_map_child.with_conf("default", 'sauce')
+            #estimator_child.with_conf("default", "avalon", "imu_xsens", "fog_kvh_DSP_3000", "sauce14")
+            estimator_child.with_conf("default", "avalon", "sauce", "sauce14")
         elsif ::CONFIG_HACK == 'simulation'
             ori_in_map_child.with_conf("default", 'sauce')
-            #estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-            estimator_child.with_conf("default", "sauce", "Bremen")
+            #estimator_child.with_conf("default", "simulation", "imu_xsens", "fog_kvh_DSP_3000", "sauce14")
+            estimator_child.with_conf("default", "sauce", "sauce14")
         elsif ::CONFIG_HACK == 'dagon'
-            ori_in_map_child.with_conf("default", 'halle')
-            #estimator_child.with_conf("default", "dagon", "imu_xsens", "fog_kvh_DSP_3000", "Bremen")
-            estimator_child.with_conf("default", "dagon", "halle", "Bremen")
+            ori_in_map_child.with_conf("default", 'sauce')
+            #estimator_child.with_conf("default", "dagon", "imu_xsens", "fog_kvh_DSP_3000", "sauce14")
+            estimator_child.with_conf("default", "dagon", "sauce", "sauce14")
         end
 
         #imu_child.calibrated_sensors_port.connect_to estimator_child.imu_samples_port
@@ -99,11 +99,11 @@ module PoseAuv
         #ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
         if ::CONFIG_HACK == 'default'
-            pose_estimator_child.with_conf("default", "avalon", "halle")
+            pose_estimator_child.with_conf("default", "avalon", "sauce")
         elsif ::CONFIG_HACK == 'simulation'
             pose_estimator_child.with_conf("default", 'avalon', 'sauce')
         elsif ::CONFIG_HACK == 'dagon'
-            pose_estimator_child.with_conf("default", "dagon", "halle")
+            pose_estimator_child.with_conf("default", "dagon", "sauce")
         end
 
         connect ori_child => pose_estimator_child.orientation_samples_port

@@ -60,10 +60,6 @@ module DFKI
                 #'velocity' => nil
             )
             
-            define 'sonar_target_move', Localization::SonarTargetMove.use(
-            
-            )
-
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
@@ -71,6 +67,7 @@ module DFKI
                 'dvl' => dvl_tag,
                 'localization' => localization_def
             )
+
             
 
         end
@@ -149,6 +146,7 @@ module DFKI
                 'pose' => pose_tag
             )
 
+            define 'sonar_feature_detector', Localization::SonarFeatureDetectorCmp
 
 
             ################# Basic Movements #########################
@@ -360,6 +358,13 @@ module DFKI
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def.with_conf('hold_wall_right'),
                 'joint' => thruster_tag
+            )
+
+            define 'sonar_target_move', AuvCont::WorldPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => sonar_feature_detector_def,
+                'joint' => thruster_tag
+            
             )
 
         end

@@ -85,6 +85,14 @@ module AuvCont
         #provides ::Base::JointsControllerSrv, :as => "command_out"
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
+        event :reached_target
+
+        on :start do |event|
+            if controller_child.respond_to? 'reached_target_event'
+                controller_child.reached_target_event.forward_to reached_target_event
+            end
+        end
+
     end
     class WorldXYVelocityCmp < Syskit::Composition
 

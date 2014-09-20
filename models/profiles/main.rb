@@ -82,7 +82,10 @@ module DFKI
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
 
-
+            use AuvCont::ConstantCommandGroundAvoidanceCmp.use(
+                'altimeter' => altimeter_tag,
+                'depth' => pose_blind_tag
+            )
 
             
             ############### DEPRICATED ##########################

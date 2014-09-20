@@ -24,6 +24,7 @@ module AuvCont
     class WorldPositionCmp < Syskit::Composition
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
+        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
         add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -65,7 +66,9 @@ module AuvCont
         #                   'aligned_velocity_controller' => ['default', 'velocity'],
         #                   'acceleration_controller' => ['default']
         #
-        connect controller_child.world_cmd_port => world_to_aligned_child.cmd_in_port
+        #connect controller_child.world_cmd_port => world_to_aligned_child.cmd_in_port
+        connect controller_child.world_cmd_port => avoid_child
+        connect avoid_child => world_to_aligned_child.cmd_in_port
         pose_child.connect_to world_to_aligned_child
         pose_child.connect_to aligned_position_controller_child
         pose_child.connect_to aligned_velocity_controller_child
@@ -98,6 +101,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
+        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -144,7 +148,9 @@ module AuvCont
 
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
 
-        connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        connect controller_child.world_command_port => avoid_child
+        connect avoid_child => world_to_aligned_child.cmd_in_port
         connect controller_child.aligned_velocity_command_port => aligned_velocity_controller_child.cmd_in_port
         connect pose_child => world_to_aligned_child
         connect pose_child => aligned_position_controller_child
@@ -171,6 +177,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
+        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -218,7 +225,11 @@ module AuvCont
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
         
         add ::Base::WorldXYPositionControllerSrv, :as => 'controller'
-        connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+
+
+        #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        connect controller_child.world_command_port => avoid_child
+        connect avoid_child => world_to_aligned_child.cmd_in_port
         connect controller_child.aligned_position_command_port => aligned_position_controller_child.cmd_in_port
 
         pose_child.connect_to world_to_aligned_child
@@ -329,6 +340,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
+        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -375,7 +387,9 @@ module AuvCont
 
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
 
-        connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
+        connect controller_child.world_command_port => avoid_child
+        connect avoid_child => world_to_aligned_child.cmd_in_port
         connect controller_child.aligned_velocity_command_port => aligned_velocity_controller_child.cmd_in_port
         connect controller_child.aligned_position_command_port => aligned_position_controller_child.cmd_in_port
 

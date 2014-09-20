@@ -59,7 +59,7 @@ module DFKI
 #                'ori' => orientation_with_z_tag#,
                 #'velocity' => nil
             )
-
+            
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
@@ -67,6 +67,7 @@ module DFKI
                 'dvl' => dvl_tag,
                 'localization' => localization_def
             )
+
             
 
         end
@@ -145,8 +146,7 @@ module DFKI
                 'pose' => pose_tag
             )
 
-
-
+            define 'sonar_feature_detector', Localization::SonarFeatureDetectorCmp
 
 
             ################# Basic Movements #########################
@@ -182,7 +182,7 @@ module DFKI
                 'pose_blind' => pose_blind_tag,
             ).use_frames(
                 'body' => 'body',
-                'odometry' => 'map_halle',
+                'odometry' => 'map_sauce',
                 'sonar' => 'sonar'
             )
 
@@ -223,7 +223,7 @@ module DFKI
             )
             
             define 'drive_simple_new', AuvCont::WorldXYVelocityCmp.use(
-                'pose' => pose_tag, #pose_estimator_def,
+                'pose' => pose_blind_tag, #pose_estimator_def,
                 'joint' => thruster_tag,
                 'controller' => AuvControl::JoystickCommandCmp.use(
                         'orientation_with_z' => orientation_with_z_tag,
@@ -245,15 +245,17 @@ module DFKI
                 'camera' => down_looking_camera_tag,
             )
 
-            define 'structure_inspection', AuvCont::WorldXYVelocityCmp.use(
+            define 'structure_inspection', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
-                'controller' => structure_detector_def
+                'controller' => structure_detector_def,
+                'main' => structure_detector_def
             )
 
             define 'structure_alignment', AuvCont::StructureCmp.use(
                 'pose' => pose_tag,
                 'joint' => thruster_tag,
+                'main' => structure_align_detector_def,
                 'controller' => structure_align_detector_def
             )
 
@@ -263,7 +265,7 @@ module DFKI
                 'bottom_camera' => down_looking_camera_tag
             ).use_frames(
                 'body' => 'body',
-                'world' => 'map_halle',
+                'world' => 'map_sauce',
                 'front_camera' => 'front_camera',
                 'bottom_camera' => 'bottom_camera'
             )
@@ -310,6 +312,18 @@ module DFKI
                 'joint' => thruster_tag
             )
 
+            define 'wall_front_left_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_left'),
+                'joint' => thruster_tag
+            )
+
+            define 'wall_front_right_new', AuvCont::WorldXYPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => wall_detector_new_def.with_conf('wall_front_right'),
+                'joint' => thruster_tag
+            )
+
             define 'trajectory', AuvCont::Trajectory.use(
                 AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'),
                 'joint' => thruster_tag,
@@ -336,6 +350,7 @@ module DFKI
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
                 'pose' => pose_tag,
                 'controller' => wall_buoy_controller_def,
+                #'main' => wall_buoy_controller_def,
                 'joint' => thruster_tag
             )
 
@@ -343,6 +358,13 @@ module DFKI
                 'pose' => pose_tag,
                 'controller' => wall_detector_new_def.with_conf('hold_wall_right'),
                 'joint' => thruster_tag
+            )
+
+            define 'sonar_target_move', AuvCont::WorldPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => sonar_feature_detector_def,
+                'joint' => thruster_tag
+            
             )
 
         end

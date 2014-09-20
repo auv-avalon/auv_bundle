@@ -1,0 +1,61 @@
+--- name:default
+# maximum distance of the measurements to the model line to be considered as inlier
+ransac_max_distance: 0.3
+# minimum amount of inliers the ransac line model should have
+ransac_min_inlier: 0.5
+# maximum allowed sigma of the estimated distance of the wall
+wall_angle_sigma: 0.1
+# amount of wall candidates to check for stability
+wall_candidate_count: 3
+# maximum allowed sigma of the estimated wall angle
+wall_distance_sigma: 0.2
+
+# the initial angle to the wall in the local coordinate frame
+initial_wall_direction:
+  rad: 0.0
+# opening angle to the left of the supposed wall direction, always positive
+left_opening_angle:
+  rad: 1.1
+# opening angle to the right of the supposed wall direction, always positive
+right_opening_angle:
+  rad: 1.1
+
+## Transformer settings
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal odometry frame
+odometry_frame: local_orientation
+# the global name that should be used for the internal sonar frame
+sonar_frame: sonar
+# The target frame in the generated poses
+target_frame: world_orientation
+# the global name that should be used for the internal wall frame
+wall_frame: reference_wall_sauce
+# the global name that should be used for the internal world frame
+world_frame: world_orientation
+
+# Time in s between orientation_samples readings
+orientation_samples_period: 0.01
+# Time in s between sonarbeam_feature readings
+sonarbeam_feature_period: 0.1
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.5
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+
+--- name:wall_left
+initial_wall_direction: 
+  rad: 1.57
+left_opening_angle: 
+  rad: 1.1
+right_opening_angle: 
+  rad: 1.1
+--- name:wall_right
+initial_wall_direction: 
+  rad: -1.57
+left_opening_angle: 
+  rad: 1.1
+right_opening_angle: 
+  rad: 1.1
+
+

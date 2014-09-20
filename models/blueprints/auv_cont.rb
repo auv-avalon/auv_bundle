@@ -85,6 +85,14 @@ module AuvCont
         #provides ::Base::JointsControllerSrv, :as => "command_out"
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
+        event :reached_target
+
+        on :start do |event|
+            if controller_child.respond_to? 'reached_target_event'
+                controller_child.reached_target_event.forward_to reached_target_event
+            end
+        end
+
     end
     class WorldXYVelocityCmp < Syskit::Composition
 
@@ -307,6 +315,11 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+
+        on :start do |event|
+            controller_child.success_event.forward_to success_event
+        end
+
     end
 
 #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => WorldPositionCmp
@@ -440,8 +453,8 @@ module AuvCont
         poll do
             @last_invalid_pose = Time.new if @last_invalid_pose.nil?
             @start_time = Time.now if @start_time.nil?
-            if @start_time.my_timeout?(self.timeout)
-                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + self.timeout}"
+            if @start_time.my_timeout?(timeout)
+                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + timeout}"
                 emit event_on_timeout 
             end
 
@@ -479,8 +492,8 @@ module AuvCont
         
         argument :heading, :default => 0
         argument :depth, :default => -4 
-        argument :x, :default => 0
-        argument :y, :default => 0
+        argument :speed_x, :default => 0
+        argument :speed_y, :default => 0
         argument :timeout, :default => nil
         argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
         argument :event_on_timeout, :default => :success
@@ -506,7 +519,7 @@ module AuvCont
                 @reader = reader_port.reader 
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
-                command_child.update_config(:x => x, :heading => heading, :depth=> depth, :y => y)
+                command_child.update_config(:x => speed_x, :heading => heading, :depth=> depth, :y => speed_y)
                 @last_invalid_post = Time.new
         end
         
@@ -514,48 +527,52 @@ module AuvCont
             @last_invalid_pose = Time.new if @last_invalid_pose.nil?
             @start_time = Time.now if @start_time.nil?
             if @start_time.my_timeout?(self.timeout)
-                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + self.timeout}"
+                Robot.info  "Finished Simple Move because time is over! #{@start_time} #{@start_time + timeout}"
                 emit event_on_timeout 
             end
 
-            if finish_when_reached
-                if @reader
-                    if pos = @reader.read
-                        if 
-                            pos.position[0].x_in_range(x,delta_xy) and
-                            pos.position[1].y_in_range(y,delta_xy) and
-                            pos.position[2].depth_in_range(depth,delta_z) and
-                            pos.orientation.yaw.angle_in_range(heading,delta_yaw)
-                                @reached_position = true
-                                if @last_invalid_pose.delta_timeout?(delta_timeout) 
-                                    Robot.info "Hold Position, recalculating"
-                                    emit :success
-                                end
-                        else
-                            if @reached_position
-                                Robot.info "################### Bad Pose! ################" 
-                            end
-                            @last_invalid_pose = Time.new
-                            @reached_position = false
-                        end
-                    end
-                end
-            end
         end
 
     end
 
 
     class StructureCmp < WorldXYVelocityCmp 
-
         event :aligned
         event :aligning
 
+        add_main Base::WorldXYVelocityControllerSrv, as: 'main'
+        overload 'controller', main_child
+
+
         on :aligned do
+            ::Robot.info "ALIGNED!!!!!"
             emit aligned_event
         end
 
         on :aligning do
+            ::Robot.info "-------------ALIGNING!!!!!"
+            emit aligning_event
+        end
+
+
+        
+    end
+
+    class BuoyWallCmp < WorldXYZPositionCmp 
+        event :aligned
+        event :aligning
+
+        add_main Base::WorldXYZPositionControllerSrv, as: 'main'
+        overload 'controller', main_child
+
+
+        on :aligned do
+            ::Robot.info "ALIGNED!!!!!"
+            emit aligned_event
+        end
+
+        on :aligning do
+            ::Robot.info "-------------ALIGNING!!!!!"
             emit aligning_event
         end
 

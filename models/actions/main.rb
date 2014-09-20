@@ -3,16 +3,16 @@ require 'models/actions/core'
 MISSION = "TESTBED"
 
 
-START_MOVE =   Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0})
-TO_STRUCTURE = Hash.new({:timeout => 300, :depth => -2.5, :x => 3.0, :y=> 0})
-
-if MISSION == "SAUCE"
-    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 }
-elsif MISSION == "TESTBED"
-    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => 50, :y => 0}
-elsif
-    raise "Invalid mission selection"
-end
+#START_MOVE =   Hash.new({:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout_s => 30})
+#TO_STRUCTURE = Hash.new({:timeout => 300, :depth => -2.5, :x => 3.0, :y=> 0})
+#
+#if MISSION == "SAUCE"
+#    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => -30, :y => 3 }
+#elsif MISSION == "TESTBED"
+#    WALL_START_MOVE = {:finish_when_reached => true,  :heading => Math::PI/2.0, :depth => -5, :delta_timeout => 5, :x => 50, :y => 0}
+#elsif
+#    raise "Invalid mission selection"
+#end
 
 
 class Main
@@ -311,58 +311,133 @@ class Main
         forward blind2.success_event, success_event
     end
 
-    #describe("search for structure and align on it")
-    #state_machine "search_structure" do
-    #    to_structure = state target_move_new_def(TO_STRUCTURE)
-    #    searching_structure = state structure_align_detector_def
-    #    aligner = state structure_alignment_def
+    describe("search for structure and align on it")
+    state_machine "search_structure" do
+        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45.0, :y=> 25, :heading => Math::PI/2)
+        searching_structure = state structure_align_detector_def
+        aligner = state structure_alignment_def
 
-        #to_structure.depends_on search_structure, :role => "search_structure"
-    #    searching_structure.depends_on to_structure
-        #to = search_structure.to_structure_task
-        #searching_structure.on :stop do |event|
-        #    to.remove_planned_task(to.to_task)
-        #end
+        to_structure.depends_on searching_structure, :role => "search_structure"
 
-        #start(searching_structure)
-        #TODO kacke
-#        aligner.depends_on search_structure
-        #transition(searching_structure.aligning_event, aligner)
+        start(to_structure)
+        transition(to_structure, searching_structure.aligning_event, aligner)
         
-        #forward search_structure.aligned_event, success_event
-        #forward aligner, aligner.aligned_event, success_event
-        #forward search_structure.aligned_event, success_event
-    #end
+        forward aligner.aligned_event, success_event
+        forward to_structure, searching_structure.aligned_event, success_event
+    end
+    
+    describe("find_blackbox")
+    state_machine "find_blackbox" do
+      
+      #create multiple waypoints to explore the environment
+      explore = state explore_map
+      surface = state target_move_new_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
+      map_fix = state fix_map_hack
+      search = state search_blackbox
+      
+      buoy_detector = state buoy_detector_def
+      localization = state localization_def
+      sonar_target_move = state sonar_target_move_def, :role => "sonar_detector"
+      
+      search.depends_on localization
+      search.depends_on buoy_detector
+      explore.depends_on localization
+      map_fix.depends_on localization
+      sonar_target_move.depends_on localization      
+      
+      start explore
+      
+      transition explore.success_event, map_fix
+      transition map_fix.success_event, sonar_target_move 
+      transition sonar_target_move.reached_target_event, search 
+      transition search.success_event, sonar_target_move 
+      
+      transition search, buoy_detector.buoy_detected_event, surface 
+            
+      forward surface.success_event, success_event
+      
+    end    
+    
 
     #describe("Passing validation-gate with localization")
     #state_machine "gate_with_localization" do 
 #
 #    end
 
+    
     describe("Passing validation-gate without localization")
     state_machine "gate_without_localization" do
-        dive = state simple_move_new_def(START_MOVE)
-        #s_search_structure = state search_structure
-        #gate_passing = state blind_forward_and_back(:time => 3, :speed => 1.0, :heading => 0, :depth => -4)
-        #to_wall = state target_move_new_def(WALL_START_MOVE) 
-        #wall  = state wall_right_new_def(:num_corners => 1)
+        dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
+        s_search_structure = state search_structure
+        #TODO Avalon does not seems to pass the gate
+        gate_passing = state blind_forward_and_back(:time => 20, :speed => 1.0, :heading => -Math::PI, :depth => -4)
 
         start(dive)
-        #transition(dive.success_event, s_search_structure)
-        #transition(s_search_structure.success_event, gate_passing)
+        transition(dive.success_event, s_search_structure)
+        transition(s_search_structure.success_event, gate_passing)
+        forward gate_passing.success_event, success_event
         #transition(gate_passing.success_event, to_wall)
         #transition(to_wall.success_event, wall)
         #forward wall.success_event, success_event
     end
 
+    describe("Moving to wall and start wall_servoing")
+    state_machine "wall_with_localization" do
+        #TODO not working here, input missing on controlchain
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => 0, :depth => -1.5, :delta_timeout => 5, :x => -3, :y => 25)#, :delta_xy => 3 ) 
+        wall  = state buoy_wall
+
+        start(to_wall)
+        transition(to_wall.success_event, wall)
+        forward wall.success_event, success_event
+    end
+
+
+    describe("Structure_inspection_dummy")
+    state_machine "structure_inspection" do
+        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
+        inspection = state structure_inspection_def
+
+        find = state structure_detector_def
+
+        back_off.depends_on find
+
+        #inspection.monitor(
+        #    'round',
+        #    inspection.find_port('pose'),
+        #    :rounds => 1).
+        #    trigger_on do |pose|
+        #        pos = pose.yaw
+        #        pos > 1.9 * Math::PI
+        #    end.
+        #    emit inspection.success_event
+
+        start back_off
+        transition back_off, find.servoing_event, inspection
+        forward inspection.success_event, success_event
+    end
+
     describe("We win the SAUC-E")
     state_machine "win" do
+
         gate = state gate_without_localization
+        #gate = state gate_with_localization
 
-        start(gate)
+        structure = state structure_inspection
 
+        wall = state wall_with_localization
 
+        blackbox = state find_blackbox
+
+        start gate
+        transition gate.success_event, structure
+        transition structure.success_event, wall
+        transition wall.success_event, blackbox
+
+        forward blackbox.success_event, success_event
     end
+
+
 
 
 #    describe("Workaround1")

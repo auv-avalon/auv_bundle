@@ -10,7 +10,7 @@ sMax: 256
 # no documentation available for this property
 sMin: 0
 # no documentation available for this property
-steps_per_frame: 1
+steps_per_frame: 0
 # no documentation available for this property
 target_pixel_s: 70000
 # no documentation available for this property
@@ -33,11 +33,20 @@ vMin: 14
 #vMax: 62
 #vMin: 30
 --- name:structure
-hMin: 44
-hMax: 142
-sMin: 68
+steps_per_frame:  0
+hMin: 33
+hMax: 162
+sMin: 65
 sMax: 209
-vMin: 2
-vMax: 254
+vMin: -1.0
+vMax: 225
 blur: 123
-#minFilled: 0.55
+--- name:structure_simulation
+steps_per_frame:  0
+hMin:  40
+hMax: 110
+sMin:  40
+sMax: 110
+vMin:  66
+vMax: 206
+blur: 149

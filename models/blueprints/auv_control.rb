@@ -15,23 +15,23 @@ class Float
         diff = (self-target_angle)
         diff = diff.modulo(Math::PI) if diff > 0
         State.sv_task.delta_heading.write(diff)
-        diff < allowed_delta
+        diff.abs < allowed_delta
     end
     
     def depth_in_range(target_depth, allowed_delta)
         diff = (self-target_depth)
         State.sv_task.delta_depth.write(diff)
-        diff < allowed_delta
+        diff.abs < allowed_delta
     end
     def x_in_range(target_p, allowed_delta)
         diff = (self-target_p)
         State.sv_task.delta_x.write(diff)
-        diff < allowed_delta
+        diff.abs < allowed_delta
     end
     def y_in_range(target_p, allowed_delta)
         diff = (self-target_p)
         State.sv_task.delta_y.write(diff)
-        diff < allowed_delta
+        diff.abs < allowed_delta
     end
 end
 

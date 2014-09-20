@@ -1,0 +1,22 @@
+--- name:default
+# The desired command
+cmd:
+  time:
+    microseconds: 0
+  linear:
+    data:
+    - .nan
+    - .nan
+    - .nan
+  angular:
+    data:
+    - .nan
+    - .nan
+    - .nan
+# no documentation available for this property
+# Positive value for distance to the ground that should be kept
+minimal_ground_distance: 1.5
+# Define wether the property or port is used
+use_as_constant_task: true
+--- name:avoid
+use_as_constant_task: false 

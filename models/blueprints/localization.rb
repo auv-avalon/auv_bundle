@@ -47,6 +47,7 @@ module Localization
         connect ori_child => sonar_estimator_child.orientation_sample_port
         connect ori_child => main_child.orientation_samples_port
         connect sonar_estimator_child.features_out_port => main_child
+        connect sonar_estimator_child.new_feature_port => main_child
         connect hb_child => main_child.thruster_samples_port
         connect hough_child => main_child.pose_update_port
         if ::CONFIG_HACK == 'dagon'

@@ -94,9 +94,9 @@ correctToFirstPosition: true
 # Number of distance bin in sonar beam collected in 1 bin in houghspace
 distancesPerBin: 4
 # bins in sonar beam with fewer entries will be ignored
-filterThreshold: 70
+filterThreshold: 50
 # How much do the sonar peaks accumulate the hough space
-gain: 10
+gain: 8
 # Ignore the vehicle orientation in the line selection algorithm
 ignoreOrientation: true
 # Number of bins of the sonar
@@ -112,7 +112,7 @@ origin_translation:
   - 25.0
   - 0.0
 # Covariance of the estimated position
-pos_covar: 0.1
+pos_covar: 1.5
 # Angular resolution of sonar (in degree)
 sensorAngularResolution: 1.8
 # Angular tolerance of linedetection

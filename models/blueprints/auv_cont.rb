@@ -20,11 +20,24 @@ module AuvCont
 #        input_port 'world_cmd', 'base/LinearAngular6DCommand'
 #        input_port 'Velocity_cmd', 'base/LinearAngular6DCommand'
 #    end
+    
+
+    class ConstantCommandGroundAvoidanceCmp < Syskit::Composition
+        add AuvControl::ConstantCommandGroundAvoidance.with_conf("avoid"), as: 'main'
+        add Base::GroundDistanceSrv, as: 'altimeter'
+        add Base::ZProviderSrv, as: 'depth'
+
+        connect altimeter_child => main_child.altimeter_port
+        connect depth_child => main_child.depth_port
+
+        export main_child.cmd_out_port
+        export main_child.cmd_in_port
+    end
    
     class WorldPositionCmp < Syskit::Composition
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
-        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
+        add AuvCont::ConstantCommandGroundAvoidanceCmp, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
         add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -67,7 +80,7 @@ module AuvCont
         #                   'acceleration_controller' => ['default']
         #
         #connect controller_child.world_cmd_port => world_to_aligned_child.cmd_in_port
-        connect controller_child.world_cmd_port => avoid_child
+        connect controller_child.world_cmd_port => avoid_child.cmd_in_port
         connect avoid_child => world_to_aligned_child.cmd_in_port
         pose_child.connect_to world_to_aligned_child
         pose_child.connect_to aligned_position_controller_child
@@ -89,11 +102,22 @@ module AuvCont
         provides ::Base::JointsCommandSrv, :as => "command_out"
 
         event :reached_target
+        event :servoing_finished
+        event :not_enough_targets
 
         on :start do |event|
             if controller_child.respond_to? 'reached_target_event'
                 controller_child.reached_target_event.forward_to reached_target_event
             end
+            
+            if controller_child.respond_to? 'servoing_finished_event'
+              controller_child.servoing_finished_event.forward_to servoing_finished_event
+            end
+            
+            if controller_child.respond_to? 'not_enough_targets_event'
+              controller_child.not_enough_targets_event.forward_to not_enough_targets_event
+            end
+            
         end
 
     end
@@ -427,7 +451,7 @@ module AuvCont
     end
 
     class PositionMoveCmp < WorldPositionCmp
-        add AuvControl::ConstantCommand, :as => 'command'
+        add AuvControl::ConstantCommand.with_conf("default"), :as => 'command'
         command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         

@@ -333,6 +333,7 @@ class Main
       explore = state explore_map
       surface = state target_move_new_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
       map_fix = state fix_map_hack
+      map_reset = state fix_map_hack
       search = state search_blackbox
       
       buoy_detector = state buoy_detector_def
@@ -341,8 +342,10 @@ class Main
       
       search.depends_on localization
       search.depends_on buoy_detector
+      sonar_target_move.depends_on buoy_detector      
       explore.depends_on localization
       map_fix.depends_on localization
+      map_reset.depends_on localization
       sonar_target_move.depends_on localization      
       
       start explore
@@ -350,7 +353,10 @@ class Main
       transition explore.success_event, map_fix
       transition map_fix.success_event, sonar_target_move 
       transition sonar_target_move.reached_target_event, search 
-      transition search.success_event, sonar_target_move 
+      transition sonar_target_move.servoing_finished_event, map_reset #we finished all targets, but found nothing :-(
+      transition sonar_target_move.not_enough_targets_event, map_reset #exploration finished, but nothing found :-(
+      transition search.success_event, sonar_target_move  #Search finished, but found nothig -> continue with next target      
+      transition map_reset.success_event, explore
       
       transition search, buoy_detector.buoy_detected_event, surface 
             

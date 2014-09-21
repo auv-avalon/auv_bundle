@@ -127,10 +127,6 @@ end
 
 Roby.every(1, :on_error => :disable) do
     status = []
-    if CONFIG_HACK != "simulation"
-        State.pose[position][x] = State.position[x]
-        State.pose[position][y] = State.position[y]
-    end
 
     Robot.warn "WATER INGRESS" if ::State.water_ingress == true
 

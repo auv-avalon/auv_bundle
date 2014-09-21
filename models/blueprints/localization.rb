@@ -126,14 +126,23 @@ module Localization
         end
 #        @position = :position2 
 #        
-        on :start do |ev|
-                @reader = main_child.pose_samples_port.reader
-        end
-        poll do 
-            if @reader
-                if (sample = @reader.read) && !State.nil?
-                    State.position[:x] = sample.position[0]
-                    State.position[:y] = sample.position[1]
+        #on :start do |ev|
+        #        @reader = main_child.pose_samples_port.reader
+#       #         emit @position if @position
+        #end
+        #poll do 
+        #    if !log.nil? && log['particle_detector']
+        #        # We should log!
+        #        
+        #        if @reader 
+        #            if sample = @reader.read
+        #                log['particle_detector']['data'] = sample.position
+        #            end
+        #        end
+        #    end
+        #end
+#            if @reader
+#                if sample = @reader.read
 #                    col = nil
 #                    row= nil
 #                    if (sample.position[0] + basin_width/2.0) < (basin_width/3.0 * 1.0)
@@ -156,9 +165,9 @@ module Localization
 #                        emit new_position
 #                        @position = new_position
 #                    end
-                end
-            end
-        end
+#                end
+#            end
+#        end
     end
 
     class DeadReckoning < Syskit::Composition

@@ -336,7 +336,7 @@ class Main
       map_reset = state fix_map_hack
       search = state search_blackbox
       
-      buoy_detector = state buoy_detector_def
+      buoy_detector = state buoy_detector_bottom_def
       localization = state localization_def
       sonar_target_move = state sonar_target_move_def, :role => "sonar_detector"
       

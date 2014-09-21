@@ -210,6 +210,10 @@ module DFKI
                 'orientation_with_z' => orientation_with_z_tag
             )
 
+            define 'buoy_detector_bottom', Buoy::DetectorCmp.use(
+                'camera' => down_looking_camera_tag, 
+                'orientation_with_z' => orientation_with_z_tag
+            )           
 
             ###     New Stuff now integrated #######################
             define 'simple_move_new', AuvCont::MoveCmp.use(

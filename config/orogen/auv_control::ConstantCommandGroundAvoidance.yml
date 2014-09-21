@@ -15,7 +15,7 @@ cmd:
     - .nan
 # no documentation available for this property
 # Positive value for distance to the ground that should be kept
-minimal_ground_distance: 1.5
+minimal_ground_distance: 0.75
 # Define wether the property or port is used
 use_as_constant_task: true
 --- name:avoid

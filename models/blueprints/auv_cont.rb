@@ -125,7 +125,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
-        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
+        add AuvCont::ConstantCommandGroundAvoidanceCmp, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -201,7 +201,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
-        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
+        add AuvCont::ConstantCommandGroundAvoidanceCmp, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"
@@ -364,7 +364,7 @@ module AuvCont
 
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
-        add AuvControl::ConstantCommandGroundAvoidance, :as => 'avoid'
+        add AuvCont::ConstantCommandGroundAvoidanceCmp, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf('default', 'no_xy'), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf('default', 'no_xy'), :as => "optimal_heading_controller"
         #add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"

@@ -89,7 +89,7 @@ initial_heading: -2.03
 # true if initial heading parameter should be used.
 use_initial_heading: true
 # Initial heading in radians.
-initial_heading: -1.26
+initial_heading: 0.0 #-1.26
 
 #******************************
 #***** Locataion Configs ******

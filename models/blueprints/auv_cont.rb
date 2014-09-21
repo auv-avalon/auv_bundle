@@ -23,7 +23,7 @@ module AuvCont
     
 
     class ConstantCommandGroundAvoidanceCmp < Syskit::Composition
-        add AuvControl::ConstantCommandGroundAvoidance, as: 'main'
+        add AuvControl::ConstantCommandGroundAvoidance.with_conf("avoid"), as: 'main'
         add Base::GroundDistanceSrv, as: 'altimeter'
         add Base::ZProviderSrv, as: 'depth'
 
@@ -37,7 +37,7 @@ module AuvCont
     class WorldPositionCmp < Syskit::Composition
         add ::Base::JointsControlledSystemSrv, :as => "joint"
         add ::Base::PoseSrv, :as => "pose"
-        add AuvCont::ConstantCommandGroundAvoidanceCmp.with_conf("avoid"), :as => 'avoid'
+        add AuvCont::ConstantCommandGroundAvoidanceCmp, :as => 'avoid'
         add AuvControl::WorldToAligned.with_conf("default"), :as => "world_to_aligned"
         add AuvControl::OptimalHeadingController.with_conf("default"), :as => "optimal_heading_controller"
         add AuvControl::PIDController.prefer_deployed_tasks("aligned_position_controller"), :as => "aligned_position_controller"

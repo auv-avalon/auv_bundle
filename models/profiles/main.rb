@@ -43,6 +43,7 @@ module DFKI
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
                 'model' => motion_model_tag,
+                'dvl' => dvl_tag
             )
             
             

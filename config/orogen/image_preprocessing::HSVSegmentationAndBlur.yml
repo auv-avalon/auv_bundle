@@ -1,12 +1,12 @@
 --- name:default
 # no documentation available for this property
-blur: 16 
+blur: 42 
 # no documentation available for this property
-hMax: 78
+hMax: 107
 # no documentation available for this property
-hMin: 18
+hMin: 40
 # no documentation available for this property
-sMax: 256
+sMax: 113
 # no documentation available for this property
 sMin: 0
 # no documentation available for this property
@@ -16,9 +16,9 @@ target_pixel_s: 70000
 # no documentation available for this property
 unsetValue: 0
 # no documentation available for this property
-vMax: 130 
+vMax: 256 
 # no documentation available for this property
-vMin: 14
+vMin: 134
 #--- name:structure
 #blur: 0
 #hMax: 253

@@ -352,7 +352,7 @@ module DFKI
             define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
                 'detector' => wall_buoy_detector_def,
                 'pose' => pose_tag,
-                'wall' => wall_detector_new_def.with_conf('wall_front_left'),
+                'wall' => wall_detector_new_def.with_conf('wall_right'),
             )
 
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(

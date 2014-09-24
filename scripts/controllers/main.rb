@@ -5,6 +5,12 @@ def color(string, *args)
     CONSOLE.color(string, *args)
 end
 
+class TaskDummy
+    def running?
+        false
+    end
+end
+
 # hafenbecken la spezia:
 # 44.095741, 9.865195     östliche Ecke
 
@@ -115,6 +121,41 @@ def process_child_tasks(task)
     end
 end
 
+
+def tryGetTask(name)
+    erg = TaskDummy.new
+    begin
+        erg = Orocos::TaskContext.get(name)
+    rescue Exception => e
+    end
+    erg
+end
+
+State.current_sonar_conf = ['default']
+Roby.every(1, :on_error => :disable) do
+    wall = tryGetTask("wall_servoing") 
+    localization = tryGetTask("uw_particle_localization")
+    sonar = tryGetTask("sonar")
+    
+    if(wall.running?)
+        sonar_conf = ['default','wall_right']
+    else
+        sonar_conf = ['default']
+
+    begin
+        if(sonar.running?)
+            if sonar_conf !=  State.current_sonar_conf
+                ::Robot.info "Reconfiguring sonar to: #{sonar_conf}"
+                sonar.apply_conf(sonar_conf,true)
+                State.current_sonar_conf = sonar_conf
+            end
+        end
+    rescue Exception => e
+        ::Robot.warn "Somethig happening during application of our sonar hack"
+        ::Robot.warn e 
+    end
+end
+    
 Roby.every(1, :on_error => :disable) do
     #STDOUT.puts "Searching for state_machines"
     State.current_state = []

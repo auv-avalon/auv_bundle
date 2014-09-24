@@ -64,7 +64,7 @@ module PoseAuv
 
         estimator_child.with_conf("default", "local_initial_estimator", "Bremen")
         wall_estimation_child.with_conf("default", "wall_right")
-        sonar_child.with_conf("default", "wall_right")
+#        sonar_child.with_conf("default", "wall_right") ##TODO Urgend
 
         sonar_child.connect_to sonar_estimator_child
         imu_child.connect_to estimator_child.imu_orientation_port

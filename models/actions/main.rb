@@ -425,12 +425,14 @@ class Main
     
     describe("Blind Localizaton based qualifyiing")
     state_machine "blind_quali" do
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -2, :timeout => 8)
         to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
         align = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
         gate = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #
         #wall = state wall_right_new_def(:timeout => 150)
 
-        start to 
+        start init 
+        transition init.success_event, to
         transition to.success_event, align 
         transition align.success_event, gate 
         #transition gate.success_event, wall
@@ -455,6 +457,45 @@ class Main
         transition wall.success_event, blackbox
 
         forward blackbox.success_event, success_event
+    end
+
+    describe("We win the SAUC-E")
+    state_machine "WandBoje" do
+
+        wall = state wall_with_localization
+
+        start wall 
+
+        forward wall.success_event, success_event
+    end
+
+    describe("We win the SAUC-E")
+    state_machine "WandBojeJudge" do
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -2, :timeout => 8)
+
+        wall = state wall_with_localization
+
+        start init
+
+        transition init.success_event, wall
+
+        forward wall.success_event, success_event
+    end
+
+    describe("We win the SAUC-E")
+    state_machine "QualiBoje" do
+
+        gate = state blind_quali 
+
+        wall = state wall_with_localization
+
+        move = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 40, :heading => -Math::PI*0.7, :x => -22, :y => 25,  :timeout => 3)
+
+        start gate
+        transition gate.success_event, wall
+        transition wall.success_event, move
+
+        forward move.success_event, success_event
     end
 
 

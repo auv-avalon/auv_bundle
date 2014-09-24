@@ -8,11 +8,11 @@ using_task_library 'sonar_wall_hough'
 using_task_library 'sonar_feature_detector'
 
 
-class TaskDummy
-    def running?
-        false
-    end
-end
+#class TaskDummy
+#    def running?
+#        false
+#    end
+#end
 
 module Localization
 
@@ -80,94 +80,57 @@ module Localization
                                 State.position[:z] = sample.position.z
                             rescue => e 
                                 ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
-                                ::Robot.info "Warn cannot set State-position"
                             end
                         end
                     end
                 end
             end
-
-            begin
-
-            wall_servoing = TaskDummy.new
-            sonar_structure_servoing = TaskDummy.new
-            begin
-                wall_servoing = Orocos::TaskContext.get 'wall_servoing'
-            rescue Exception => e
-            end
-            begin
-                sonar_structure_servoing = Orocos::TaskContext.get 'sonar_structure_servoing'
-            rescue Exception => e
-            end
-            
-            if(wall_servoing.running? && !@sonar_in_use)
-                @sonar_in_use = true
-            end
-
-            if(sonar_structure_servoing.running? && !@sonar_in_use)
-                @sonar_in_use = true
-            end
-            
-
-
-            if(@sonar_in_use && !wall_servoing.running? && !sonar_structure_servoing.running?)
-                #reset sonar config
-                @sonar_in_use = false
-                orocos_t = nil
-                if sonar_child.respond_to?(:orocos_task)
-                    orocos_t = sonar_child.orocos_task
-                else
-                    #Simulation special case
-                    orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
-                end
-
-                orocos_t.apply_conf(['default','sauce'],true)
-            end
-
-            rescue Exception => e
-                ::Robot::error "Something went wrong here, debug this for sonar reconfig hack"
-                ::Robot::error e
-            end
-            
         end
+    end
+
+#            begin
+
+#            wall_servoing = TaskDummy.new
+#            sonar_structure_servoing = TaskDummy.new
+#            begin
+#                wall_servoing = Orocos::TaskContext.get 'wall_servoing'
+#            rescue Exception => e
+#            end
+#            begin
+#                sonar_structure_servoing = Orocos::TaskContext.get 'sonar_structure_servoing'
+#            rescue Exception => e
+#            end
+#            
+#            if(wall_servoing.running? && !@sonar_in_use)
+#                @sonar_in_use = true
+#            end
+#
+#            if(sonar_structure_servoing.running? && !@sonar_in_use)
+#                @sonar_in_use = true
+#            end
+#            
+#
+#
+#            if(@sonar_in_use && !wall_servoing.running? && !sonar_structure_servoing.running?)
+#                #reset sonar config
+#                @sonar_in_use = false
+#                orocos_t = nil
+#                if sonar_child.respond_to?(:orocos_task)
+#                    orocos_t = sonar_child.orocos_task
+#                else
+#                    #Simulation special case
+#                    orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
+#                end
+#
+#                orocos_t.apply_conf(['default'],true)
+#            end
+#
+#            rescue Exception => e
+#                ::Robot::error "Something went wrong here, debug this for sonar reconfig hack"
+#                ::Robot::error e
+#            end
+            
+#        end
 #        @position = :position2 
 #        
         #on :start do |ev|
@@ -212,7 +175,7 @@ module Localization
 #                end
 #            end
 #        end
-    end
+#    end
 
     class DeadReckoning < Syskit::Composition
 	add UwParticleLocalization::MotionModel, :as => 'main'

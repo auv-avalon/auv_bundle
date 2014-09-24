@@ -195,6 +195,13 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+        event :aligned
+        event :aligning
+         on :start do |e|
+
+                controller_child.aligning_event.forward_to aligning_event
+                controller_child.aligned_event.forward_to aligned_event
+         end
     end
     
     class WorldXYPositionCmp < Syskit::Composition
@@ -277,6 +284,7 @@ module AuvCont
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
         on :start do |ev|
+                controller_child.success_event.forward_to success_event
                 @start_time = Time.now
                 Robot.info "Starting Position moving #{self}"
         end
@@ -583,6 +591,7 @@ module AuvCont
 
         end
 
+
     end
 
 
@@ -593,16 +602,16 @@ module AuvCont
         add_main Base::WorldXYVelocityControllerSrv, as: 'main'
         overload 'controller', main_child
 
-
-        on :aligned do
-            ::Robot.info "ALIGNED!!!!!"
-            emit aligned_event
-        end
-
-        on :aligning do
-            ::Robot.info "-------------ALIGNING!!!!!"
-            emit aligning_event
-        end
+#
+#        on :aligned do |e|
+#            emit :aligned
+#            e
+#        end
+#
+#        on :aligning do |e|
+#            emit :aligning
+#            e
+#        end
 
 
         
@@ -616,14 +625,16 @@ module AuvCont
         overload 'controller', main_child
 
 
-        on :aligned do
-            ::Robot.info "ALIGNED!!!!!"
+        on :aligned do |e|
+            ::Robot.info "ALIGNED"
             emit aligned_event
+            e
         end
 
-        on :aligning do
-            ::Robot.info "-------------ALIGNING!!!!!"
+        on :aligning do |e|
+            ::Robot.info "ALIGNING"
             emit aligning_event
+            e
         end
 
 

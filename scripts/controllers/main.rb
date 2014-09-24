@@ -131,16 +131,22 @@ def tryGetTask(name)
     erg
 end
 
-State.current_sonar_conf = ['default']
+State.current_sonar_conf = nil #['default']
 Roby.every(1, :on_error => :disable) do
     wall = tryGetTask("wall_servoing") 
     localization = tryGetTask("uw_particle_localization")
     sonar = tryGetTask("sonar")
+    buoy_on_wall = tryGetTask("sonar")
     
     if(wall.running?)
-        sonar_conf = ['default','wall_right']
+        if buoy_on_wall.running?
+            sonar_conf = ['default']
+        else
+            sonar_conf = ['default','wall_right']
+        end
     else
         sonar_conf = ['default']
+    end
 
     begin
         if(sonar.running?)
@@ -148,6 +154,18 @@ Roby.every(1, :on_error => :disable) do
                 ::Robot.info "Reconfiguring sonar to: #{sonar_conf}"
                 sonar.apply_conf(sonar_conf,true)
                 State.current_sonar_conf = sonar_conf
+            end
+            #Sainity check 
+            if sonar_conf.include?('wall_right')
+                if sonar.config.continous == true
+                    ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                    State.current_sonar_conf = nil #Try to configure again
+                end
+            else
+                if sonar.config.continous == false 
+                    ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                    State.current_sonar_conf = nil #Try to configure again
+                end
             end
         end
     rescue Exception => e

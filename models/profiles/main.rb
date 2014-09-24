@@ -39,7 +39,7 @@ module DFKI
             tag 'dvl', ::Base::DVLSrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
             
-            define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
+            define 'pose_estimator_blind', PoseAuv::PoseEstimatorBlindCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
                 'model' => motion_model_tag,

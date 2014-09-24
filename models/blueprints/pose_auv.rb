@@ -87,14 +87,13 @@ module PoseAuv
         end
     end
 
-    class PoseEstimatorCmp < Syskit::Composition
+    class PoseEstimatorBlindCmp < Syskit::Composition
         argument :reset, :default => false
 
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add Base::OrientationSrv, :as => 'ori'
         add Base::VelocitySrv, :as => 'model'
         add Base::ZProviderSrv, :as => 'depth'
-        add_optional Base::PoseSrv, :as => 'localization'
         add_optional Base::DVLSrv, as: 'dvl'
         #ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
 
@@ -108,12 +107,67 @@ module PoseAuv
 
         connect ori_child => pose_estimator_child.orientation_samples_port
         connect model_child => pose_estimator_child.model_velocity_samples_port
-        connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
         connect depth_child => pose_estimator_child.depth_samples_port
         connect dvl_child => pose_estimator_child.dvl_velocity_samples_port
 
         export pose_estimator_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
+
+        on :start do |e|
+#            begin
+#                a = find_child_from_role('localization')
+#                if a
+#                    a.stop_event.forward_to loclaization_removed_event
+#                    a.failed_event.forward_to loclaization_removed_event
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                    ::Robot.warn "JEEHAAAA"
+#                end
+#            rescue Exception => e
+#            end
+            if self.reset
+                pose_estimator_child.orocos_task.resetState
+            end
+        end
+
+        event :MISSING_TRANSFORMATION
+    end
+    
+    class PoseEstimatorCmp < Syskit::Composition 
+        add_optional Base::PoseSrv, :as => 'localization'
+        argument :reset, :default => false
+
+        add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
+        add Base::OrientationSrv, :as => 'ori'
+        add Base::VelocitySrv, :as => 'model'
+        add Base::ZProviderSrv, :as => 'depth'
+        add_optional Base::DVLSrv, as: 'dvl'
+        #ori_child.prefer_deployed_tasks("ikf_orientation_estimator")
+
+        if ::CONFIG_HACK == 'default'
+            pose_estimator_child.with_conf("default", "avalon", "sauce")
+        elsif ::CONFIG_HACK == 'simulation'
+            pose_estimator_child.with_conf("default", 'avalon', 'sauce')
+        elsif ::CONFIG_HACK == 'dagon'
+            pose_estimator_child.with_conf("default", "dagon", "sauce")
+        end
+
+        connect ori_child => pose_estimator_child.orientation_samples_port
+        connect model_child => pose_estimator_child.model_velocity_samples_port
+        connect depth_child => pose_estimator_child.depth_samples_port
+        connect dvl_child => pose_estimator_child.dvl_velocity_samples_port
+
+        export pose_estimator_child.pose_samples_port
+        provides Base::PoseSrv, :as => 'pose'
+
         on :start do |e|
             if self.reset
                 pose_estimator_child.orocos_task.resetState
@@ -121,6 +175,7 @@ module PoseAuv
         end
 
         event :MISSING_TRANSFORMATION
+        connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
     end
 
 #    class DagonOrientationEstimatorCmp < Syskit::Composition

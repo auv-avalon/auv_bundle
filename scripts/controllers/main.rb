@@ -155,16 +155,18 @@ Roby.every(1, :on_error => :disable) do
                 sonar.apply_conf(sonar_conf,true)
                 State.current_sonar_conf = sonar_conf
             end
-            #Sainity check 
-            if sonar_conf.include?('wall_right')
-                if sonar.config.continous == true
-                    ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
-                    State.current_sonar_conf = nil #Try to configure again
-                end
-            else
-                if sonar.config.continous == false 
-                    ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
-                    State.current_sonar_conf = nil #Try to configure again
+            if CONFIG_HACK != 'simulation'
+                #Sainity check 
+                if sonar_conf.include?('wall_right')
+                    if sonar.config.continous == true
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
+                else
+                    if sonar.config.continous == false 
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
                 end
             end
         end

@@ -498,6 +498,15 @@ class Main
         forward move.success_event, success_event
     end
 
+    describe("only_wall")
+    state_machine "only_wall" do
+        wall_one = state wall_right_new_def(:timeout => 240, :max_corners => 1)
+        wall_two = state wall_right_new_def(:timeout => 20)
+        start wall_one 
+        transition wall_one.success_event, wall_two
+        transition wall_one.failed_event, wall_two
+        forward wall_two.success_event, success_event
+    end
 
     describe("test")
     state_machine "test" do

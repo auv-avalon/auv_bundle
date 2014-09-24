@@ -375,6 +375,15 @@ module DFKI
             
             )
 
+            define 'shout_asv', AuvCont::MoveCmp
+
+            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
+                'pose' => pose_tag           
+            ).use_frames(
+                'map' => 'map_sauce',
+                'gps_utm_zone' => 'world_utm_sauce'
+            )
+
         end
     end
 end

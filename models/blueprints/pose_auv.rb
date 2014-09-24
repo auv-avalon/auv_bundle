@@ -5,6 +5,7 @@ using_task_library "orientation_estimator"
 using_task_library "uw_particle_localization"
 using_task_library 'pose_estimation'
 using_task_library 'wall_orientation_correction'
+using_task_library 'gps_helper'
 
 
 require "rock/models/blueprints/pose"
@@ -12,6 +13,12 @@ require "models/blueprints/auv.rb"
 
 module PoseAuv
 
+    class GPSPositionCmp < Syskit::Composition
+        add_main GpsHelper::MapToGPS, :as => 'map_to_gps'
+        add Base::PoseSrv, :as => 'pose'
+
+        pose_child.connect_to map_to_gps_child.position_samples_port
+    end
 
     class IKFOrientationEstimatorCmp < Syskit::Composition
         #add_main OrientationEstimator::IKF.prefer_deployed_tasks(/ikf_orientation_estimator/), :as => 'estimator'

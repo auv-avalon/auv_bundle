@@ -1,6 +1,6 @@
 --- name:default
 # radius of the buoy in m
-buoy_radius: 0.15
+buoy_radius: 0.2
 # number of frames a buoy is not detected in order to set BUOY_LOST
 buoy_timeout: 20
 # debugging or not?
@@ -18,7 +18,7 @@ hSmooth: 75
 # Buoy hue value.
 hValueMax: 255
 # Buoy hue value.
-hValueMin: 27
+hValueMin: 15 
 # Buoy saturation value.
 houghMaxCircle: 90
 # Buoy hue value.
@@ -60,7 +60,7 @@ use_h: true
 # no documentation available for this property
 use_s: true
 # no documentation available for this property
-use_v: true
+use_v: false
 # Hough threshold.
 vHoughAccumulatorThreshold: 19
 # Hough threshold.
@@ -70,7 +70,7 @@ vSmooth: 23
 # Buoy hue value.
 vValueMax: 255
 # Buoy hue value.
-vValueMin: 183
+vValueMin: 211
 --- name:simulation
 # radius of the buoy in m
 buoy_radius: 0.05

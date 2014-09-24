@@ -28,15 +28,15 @@ def check_for_switch
     
     #####  Checking wether we can start localication or not ############
     if State.lowlevel_state == 5 or State.lowlevel_state == 3 #or State.lowlevel_state == 2
-        if State.localization_task.nil? and new_state
-            nm, _ = Robot.send("localization_def!")
-            State.localization_task = nm.as_service
-        end
+        #if State.localization_task.nil? and new_state
+        #    nm, _ = Robot.send("localization_def!")
+        #    State.localization_task = nm.as_service
+        #end
     else
-        if State.localization_task
-            Roby.plan.unmark_mission(State.localization_task.task)
-            State.localization_task = nil
-        end
+        #if State.localization_task
+        #    Roby.plan.unmark_mission(State.localization_task.task)
+        #    State.localization_task = nil
+        #end
     end
 
 

@@ -30,11 +30,11 @@ def check_for_switch
     if State.lowlevel_state == 5 or State.lowlevel_state == 3 #or State.lowlevel_state == 2
         hb_running = false
         begin
-            t = Oroco::TaskContext.get "hbridge_writer"
+            t = Orocos::TaskContext.get "hbridge_writer"
             hb_running = t.running?
         end
         if State.localization_task.nil? and hb_running
-            nm, _ = Robot.send("localization_def")
+            nm, _ = Robot.send("localization_def!")
             State.localization_task = nm.as_service
         end
     else

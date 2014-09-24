@@ -195,13 +195,13 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
-        event :aligned
-        event :aligning
-         on :start do |e|
+#        event :aligned
+ #       event :aligning
 
-                controller_child.aligning_event.forward_to aligning_event
-                controller_child.aligned_event.forward_to aligned_event
-         end
+#         on :start do |e|
+#                controller_child.aligning_event.forward_to aligning_event
+#                controller_child.aligned_event.forward_to aligned_event
+#         end
     end
     
     class WorldXYPositionCmp < Syskit::Composition

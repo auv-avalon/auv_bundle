@@ -249,6 +249,7 @@ module AuvCont
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
         
         add ::Base::WorldXYPositionControllerSrv, :as => 'controller'
+        argument :timeout, :default => nil
 
 
         #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
@@ -275,6 +276,17 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+        on :start do |ev|
+                @start_time = Time.now
+                Robot.info "Starting Position moving #{self}"
+        end
+        poll do
+            @start_time = Time.now if @start_time.nil?
+            if @start_time.my_timeout?(timeout)
+                Robot.info  "Timeout! #{@start_time} #{@start_time + timeout}"
+                emit success_event 
+            end
+        end
     end
 
     class WorldXYZPositionCmp < Syskit::Composition

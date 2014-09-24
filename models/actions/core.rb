@@ -157,7 +157,7 @@ class Main < Roby::Actions::Interface
     
     describe("This is a workaaround for the monitor usage")
     state_machine "wall_and_buoy" do
-        wall = state wall_front_left_new_def
+        wall = state wall_right_new_def
         detector = state wall_buoy_detector_def 
         detector.depends_on wall, :role => "detector"
         start(detector)

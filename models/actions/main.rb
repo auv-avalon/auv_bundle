@@ -390,7 +390,7 @@ class Main
     describe("Moving to wall and start wall_servoing")
     state_machine "wall_with_localization" do
         #TODO not working here, input missing on controlchain
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => 0, :depth => -1.5, :delta_timeout => 5, :x => -3, :y => 25)#, :delta_xy => 3 ) 
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2, :depth => -1.5, :delta_timeout => 2, :x => -5, :y => 26)#, :delta_xy => 3 ) 
         wall  = state buoy_wall
 
         start(to_wall)
@@ -422,6 +422,20 @@ class Main
         transition back_off, find.servoing_event, inspection
         forward inspection.success_event, success_event
     end
+    
+    describe("Blind Localizaton based qualifyiing")
+    state_machine "blind_quali" do
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
+        gate = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #
+        #wall = state wall_right_new_def(:timeout => 150)
+
+        start to 
+        transition to.success_event, align 
+        transition align.success_event, gate 
+        #transition gate.success_event, wall
+        forward gate.success_event, success_event
+    end
 
     describe("We win the SAUC-E")
     state_machine "win" do
@@ -444,6 +458,18 @@ class Main
     end
 
 
+    describe("test")
+    state_machine "test" do
+
+        move = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 20, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 3)
+        #move = state simple_move_new_def(:timeout => 3)
+        gate = state buoy_wall
+
+        start move
+        transition move.success_event, gate
+
+        forward gate.success_event, success_event
+    end
 
 
 #    describe("Workaround1")

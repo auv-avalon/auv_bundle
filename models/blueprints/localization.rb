@@ -74,9 +74,52 @@ module Localization
                 if sample = @reader.read
                     unless State.nil? 
                         unless State.position.nil?
-                            State.position[:x] = sample.position.x
-                            State.position[:y] = sample.position.y
-                            State.position[:z] = sample.position.z
+                            begin
+                                State.position[:x] = sample.position.x
+                                State.position[:y] = sample.position.y
+                                State.position[:z] = sample.position.z
+                            rescue => e 
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                                ::Robot.info "Warn cannot set State-position"
+                            end
                         end
                     end
                 end

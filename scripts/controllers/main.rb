@@ -129,6 +129,7 @@ Roby.every(1, :on_error => :disable) do
     status = []
 
     Robot.warn "WATER INGRESS" if ::State.water_ingress == true
+    Robot.warn "!!!!!!!   Logging disabled       !!!!" if LOG_DISABLED
 
     add_status(status, "state", "%i", State, :lowlevel_state)
     add_status(status, "sub-state", "%i", State, :lowlevel_substate)

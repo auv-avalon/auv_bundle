@@ -159,7 +159,7 @@ module Localization
                     orocos_t = sonar_child.find_child {|c| c.class == Simulation::Sonar }.orocos_task
                 end
 
-                orocos_t.apply_conf(['default','sauce'],true)
+                orocos_t.apply_conf(['default'],true)
             end
 
             rescue Exception => e

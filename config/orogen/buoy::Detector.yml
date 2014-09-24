@@ -10,17 +10,17 @@ debug_gui: true
 # the time in s how long a buoy of the past is noticed by the filter.
 filter_timeout: 1.5
 # Hough threshold.
-hHoughAccumulatorThreshold: 19
+hHoughAccumulatorThreshold: 40
 # Hough threshold.
-hHoughEdgeThreshold: 19
+hHoughEdgeThreshold: 30
 # no documentation available for this property
 hSmooth: 75
 # Buoy hue value.
 hValueMax: 255
 # Buoy hue value.
-hValueMin: 15 
+hValueMin: 25 
 # Buoy saturation value.
-houghMaxCircle: 90
+houghMaxCircle: 130
 # Buoy hue value.
 houghMinCircle: 40
 # no documentation available for this property
@@ -46,9 +46,9 @@ roi_x: 0.0
 # for light detection: relative region of interrest koordinate as factor of buoy-radius
 roi_y: 0.2
 # Hough threshold.
-sHoughAccumulatorThreshold: 19
+sHoughAccumulatorThreshold: 40
 # Hough threshold.
-sHoughEdgeThreshold: 19
+sHoughEdgeThreshold: 30
 # no documentation available for this property
 sSmooth: 75
 # Buoy saturation value.
@@ -60,7 +60,7 @@ use_h: true
 # no documentation available for this property
 use_s: true
 # no documentation available for this property
-use_v: false
+use_v: true
 # Hough threshold.
 vHoughAccumulatorThreshold: 19
 # Hough threshold.
@@ -70,7 +70,7 @@ vSmooth: 23
 # Buoy hue value.
 vValueMax: 255
 # Buoy hue value.
-vValueMin: 211
+vValueMin: 200
 --- name:simulation
 # radius of the buoy in m
 buoy_radius: 0.05

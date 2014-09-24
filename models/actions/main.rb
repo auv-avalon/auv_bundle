@@ -506,7 +506,7 @@ class Main
         transition wall_one.success_event, wall_two
         transition wall_one.failed_event, wall_two
         forward wall_two.success_event, success_event
-    end
+                            end
 
     describe("test")
     state_machine "test" do
@@ -521,56 +521,193 @@ class Main
         forward gate.success_event, success_event
     end
 
+    describe("quali")
+    state_machine "wall" do
 
-#    describe("Workaround1")
-#    state_machine "wa1" do
-#        s1 = state drive_to_pipeline
-#        detector = state pipeline_detector_def
-#        detector.depends_on s1
-#        start detector
-#        forward detector.align_auv_event, success_event
+        wall = state wall_right_def
+
+        start wall
+
+        forward wall.success_event, success_event
+    end
+
+    #TODO in Core weil gibt es schon
+#    describe("quali")
+#    state_machine "wall_buoy" do
+#
+#        wall = state buoy_wall
+#
+#        start wall
+#
+#        forward wall.success_event, success_event
 #    end
 
-#    describe("Find pipeline localization based, and to a infinite pipe-ping-pong on it")
-#    state_machine "start_pipe_loopings" do
+
+    describe("quali")
+    state_machine "wall_buoy_wall" do
+
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        search_continue = state wall_continue #wall_right_def
+
+        start search
+
+        transition(search.success_event, buoy)
+        transition(buoy.success_event, search_continue)
+
+        forward search.success_event, success_event
+    end
+
+
+    describe("quali mit targetmove")
+    state_machine "target_wall" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        wall = state wall_right_def
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+
+        start to
+        transition to.success_event, wall
+        transition wall.success_event, back
+
+        forward back.success_event, success_event
+    end
+
+    describe("buoy wall")
+    state_machine "target_wall_buoy" do
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        start to 
+        transition to.success_event, search
+        transition(search.success_event, buoy)
+        transition buoy.success_event, back
+        forward back.success_event, success_event
+    end
+
+    describe("quali")
+    state_machine "target_wall_buoy_wall" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        search_continue = state wall_continue #wall_right_def
+
+        start to 
+        transition to.success_event, search
+        transition(search.success_event, buoy)
+        transition(buoy.success_event, search_continue)
+        transition search_continue.success_event, back
+
+        forward back.success_event, success_event
+    end
+    
+
+    describe("quali")
+    state_machine "wall_buoy_asv_wall" do
+
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        shout = state shout_asv_def
+        search_continue = state wall_continue #all_right_def
+
+        start search
+
+        transition(search.success_event, buoy)
+        transition(buoy.success_event, shout)
+        transition(shout.success_event, search_continue)
+
+        forward search.success_event, success_event
+    end
+
+    describe("quali")
+    state_machine "target_wall_buoy_wall" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        shout = state shout_asv_def
+        search_continue = state wall_continue #wall_right_def
+
+        start to 
+        transition to.success_event, search
+        transition(search.success_event, buoy)
+        transition(buoy.success_event, shout)
+        transition(shout.success_event, search_continue)
+        transition search_continue.success_event, back
+
+        forward back.success_event, success_event
+    end
+
+# WALL TEIL FERTIG
+# # Structure Teil
 #
-#        detector = state trajectory_move_def(:target => "pipeline")
-#        #turn = state simple_move_def(:heading => -Math::PI, :timeout => 5)
-#
-#        pipeline1 = state pipe_ping_pong(:post_heading => 0)
-#        pipeline2 = state pipe_ping_pong(:post_heading => 0)
-#
-#        start detector
-#
-#        transition(detector.success_event, pipeline1)
-##        transition(turn.success_event, pipeline1)
-#        transition(pipeline1.success_event, pipeline2)
-#        transition(pipeline2.success_event, pipeline1)
-#    end
+    
+    describe("quali")
+    state_machine "structure" do
+
+        structure = state structure_inspection_def
+
+        start structure
+
+        forward structure.success_event, success_event
+    end
+
+    describe("quali")
+    state_machine "structure" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        structure = state structure_inspection_def
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
+
+        start to
+        transition to.success_event, structure
+        transition structure.success_event, back
+
+        forward back.success_event, success_event
+    end
+
+
+    ### Structure Teil fertig
+    ### Blackbox Teil
+    #
+
+
+    describe("quali")
+    state_machine "box" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
+        back = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
+        box_found = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
+
+        start to
+        transition to.success_event, box_found
+        transition box_found.success_event, back
+
+        forward back.success_event, success_event
+    end
+
+    describe("quali")
+    state_machine "box_search" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
+        back = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
+        box_search = state buoy_detector_bottom_def 
+
+        start to
+        transition to.success_event, box_search
+        transition box_search.success_event, back
+
+        forward back.success_event, success_event
+    end
 
 end
 
-#module FailureHandling
-#    class Operator < Roby::Coordination::FaultResponseTable
-#        describe("waits for the operator to do something").
-#            returns(WaitForOperator)
-#        def wait_for_operator
-#            WaitForOperator.new
-#        end
-#        # This is a catch-all that makes the system stop doing anything until an
-#        # operator comes
-#        on_fault Roby::LocalizedError do
-#            wait_for_operator!
-#        end
-#    end
-#end
-#
-#module HBridgeFailure
-#    class Retry
-#        on_fault with_origin(HBrigde.timeout_event) do
-##            retry
-#        end
-#
-#
-#    end
-#end
+
+
+
+
+

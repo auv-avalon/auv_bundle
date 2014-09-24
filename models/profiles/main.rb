@@ -375,6 +375,8 @@ module DFKI
             
             )
 
+            define 'shout_asv', AuvCont::MoveCmp
+
         end
     end
 end

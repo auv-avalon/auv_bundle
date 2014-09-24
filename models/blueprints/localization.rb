@@ -85,8 +85,10 @@ module Localization
                     end
                 end
             end
+        end
+    end
 
-            begin
+#            begin
 
 #            wall_servoing = TaskDummy.new
 #            sonar_structure_servoing = TaskDummy.new
@@ -128,7 +130,7 @@ module Localization
 #                ::Robot::error e
 #            end
             
-        end
+#        end
 #        @position = :position2 
 #        
         #on :start do |ev|
@@ -173,7 +175,7 @@ module Localization
 #                end
 #            end
 #        end
-    end
+#    end
 
     class DeadReckoning < Syskit::Composition
 	add UwParticleLocalization::MotionModel, :as => 'main'

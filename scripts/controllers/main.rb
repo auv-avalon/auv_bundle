@@ -141,6 +141,7 @@ Roby.every(1, :on_error => :disable) do
         sonar_conf = ['default','wall_right']
     else
         sonar_conf = ['default']
+    end
 
     begin
         if(sonar.running?)

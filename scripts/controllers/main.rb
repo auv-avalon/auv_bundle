@@ -46,12 +46,20 @@ def lon(x, y)
     m2gps(x,y)[1]
 end
 
+def sanitize(string)
+    if string.nil? 
+        return ""
+    end
+    string.gsub!(' (', ':')
+    string.gsub!(')', ';')
+end
+
 def sauce_log
 #    ::Robot.info State.time
 #    ::Robot.info State.position
 #    ::Robot.info State.current_state
     begin 
-    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{State.current_state[0]})\n"
+    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{sanitize(State.current_state[0])})\n"
     rescue Exception => e
         ::Robot.info "Got here #{e}"
         return e
@@ -131,16 +139,22 @@ def tryGetTask(name)
     erg
 end
 
-State.current_sonar_conf = ['default']
+State.current_sonar_conf = nil #['default']
 Roby.every(1, :on_error => :disable) do
     wall = tryGetTask("wall_servoing") 
     localization = tryGetTask("uw_particle_localization")
     sonar = tryGetTask("sonar")
+    buoy_on_wall = tryGetTask("sonar")
     
     if(wall.running?)
-        sonar_conf = ['default','wall_right']
+        if buoy_on_wall.running?
+            sonar_conf = ['default']
+        else
+            sonar_conf = ['default','wall_right']
+        end
     else
         sonar_conf = ['default']
+    end
 
     begin
         if(sonar.running?)
@@ -148,6 +162,20 @@ Roby.every(1, :on_error => :disable) do
                 ::Robot.info "Reconfiguring sonar to: #{sonar_conf}"
                 sonar.apply_conf(sonar_conf,true)
                 State.current_sonar_conf = sonar_conf
+            end
+            if CONFIG_HACK != 'simulation'
+                #Sainity check 
+                if sonar_conf.include?('wall_right')
+                    if sonar.config.continous == true
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
+                else
+                    if sonar.config.continous == false 
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
+                end
             end
         end
     rescue Exception => e

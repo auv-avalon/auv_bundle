@@ -145,7 +145,7 @@ module Wall
 
         on :detected_corner do |e|
             self.corner_passed!
-            Robot.info "Passed a corner, have passed #{self.num_corners}"
+            Robot.info "Passed a corner, have passed #{self.num_corners} corners"
         end
 
         poll do

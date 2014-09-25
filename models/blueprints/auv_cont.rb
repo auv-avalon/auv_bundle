@@ -195,13 +195,13 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
-        event :aligned
-        event :aligning
-         on :start do |e|
+#        event :aligned
+ #       event :aligning
 
-                controller_child.aligning_event.forward_to aligning_event
-                controller_child.aligned_event.forward_to aligned_event
-         end
+#         on :start do |e|
+#                controller_child.aligning_event.forward_to aligning_event
+#                controller_child.aligned_event.forward_to aligned_event
+#         end
     end
     
     class WorldXYPositionCmp < Syskit::Composition
@@ -241,6 +241,7 @@ module AuvCont
             acceleration_controller_child.with_conf('default', 'all_thruster_huelle')
         end
         add AuvControl::AlignedToBody, :as => "aligned_to_body"
+        add_main ::Base::WorldXYPositionControllerSrv, :as => 'controller'
 #        add Base::WorldXYZRollPitchYawControllerSrv, :as => "command"
 #        command_child.prefer_deployed_tasks("constant_command")
         
@@ -255,8 +256,8 @@ module AuvCont
 
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
         
-        add ::Base::WorldXYPositionControllerSrv, :as => 'controller'
         argument :timeout, :default => nil
+        argument :corners, :default => nil
 
 
         #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
@@ -283,16 +284,36 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+
+        event :detected_corner
+#
         on :start do |ev|
                 controller_child.success_event.forward_to success_event
                 @start_time = Time.now
+                @num_corners = 0 
                 Robot.info "Starting Position moving #{self}"
         end
+
+        def corner_passed!
+            @num_corners = @num_corners + 1 
+        end
+
+        on :detected_corner do |e|
+            self.corner_passed!
+            Robot.info "Passed a corner, have passed #{@num_corners}"
+        end
+
         poll do
             @start_time = Time.now if @start_time.nil?
             if @start_time.my_timeout?(timeout)
                 Robot.info  "Timeout! #{@start_time} #{@start_time + timeout}"
-                emit success_event 
+                emit :success 
+            end
+            if(self.corners)
+                if(@num_corners == self.corners)
+                    Robot.info "Wall servoing succssfull get all #{self.corners} corners"
+                    emit :success
+                end
             end
         end
     end

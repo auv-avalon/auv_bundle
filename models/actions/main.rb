@@ -390,7 +390,7 @@ class Main
     describe("Moving to wall and start wall_servoing")
     state_machine "wall_with_localization" do
         #TODO not working here, input missing on controlchain
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2, :depth => -1.5, :delta_timeout => 2, :x => -5, :y => 26)#, :delta_xy => 3 ) 
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2, :depth => -1.5, :delta_timeout => 2, :x => -3, :y => 26.5)#, :delta_xy => 3 ) 
         wall  = state buoy_wall
 
         start(to_wall)
@@ -524,7 +524,7 @@ class Main
     describe("quali")
     state_machine "wall" do
 
-        wall = state wall_right_def
+        wall = state wall_right_new_def(:timeout => 300, :corners => 1)
 
         start wall
 
@@ -562,8 +562,8 @@ class Main
     describe("quali mit targetmove")
     state_machine "target_wall" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
-        wall = state wall_right_def
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.33, :x => -5, :y => 26.5,  :timeout => 60)
+        wall = state wall_right_new_def(:timeout => 300, :max_corners => 1)
         back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
 
         start to

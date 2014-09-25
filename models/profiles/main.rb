@@ -366,7 +366,7 @@ module DFKI
 
             define 'wall_right_hold_pos', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
-                'controller' => wall_detector_new_def.with_conf('hold_wall_right'),
+                'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
             )
 

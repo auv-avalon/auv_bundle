@@ -21,17 +21,17 @@ class Main
         
         detector = state wall_detector_new_def#.with_conf('hold_wall_right') ##TODO URGEND
         init_wall = state wall_right_hold_pos_def
-        hold_wall = state wall_right_hold_pos_def
+        #hold_wall = state wall_right_hold_pos_def
         init_wall.depends_on detector, :role => "foo"
         heading_estimator = state initial_orientation_estimator_def
-        heading_estimator.depends_on hold_wall, :role => "fasel"
+        heading_estimator.depends_on init_wall #hold_wall, :role => "fasel"
 
         start(init_wall)
         transition(init_wall, detector.wall_servoing_event, heading_estimator)
         
-        forward heading_estimator.failed_event, failed_event
-        forward init_wall.failed_event, failed_event
-        forward hold_wall.failed_event, failed_event
+        #forward heading_estimator.failed_event, failed_event
+        #forward init_wall.failed_event, failed_event
+        #forward hold_wall.failed_event, failed_event
         forward heading_estimator.success_event, success_event
 
     end
@@ -402,11 +402,12 @@ class Main
     describe("Structure_inspection_dummy")
     state_machine "structure_inspection" do
         back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
+        move = state target_move_new_def(:x => -22.5, :y => 25, :delta_timeout => 5, :timeout => 120, :depth => -2)
         inspection = state structure_inspection_def
 
         find = state structure_detector_def
 
-        back_off.depends_on find
+        move.depends_on find
 
         #inspection.monitor(
         #    'round',
@@ -419,7 +420,8 @@ class Main
         #    emit inspection.success_event
 
         start back_off
-        transition back_off, find.servoing_event, inspection
+        transition back_off.success_event, move
+        transition move, find.servoing_event, inspection
         forward inspection.success_event, success_event
     end
     
@@ -438,25 +440,48 @@ class Main
         #transition gate.success_event, wall
         forward gate.success_event, success_event
     end
+    describe("quali")
+    state_machine "target_wall_buoy_wall" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
+        search = state wall_and_buoy
+        #buoy = state wall_buoy_survey_def 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+        search_continue = state wall_continue #wall_right_def
+        search_continue2 = state wall_right_new_def(:timeout => 20)
+
+        start to 
+        transition to.success_event, align
+        transition align.success_event, search
+        transition(search.success_event, buoy)
+        transition(buoy.success_event, search_continue)
+        transition search_continue.success_event, search_continue2
+        transition search_continue2.success_event, back
+
+        forward back.success_event, success_event
+    end
 
     describe("We win the SAUC-E")
     state_machine "win" do
 
-        gate = state gate_without_localization
+        #gate = state gate_without_localization
         #gate = state gate_with_localization
+        gate = state blind_quali
 
         structure = state structure_inspection
 
-        wall = state wall_with_localization
+        wall = state target_wall_buoy_wall
 
-        blackbox = state find_blackbox
+        #blackbox = state find_blackbox
 
         start gate
-        transition gate.success_event, structure
-        transition structure.success_event, wall
-        transition wall.success_event, blackbox
+        transition gate.success_event, wall
+        #transition structure.success_event, wall
+        transition wall.success_event, structure 
 
-        forward blackbox.success_event, success_event
+        forward structure.success_event, success_event
     end
 
     describe("We win the SAUC-E")
@@ -508,18 +533,29 @@ class Main
         forward wall_two.success_event, success_event
                             end
 
-    describe("test")
-    state_machine "test" do
-
-        move = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 20, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 3)
-        #move = state simple_move_new_def(:timeout => 3)
-        gate = state buoy_wall
-
-        start move
-        transition move.success_event, gate
-
-        forward gate.success_event, success_event
-    end
+#    describe("test")
+#    state_machine "test" do
+#
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#        move = state simple_move_new_def(:timeout => 3)
+#
+#        start move
+#        transition move.success_event, move1 
+#        transition move1.success_event, move2 
+#        transition move2.success_event, move3 
+#        transition move3.success_event, move4 
+#        transition move4.success_event, move5 
+#        transition move5.success_event, move6 
+#        transition move6.success_event, move7 
+#
+#        forward move7.success_event, success_event
+#    end
 
     describe("quali")
     state_machine "wall" do
@@ -555,7 +591,7 @@ class Main
         transition(search.success_event, buoy)
         transition(buoy.success_event, search_continue)
 
-        forward search.success_event, success_event
+        forward search_continue.success_event, success_event
     end
 
 
@@ -577,7 +613,8 @@ class Main
     state_machine "target_wall_buoy" do
         to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
-        buoy = state wall_buoy_survey_def 
+        #buoy = state wall_buoy_survey_def 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
         back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
         start to 
         transition to.success_event, search
@@ -590,16 +627,21 @@ class Main
     state_machine "target_wall_buoy_wall" do
 
         to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
-        buoy = state wall_buoy_survey_def 
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        #buoy = state wall_buoy_survey_def 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
         search_continue = state wall_continue #wall_right_def
+        search_continue2 = state wall_right_new_def(:timeout => 20)
 
         start to 
-        transition to.success_event, search
+        transition to.success_event, align
+        transition align.success_event, search
         transition(search.success_event, buoy)
         transition(buoy.success_event, search_continue)
-        transition search_continue.success_event, back
+        transition search_continue.success_event, search_continue2
+        transition search_continue2.success_event, back
 
         forward back.success_event, success_event
     end
@@ -622,25 +664,25 @@ class Main
         forward search.success_event, success_event
     end
 
-    describe("quali")
-    state_machine "target_wall_buoy_wall" do
-
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
-        search = state wall_and_buoy
-        buoy = state wall_buoy_survey_def 
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
-        shout = state shout_asv_def
-        search_continue = state wall_continue #wall_right_def
-
-        start to 
-        transition to.success_event, search
-        transition(search.success_event, buoy)
-        transition(buoy.success_event, shout)
-        transition(shout.success_event, search_continue)
-        transition search_continue.success_event, back
-
-        forward back.success_event, success_event
-    end
+    #describe("quali")
+    #state_machine "target_wall_buoy_wall" do
+#
+#        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+#        search = state wall_and_buoy
+#        buoy = state wall_buoy_survey_def 
+#        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+#        shout = state shout_asv_def
+#        search_continue = state wall_continue #wall_right_def
+#
+#        start to 
+#        transition to.success_event, search
+#        transition(search.success_event, buoy)
+#        transition(buoy.success_event, shout)
+#        transition(shout.success_event, search_continue)
+#        transition search_continue.success_event, back
+#
+#        forward back.success_event, success_event
+#    end
 
 # WALL TEIL FERTIG
 # # Structure Teil

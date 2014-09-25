@@ -144,7 +144,7 @@ Roby.every(1, :on_error => :disable) do
     wall = tryGetTask("wall_servoing") 
     localization = tryGetTask("uw_particle_localization")
     sonar = tryGetTask("sonar")
-    buoy_on_wall = tryGetTask("sonar")
+    buoy_on_wall = tryGetTask("buoy_on_wall")
     
     if(wall.running?)
         if buoy_on_wall.running?

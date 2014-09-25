@@ -40,10 +40,11 @@ module DFKI
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
 	    tag 'altimeter', ::Base::GroundDistanceSrv
             
-            define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
+            define 'pose_estimator_blind', PoseAuv::PoseEstimatorBlindCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
                 'model' => motion_model_tag,
+                'dvl' => dvl_tag
             )
             
             
@@ -353,7 +354,7 @@ module DFKI
             define 'wall_buoy_controller', Buoy::ControllerNewCmp.use(
                 'detector' => wall_buoy_detector_def,
                 'pose' => pose_tag,
-                'wall' => wall_detector_new_def.with_conf('wall_front_left'),
+                'wall' => wall_detector_new_def.with_conf('wall_right'),
             )
 
             define 'wall_buoy_survey', AuvCont::WorldXYZPositionCmp.use(
@@ -374,6 +375,15 @@ module DFKI
                 'controller' => sonar_feature_detector_def,
                 'joint' => thruster_tag
             
+            )
+
+            define 'shout_asv', AuvCont::MoveCmp
+
+            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
+                'pose' => pose_tag           
+            ).use_frames(
+                'map' => 'map_sauce',
+                'gps_utm_zone' => 'world_utm_sauce'
             )
 
         end

@@ -157,16 +157,36 @@ class Main < Roby::Actions::Interface
     
     describe("This is a workaaround for the monitor usage")
     state_machine "wall_and_buoy" do
-        wall = state wall_front_left_new_def
+        wall = state wall_right_new_def(:timeout => 300, :corners => 1)
         detector = state wall_buoy_detector_def 
         detector.depends_on wall, :role => "detector"
         start(detector)
         forward detector.buoy_found_event, success_event
     end
+
+    describe("...")
+    state_machine "wall_continue" do
+        back_off = state simple_move_def(:heading => 0.33, :depth => -1.5, :timeout => 5, :speed_x => 1)
+        wall = state wall_right_def
+
+        start back_off
+        transition back_off.success_event, wall
+        forward wall.success_event, success_event
+    end
     
     #TODO sicherheitsnets
     describe("buoy wall")
     state_machine "buoy_wall" do
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        start search
+        transition(search.success_event, buoy)
+        forward buoy.success_event, success_event
+    end
+
+    #TODO KOPIE wegen Benennung
+    describe("buoy wall")
+    state_machine "wall_buoy" do
         search = state wall_and_buoy
         buoy = state wall_buoy_survey_def 
         start search

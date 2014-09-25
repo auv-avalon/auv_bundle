@@ -4,11 +4,11 @@ enable_debug_output: 1
 # the exploration will simply drive forward in the origin serviong direction
 exploration_speed: 0.1
 # fading out factor for the features in center wall estimator
-fading_out_factor: 0.005 #0.028
+fading_out_factor: 0.01 #0.028
 # epsilon in one meter distance of dbscan algorithm. epsilon will be increased linear by the distance of the features
 #dbscan_epsilon: 0.15 #Not a property????
 # reference depth
-fixed_depth: -2.0
+fixed_depth: -1.2
 # the wall will be in this direction if the wall servoing is performed, default is 0 than the wall is in front
 servoing_wall_direction: 0.0
 # the inital heading of avalon to the wall, default is 0 than the wall is in front
@@ -61,7 +61,7 @@ right_opening_angle: 1.57
 --- name:wall_right
 servoing_wall_direction: -1.57
 initial_wall_direction: -1.57
-servoing_speed: 0.1
+servoing_speed: 1.5
 left_opening_angle: 1.57
 right_opening_angle: 1.1
 --- name:hold_wall_right

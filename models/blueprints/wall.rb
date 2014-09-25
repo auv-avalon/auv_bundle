@@ -30,19 +30,19 @@ module Wall
         provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
 
         conf 'wall_front_left',
-             sonar_child => ['default', 'wall_front'],
+#             sonar_child => ['default', 'wall_front'],
              detector_child => ['default', 'wall_front_left']
         conf 'wall_front_right',
-             sonar_child => ['default', 'wall_front'],
+#             sonar_child => ['default', 'wall_front'],
              detector_child => ['default', 'wall_front_right']
         conf 'wall_right',
-             sonar_child => ['default', 'wall_right'],
+#             sonar_child => ['default', 'wall_right'],
              detector_child => ['default', 'wall_right']
         conf 'wall_left',
-             sonar_child => ['default', 'wall_left'],
+#             sonar_child => ['default', 'wall_left'],
              detector_child => ['default', 'wall_left']
         conf 'hold_wall_right',
-             sonar_child => ['default', 'wall_right'],
+#             sonar_child => ['default', 'wall_right'],
              detector_child => ['default', 'hold_wall_right']
 
         event :wall_servoing
@@ -96,19 +96,19 @@ module Wall
         provides WallServoing::WallOrientationSrv, as: 'wall_ori'
 
         conf 'wall_front_left',
-             sonar_child => ['default', 'wall_front'],
+#             sonar_child => ['default', 'wall_front'],
              detector_child => ['default', 'wall_front_left']
         conf 'wall_front_right',
-             sonar_child => ['default', 'wall_front'],
+#             sonar_child => ['default', 'wall_front'],
              detector_child => ['default', 'wall_front_right']
         conf 'wall_right',
-             sonar_child => ['default', 'wall_right'],
+#             sonar_child => ['default', 'wall_right'],
              detector_child => ['default', 'wall_right']
         conf 'wall_left',
-             sonar_child => ['default', 'wall_left'],
+#             sonar_child => ['default', 'wall_left'],
              detector_child => ['default', 'wall_left']
         conf 'hold_wall_right',
-             sonar_child => ['default', 'wall_right'],
+#             sonar_child => ['default', 'wall_right'],
              detector_child => ['default', 'hold_wall_right']
 
         event :wall_servoing
@@ -122,8 +122,6 @@ module Wall
         argument :max_corners, :default => nil
 
         attr_accessor :num_corners
-        
-                
 
         on :start do |event|
             Robot.info "Starting Wall Servoing"
@@ -147,7 +145,7 @@ module Wall
 
         on :detected_corner do |e|
             self.corner_passed!
-            Robot.info "Passed a corner, have passed #{self.num_corners}"
+            Robot.info "Passed a corner, have passed #{self.num_corners} corners"
         end
 
         poll do
@@ -215,7 +213,7 @@ module Wall
         end
 
         #workaround to access the sonar
-        add Base::SonarScanProviderSrv, :as => 'sonar'
+        #add Base::SonarScanProviderSrv, :as => 'sonar'
 
         on :start do |event|
             Robot.info "Starting Wall Servoing"

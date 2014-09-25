@@ -46,12 +46,17 @@ def lon(x, y)
     m2gps(x,y)[1]
 end
 
+def sanitize(string)
+    string.gsub!(' (', ':')
+    string.gsub!(')', ';')
+end
+
 def sauce_log
 #    ::Robot.info State.time
 #    ::Robot.info State.position
 #    ::Robot.info State.current_state
     begin 
-    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{State.current_state[0]})\n"
+    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{sanitize(State.current_state[0])})\n"
     rescue Exception => e
         ::Robot.info "Got here #{e}"
         return e

@@ -39,8 +39,8 @@ def check_for_switch
         end
     else
         if State.localization_task
-            State.localization_task = nil
             Roby.plan.unmark_mission(State.localization_task.task)
+            State.localization_task = nil
         end
     end
 

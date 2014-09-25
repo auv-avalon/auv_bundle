@@ -63,7 +63,7 @@ module PoseAuv
         event :VALID_WALL_FIX
 
         add_main WallOrientationCorrection::Task, :as => 'wall_estimation'
-        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks("initial_orientation_estimator"), :as => 'estimator'
+        add OrientationEstimator::BaseEstimator.prefer_deployed_tasks("orientation_estimator"), :as => 'estimator'
         add XsensImu::Task, :as => 'imu'
         add FogKvh::Dsp3000Task, :as => 'fog'
         add Base::SonarScanProviderSrv, :as => 'sonar'

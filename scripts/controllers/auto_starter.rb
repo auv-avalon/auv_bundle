@@ -12,13 +12,14 @@ State.localization_task = nil
 State.lowlevel_substate  = -1
 State.lowlevel_state = -1
 State.position = {:x => 0, :y => 0, :z => 0}
+State.gps= {:lat => 0, :lon => 0}
 State.current_action = nil
 State.current_state = ["Initializing"]
 #Define the possible modes that can be set
 #State.navigation_mode = ["drive_simple_def","buoy_def", "pipeline_def", "wall_right_def"]
 
 #State.navigation_mode = [nil,"drive_simple_def","minimal_demo", "minimal_demo_once","target_move_def","buoy_def", "pipeline_def", "wall_right_def", "target_move_def", "pipe_ping_pong","ping_pong_pipe_wall_back_to_pipe","rocking"]
-State.navigation_mode = [nil,"drive_simple_new_def"]
+State.navigation_mode = [nil,"win","drive_simple_new_def"]
 
 def check_for_switch
     new_state = State.navigation_mode[State.lowlevel_substate]

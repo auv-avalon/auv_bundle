@@ -39,6 +39,7 @@ module DFKI
             tag 'orientation', ::Base::OrientationWithZSrv
             tag 'dvl', ::Base::DVLSrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
+	    tag 'altimeter', ::Base::GroundDistanceSrv
             
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorBlindCmp.use(
                 'depth' => depth_tag,
@@ -57,10 +58,15 @@ module DFKI
                 dvl_tag,
                 Base::OrientationWithZSrv => orientation_tag,
                 'hough' => hough_detector_def,
-                'hb' => thruster_feedback_tag#,
+                'hb' => thruster_feedback_tag,
+		'altimeter' => altimeter_tag
 #                'ori' => orientation_with_z_tag#,
                 #'velocity' => nil
+            ).use_frames(
+                'map' => 'map_sauce',
+                'gps_utm_zone' => 'world_utm_sauce'
             )
+
             
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
@@ -365,7 +371,7 @@ module DFKI
 
             define 'wall_right_hold_pos', AuvCont::WorldXYPositionCmp.use(
                 'pose' => pose_tag,
-                'controller' => wall_detector_new_def.with_conf('hold_wall_right'),
+                'controller' => wall_detector_new_def,
                 'joint' => thruster_tag
             )
 
@@ -378,12 +384,12 @@ module DFKI
 
             define 'shout_asv', AuvCont::MoveCmp
 
-            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
-                'pose' => pose_tag           
-            ).use_frames(
-                'map' => 'map_sauce',
-                'gps_utm_zone' => 'world_utm_sauce'
-            )
+#            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
+#                'pose' => pose_tag           
+#            ).use_frames(
+#                'map' => 'map_sauce',
+#                'gps_utm_zone' => 'world_utm_sauce'
+#            )
 
             define 'modem', Modem::ModemCmp.use(
                 'pose' => pose_tag

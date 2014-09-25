@@ -634,7 +634,23 @@ module AuvCont
 #            e
 #        end
 
+        argument :timeout, :default => 60
 
+        attr_reader :start_time
+
+        on :start do |ev|
+                @start_time = Time.now
+                Robot.info "Starting structure moving #{self}"
+        end
+        
+        poll do
+            @start_time = Time.now if @start_time.nil?
+            if @start_time.my_timeout?(self.timeout)
+                Robot.info  "Finished Simple Move because time is over! #{@start_time} #{@start_time + timeout}"
+                emit success_event 
+            end
+
+        end
         
     end
 

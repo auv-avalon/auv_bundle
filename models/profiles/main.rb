@@ -8,6 +8,7 @@ require "models/blueprints/structure"
 require "models/blueprints/localization"
 require "models/blueprints/auv_cont"
 require "models/blueprints/auv_control"
+require "models/blueprints/modem"
 
 
 using_task_library 'controldev'
@@ -382,6 +383,10 @@ module DFKI
             ).use_frames(
                 'map' => 'map_sauce',
                 'gps_utm_zone' => 'world_utm_sauce'
+            )
+
+            define 'modem', Modem::ModemCmp.use(
+                'pose' => pose_tag
             )
 
         end

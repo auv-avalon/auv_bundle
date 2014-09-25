@@ -47,6 +47,9 @@ def lon(x, y)
 end
 
 def sanitize(string)
+    if string.nil? 
+        return ""
+    end
     string.gsub!(' (', ':')
     string.gsub!(')', ';')
 end

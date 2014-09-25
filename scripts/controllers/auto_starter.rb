@@ -12,6 +12,7 @@ State.localization_task = nil
 State.lowlevel_substate  = -1
 State.lowlevel_state = -1
 State.position = {:x => 0, :y => 0, :z => 0}
+State.gps= {:lat => 0, :lon => 0}
 State.current_action = nil
 State.current_state = ["Initializing"]
 #Define the possible modes that can be set

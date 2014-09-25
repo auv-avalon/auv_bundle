@@ -61,7 +61,11 @@ module DFKI
 		'altimeter' => altimeter_tag
 #                'ori' => orientation_with_z_tag#,
                 #'velocity' => nil
+            ).use_frames(
+                'map' => 'map_sauce',
+                'gps_utm_zone' => 'world_utm_sauce'
             )
+
             
             define 'pose_estimator', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
@@ -379,12 +383,12 @@ module DFKI
 
             define 'shout_asv', AuvCont::MoveCmp
 
-            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
-                'pose' => pose_tag           
-            ).use_frames(
-                'map' => 'map_sauce',
-                'gps_utm_zone' => 'world_utm_sauce'
-            )
+#            define 'map_to_gps', PoseAuv::GPSPositionCmp.use(
+#                'pose' => pose_tag           
+#            ).use_frames(
+#                'map' => 'map_sauce',
+#                'gps_utm_zone' => 'world_utm_sauce'
+#            )
 
         end
     end

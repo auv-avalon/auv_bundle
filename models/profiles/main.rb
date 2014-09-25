@@ -38,6 +38,7 @@ module DFKI
             tag 'orientation', ::Base::OrientationWithZSrv
             tag 'dvl', ::Base::DVLSrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
+	    tag 'altimeter', ::Base::GroundDistanceSrv
             
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorCmp.use(
                 'depth' => depth_tag,
@@ -55,7 +56,8 @@ module DFKI
                 dvl_tag,
                 Base::OrientationWithZSrv => orientation_tag,
                 'hough' => hough_detector_def,
-                'hb' => thruster_feedback_tag#,
+                'hb' => thruster_feedback_tag,
+		'altimeter' => altimeter_tag
 #                'ori' => orientation_with_z_tag#,
                 #'velocity' => nil
             )

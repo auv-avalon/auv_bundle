@@ -33,6 +33,7 @@ module Localization
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
+        add_optional ::Base::GroundDistanceSrv, as: 'altimeter'
 
         if ::CONFIG_HACK == 'default'
             main_child.with_conf("nurc", "slam_testhalle")
@@ -56,6 +57,7 @@ module Localization
         end
         connect main_child.pose_samples_port => sonar_detector_child.pose_samples_port
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
+	connect altimeter_child => main_child.echosounder_samples_port 
 
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'

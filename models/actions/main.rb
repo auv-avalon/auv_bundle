@@ -403,7 +403,7 @@ class Main
     state_machine "structure_inspection" do
         back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
         move = state target_move_new_def(:x => -22.5, :y => 25, :delta_timeout => 5, :timeout => 120, :depth => -2)
-        inspection = state structure_inspection_def
+        inspection = state structure_inspection_def(:timeout => 60)
 
         find = state structure_detector_def
 
@@ -427,7 +427,7 @@ class Main
     
     describe("Blind Localizaton based qualifyiing")
     state_machine "blind_quali" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -2, :timeout => 8)
+        init = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2, :depth => -2, :timeout => 8)
         to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
         align = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
         gate = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #

@@ -558,13 +558,25 @@ class Main
         forward search.success_event, success_event
     end
 
+    describe("quali")
+    state_machine "wall_buoy" do
+
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+
+        start search
+
+        transition(search.success_event, buoy)
+
+        forward buoy.success_event, success_event
+    end
 
     describe("quali mit targetmove")
     state_machine "target_wall" do
 
         to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.33, :x => -5, :y => 26.5,  :timeout => 60)
-        wall = state wall_right_new_def(:timeout => 300, :max_corners => 1)
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        wall = state wall_right_new_def(:timeout => 300, :corners => 1)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0 + Math::PI, :x => -22,     :y => 25,  :timeout => 150) 
 
         start to
         transition to.success_event, wall
@@ -578,7 +590,7 @@ class Main
         to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
         buoy = state wall_buoy_survey_def 
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0 + Math::PI, :x => -22,     :y => 25,  :timeout => 150) 
         start to 
         transition to.success_event, search
         transition(search.success_event, buoy)
@@ -592,7 +604,7 @@ class Main
         to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
         buoy = state wall_buoy_survey_def 
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0 + Math::PI, :x => -22,     :y => 25,  :timeout => 150) 
         search_continue = state wall_continue #wall_right_def
 
         start to 

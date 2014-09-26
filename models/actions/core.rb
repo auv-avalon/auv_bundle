@@ -185,6 +185,8 @@ class Main < Roby::Actions::Interface
         forward buoy.success_event, success_event
     end
 
+    
+
     #TODO KOPIE wegen Benennung
     describe("buoy wall")
     state_machine "wall_buoy" do
@@ -304,6 +306,31 @@ class Main < Roby::Actions::Interface
       
     end    
     
+    describe("inspect structure")
+    state_machine "inspect_structure" do
+      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 29.5, :heading => Math::PI)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 23.5, :heading => Math::PI)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 23.5, :heading => Math::PI/2)
+      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 23.5, :heading => Math::PI/2)
+      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 23.5, :heading => 0)
+      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 29.5, :heading => 0)
+      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 29.5, :heading => -Math::PI/2)
+      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 29.5, :heading => -Math::PI/2)
+      
+      start(explore1)
+      
+      transition(explore1.success_event, explore2)
+      transition(explore2.success_event, explore3)
+      transition(explore3.success_event, explore4)
+      transition(explore4.success_event, explore5)
+      transition(explore5.success_event, explore6)
+      transition(explore6.success_event, explore7)
+      transition(explore7.success_event, explore8)
+      
+      forward explore8.success_event, success_event
+      
+    end    
+
     describe("Find_pipe_with_localization").
         optional_arg("check_pipe_angle",false)
     action_state_machine "find_pipe_with_localization" do

@@ -427,7 +427,7 @@ class Main
     
     describe("Blind Localizaton based qualifyiing")
     state_machine "blind_quali" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2, :depth => -2, :timeout => 8)
+        init = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2, :depth => -2, :x_speed => 1, :timeout => 10)
         to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
         align = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
         gate = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #

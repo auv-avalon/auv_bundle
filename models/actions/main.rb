@@ -470,7 +470,7 @@ class Main
         #gate = state gate_with_localization
         gate = state blind_quali
 
-        structure = state structure_inspection
+        structure = state inspect_structure
 
         wall = state target_wall_buoy_wall
 

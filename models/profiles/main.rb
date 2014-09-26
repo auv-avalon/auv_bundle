@@ -391,9 +391,9 @@ module DFKI
 #                'gps_utm_zone' => 'world_utm_sauce'
 #            )
 
-            define 'modem', Modem::ModemCmp.use(
-                'pose' => pose_tag
-            )
+            #define 'modem', Modem::ModemCmp.use(
+            #    'pose' => pose_tag
+            #)
 
         end
     end

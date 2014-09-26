@@ -308,14 +308,14 @@ class Main < Roby::Actions::Interface
     
     describe("inspect structure")
     state_machine "inspect_structure" do
-      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 29.5, :heading => Math::PI)
-      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 23.5, :heading => Math::PI)
-      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 23.5, :heading => Math::PI/2)
-      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 23.5, :heading => Math::PI/2)
-      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 23.5, :heading => 0)
-      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 29.5, :heading => 0)
-      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -24, :y => 29.5, :heading => -Math::PI/2)
-      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 1, :x => -18, :y => 29.5, :heading => -Math::PI/2)
+      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => Math::PI, :timeout => 30)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI, :timeout => 30)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
+      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
+      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => 0, :timeout => 30)
+      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => 0, :timeout => 30)
+      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
+      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
       
       start(explore1)
       

@@ -1,3 +1,4 @@
+=begin
 require 'models/blueprints/localization'
 using_task_library 'modemdriver'
 using_task_library 'modem_position'
@@ -28,3 +29,4 @@ module Modem
 
     end
 end
+=end

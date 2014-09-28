@@ -40,12 +40,21 @@ module DFKI
             tag 'dvl', ::Base::DVLSrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
 	    tag 'altimeter', ::Base::GroundDistanceSrv
+            tag 'gps', ::Base::PositionSrv
             
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorBlindCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
                 'model' => motion_model_tag,
                 'dvl' => dvl_tag
+            )
+
+            define 'pose_estimator_gps', PoseAuv::PoseEstimatorCmp.use(
+                'depth' => depth_tag,
+                'ori' => orientation_tag,
+                'model' => motion_model_tag,
+                'dvl' => dvl_tag,
+                'localization' => gps_tag
             )
             
             
@@ -95,7 +104,6 @@ module DFKI
                 'depth' => pose_blind_tag
             )
 
-            
             ############### DEPRICATED ##########################
             # Define old ControlLoops
             define 'base_loop', Base::ControlLoop.use(

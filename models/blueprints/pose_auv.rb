@@ -149,7 +149,7 @@ module PoseAuv
     end
     
     class PoseEstimatorCmp < Syskit::Composition 
-        add_optional Base::PoseSrv, :as => 'localization'
+        add_optional Base::PositionSrv, :as => 'localization'
         argument :reset, :default => false
 
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
@@ -182,7 +182,7 @@ module PoseAuv
         end
 
         event :MISSING_TRANSFORMATION
-        connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
+        connect localization_child.position_samples_port => pose_estimator_child.xy_position_samples_port
     end
 
 #    class DagonOrientationEstimatorCmp < Syskit::Composition

@@ -813,7 +813,7 @@ class Main
     forward surface_wp4.success_event, success_event
     end
 
-    WAYPOINTS_test = [{:x => -10, :y => 10}, {:x => -10, :y => 15}, {:x => -15, :y => 15}, {:x => -15, :y => 10}, {:x => -10, :y => 10}]
+    WAYPOINTS_test = [{:x => -170, :y => 25}, {:x => -170, :y => 10}, {:x => -200, :y => 10}, {:x => -200, :y => 40}, {:x => -170, :y => 40}]
 
     describe("Long range navigation")
     state_machine("longrangei_test") do

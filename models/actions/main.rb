@@ -758,6 +758,32 @@ class Main
         forward back.success_event, success_event
     end
 
+    describe("Long range navigation")
+    state_machine("longrange") do
+    to_start = state target_move_new_def(:x => WAYPOINTS[0][:x], :y => WAYPOINTS[0][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 480 )
+    surface_start = state simple_move_new_def(:depth => 0.5, :timeout => 15)
+    to_wp1 = state target_move_new_def(:x => WAYPOINTS[1][:x], :y => WAYPOINTS[1][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 900)
+    surface_wp1 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
+    to_wp2 = state target_move_new_def(:x => WAYPOINTS[2][:x], :y => WAYPOINTS[2][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => -Math::PI/2, :timeout => 480)
+    surface_wp2 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
+    to_wp3 = state target_move_new_def(:x => WAYPOINTS[3][:x], :y => WAYPOINTS[3][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => 0, :timeout => 900)
+    surface_wp3 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
+    to_wp4 = state target_move_new_def(:x => WAYPOINTS[4][:x], :y => WAYPOINTS[4][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI/4, :timeout => 480)
+    surface_wp4 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
+
+    start to_start
+    transition to_start.success_event, surface_start
+    transition surface_start.success_event, to_wp1
+    transition to_wp1.success_event, surface_wp1
+    transition surface_wp1.success_event, to_wp2
+    transition to_wp2.success_event, surface_wp2
+    transition surface_wp2.success_event, to_wp3
+    transition to_wp3.success_event, surface_wp3
+    transition surface_wp3.success_event, to_wp4
+    transition to_wp4.success_event, surface_wp4
+    forward surface_wp4.success_event, success_event
+    end
+
 end
 
 

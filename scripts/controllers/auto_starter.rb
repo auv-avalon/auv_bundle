@@ -31,7 +31,13 @@ def check_for_switch
     if State.lowlevel_state == 5 or State.lowlevel_state == 3 #or State.lowlevel_state == 2
         hb_running = false
         begin
-            t = Orocos::TaskContext.get "hbridge_writer"
+            t = nil
+            if ::CONFIG_HACK == 'avalon'
+                t = Orocos::TaskContext.get "hbridge_writer"
+            else
+                t = Orocos::TaskContext.get "dagon_motors_left"
+            end
+
             hb_running = t.running?
         end
         if State.localization_task.nil? and hb_running

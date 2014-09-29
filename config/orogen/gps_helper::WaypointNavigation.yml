@@ -1,0 +1,53 @@
+--- name:default
+# Minimum distance between two consecutive poitions in order to compute a heading offset.
+min_distance_delta: 30.0
+# Minimum time delta in which valid gps data should be available.
+valid_gps_fix_time: 10.0
+# Radius of each waypoint, in which the waypoints will marked as reached.
+waypoint_radius: 30.0
+# Waypoints in map coordinates
+waypoints: []
+
+--- name:long_range_nav
+# Waypoints in map coordinates
+waypoints:
+- data:
+  - -169.77750577195548
+  - 25.02584568876773
+  - -3.0
+- data:
+  - -518.9540244974196
+  - 4.777934763580561
+  - -3.0
+- data:
+  - -511.98275818908587
+  - -127.80487220361829
+  - -3.0
+- data:
+  - -254.6220269454643
+  - -109.86163759976625
+  - -3.0
+- data:
+  - -172.64859561109915
+  - 21.167946573346853
+  - -3.0
+
+--- name:short_range_nav
+waypoints:
+- data:
+  - -10.0
+  - 10.0
+  - -1.0
+- data:
+  - -10.0
+  - 20.0
+  - -1.0
+- data:
+  - -20.0
+  - 20.0
+  - -1.0
+- data:
+  - -20.0
+  - 10.0
+  - -1.0
+

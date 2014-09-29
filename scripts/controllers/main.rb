@@ -14,44 +14,52 @@ end
 # hafenbecken la spezia:
 # 44.095741, 9.865195     östliche Ecke
 
-def m2gps(x, y)
-    from = Gdal::Osr::SpatialReference.new
-    from.set_well_known_geog_cs('WGS84')
-    to = Gdal::Osr::SpatialReference.new
-    to.set_well_known_geog_cs('WGS84')
-    to.set_utm(39, 1)
-    
-    origin_coord = 9.865012886520264,44.09616855137776,0
-    q = Eigen::Quaternion.from_angle_axis( (230) / 180.0 * Math::PI, Eigen::Vector3.UnitZ )
+#def m2gps(x, y)
+#    from = Gdal::Osr::SpatialReference.new
+#    from.set_well_known_geog_cs('WGS84')
+#    to = Gdal::Osr::SpatialReference.new
+#    to.set_well_known_geog_cs('WGS84')
+#    to.set_utm(39, 1)
+#    
+#    origin_coord = 9.865012886520264,44.09616855137776,0
+#    q = Eigen::Quaternion.from_angle_axis( (230) / 180.0 * Math::PI, Eigen::Vector3.UnitZ )
+#
+#    transform = Gdal::Osr::CoordinateTransformation.new(to, from)
+#    transform_inverse = Gdal::Osr::CoordinateTransformation.new(from, to)
+#    origin = transform_inverse.transform_point(origin_coord[1],origin_coord[0],0)
+#
+#    v = Eigen::Vector3.new(x,y,0)
+#    v = q* v
+#    v = v + Eigen::Vector3.new(origin[0], origin[1],0)
+#
+#    erg = transform.transform_point(v[0].to_f, v[1].to_f,0)
+#
+#
+#    return erg[0], erg[1]
+#end
 
-    transform = Gdal::Osr::CoordinateTransformation.new(to, from)
-    transform_inverse = Gdal::Osr::CoordinateTransformation.new(from, to)
-    origin = transform_inverse.transform_point(origin_coord[1],origin_coord[0],0)
+#def lat(x, y)
+#    m2gps(x,y)[0]
+#end
+#
+#def lon(x, y)
+#    m2gps(x,y)[1]
+#end
 
-    v = Eigen::Vector3.new(x,y,0)
-    v = q* v
-    v = v + Eigen::Vector3.new(origin[0], origin[1],0)
-
-    erg = transform.transform_point(v[0].to_f, v[1].to_f,0)
-
-
-    return erg[0], erg[1]
-end
-
-def lat(x, y)
-    m2gps(x,y)[0]
-end
-
-def lon(x, y)
-    m2gps(x,y)[1]
+def sanitize(string)
+    if string.nil? 
+        return ""
+    end
+    string.gsub!(' (', ':')
+    string.gsub!(')', ';')
 end
 
 def sauce_log
 #    ::Robot.info State.time
 #    ::Robot.info State.position
 #    ::Robot.info State.current_state
-    begin 
-    "(#{State.time}, #{lat(State.position[:x], State.position[:y])}, #{lon(State.position[:x],State.position[:y])}, #{State.position[:z] * -1}, #{State.current_state[0]})\n"
+    begin
+    "(#{State.time}, #{State.gps[:lat]}, #{State.gps[:lon]}, #{State.position[:z]}, #{sanitize(State.current_state[0])})\n"
     rescue Exception => e
         ::Robot.info "Got here #{e}"
         return e
@@ -131,16 +139,22 @@ def tryGetTask(name)
     erg
 end
 
-State.current_sonar_conf = ['default']
+State.current_sonar_conf = nil #['default']
 Roby.every(1, :on_error => :disable) do
     wall = tryGetTask("wall_servoing") 
     localization = tryGetTask("uw_particle_localization")
     sonar = tryGetTask("sonar")
+    buoy_on_wall = tryGetTask("buoy_on_wall")
     
     if(wall.running?)
-        sonar_conf = ['default','wall_right']
+        if buoy_on_wall.running?
+            sonar_conf = ['default']
+        else
+            sonar_conf = ['default','wall_right']
+        end
     else
         sonar_conf = ['default']
+    end
 
     begin
         if(sonar.running?)
@@ -148,6 +162,20 @@ Roby.every(1, :on_error => :disable) do
                 ::Robot.info "Reconfiguring sonar to: #{sonar_conf}"
                 sonar.apply_conf(sonar_conf,true)
                 State.current_sonar_conf = sonar_conf
+            end
+            if CONFIG_HACK != 'simulation'
+                #Sainity check 
+                if sonar_conf.include?('wall_right')
+                    if sonar.config.continous == true
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
+                else
+                    if sonar.config.continous == false 
+                        ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
+                        State.current_sonar_conf = nil #Try to configure again
+                    end
+                end
             end
         end
     rescue Exception => e

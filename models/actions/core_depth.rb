@@ -27,16 +27,16 @@ class Main < Roby::Actions::Interface
 
     describe("lawn_mover_over_pipe")
     state_machine "lawn_mover_over_pipe" do
-        s1 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -4, :delta_timeout => 10, :x => -5, :y => 0)
-        s2 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -4, :delta_timeout => 10, :x => -5, :y => 4)
-        s3 = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -4, :delta_timeout => 5)
-        s4 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -4, :delta_timeout => 10, :x => 0, :y => 4)
-        s5 = state simple_move_def(:finish_when_reached => true, :heading => -Math::PI/2.0, :depth => -4, :delta_timeout => 5)
-        s6 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -4, :delta_timeout => 10, :x => 0, :y => 0)
-        s7 = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -4, :delta_timeout => 5)
-        s8 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -4, :delta_timeout => 10, :x => 5, :y => 0)
-        s9 = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -4, :delta_timeout => 5)
-        s10 =state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -4, :delta_timeout => 10, :x => 5, :y => 4)
+        s1 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -10, :delta_timeout => 10, :x => -5, :y => 0)
+        s2 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -10, :delta_timeout => 10, :x => -5, :y => 4)
+        s3 = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 5)
+        s4 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 10, :x => 0, :y => 4)
+        s5 = state simple_move_def(:finish_when_reached => true, :heading => -Math::PI/2.0, :depth => -10, :delta_timeout => 5)
+        s6 = state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -10, :delta_timeout => 10, :x => 0, :y => 0)
+        s7 = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 5)
+        s8 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 10, :x => 5, :y => 0)
+        s9 = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -10, :delta_timeout => 5)
+        s10 =state target_move_def(:finish_when_reached => true, :heading => Math::PI/2.0, :depth => -10, :delta_timeout => 10, :x => 5, :y => 4)
 
         start(s1)
         transition(s1.success_event,s2)
@@ -139,12 +139,12 @@ class Main < Roby::Actions::Interface
 
     describe("simple_move_tests")
     state_machine "simple" do
-        s1 = state simple_move_def(:heading=>0, :depth=>-5,:timeout =>15)
-        s2 = state simple_move_def(:heading=>0, :speed_x=>3 ,:depth=>-5, :timeout=> 15)
-        s3 = state simple_move_def(:heading => Math::PI*0.5, :speed_x => 3 ,:depth=>-5, :timeout=> 15)
-        s4 = state simple_move_def(:heading => Math::PI*1.0, :speed_x => 3 ,:depth=>-5, :timeout=> 15)
-        s5 = state simple_move_def(:heading => Math::PI*1.5, :speed_x => 3 ,:depth=>-5, :timeout=> 15)
-        s6 = state simple_move_def(:heading => 0, :speed_x => 0 ,:depth=>-5, :timeout=> 15)
+        s1 = state simple_move_def(:heading=>0, :depth=>10,:timeout =>15)
+        s2 = state simple_move_def(:heading=>0, :speed_x=>3 ,:depth=>10, :timeout=> 15)
+        s3 = state simple_move_def(:heading => Math::PI*0.5, :speed_x => 3 ,:depth=>10, :timeout=> 15)
+        s4 = state simple_move_def(:heading => Math::PI*1.0, :speed_x => 3 ,:depth=>10, :timeout=> 15)
+        s5 = state simple_move_def(:heading => Math::PI*1.5, :speed_x => 3 ,:depth=>10, :timeout=> 15)
+        s6 = state simple_move_def(:heading => 0, :speed_x => 0 ,:depth=>10, :timeout=> 15)
         start(s1)
         transition(s1.success_event,s2)
         transition(s2.success_event,s3)
@@ -167,7 +167,7 @@ class Main < Roby::Actions::Interface
     describe("...")
     state_machine "wall_continue" do
     #    back_off = state simple_move_def(:heading => 0.33, :depth => -1.5, :timeout => 5, :speed_x => 1)
-        wall = state wall_right_new_def(:timeout => 30, :corners => 1)
+        wall = state wall_right_new_def(:timeout => 300, :corners => 1)
 
         start wall 
         #transition back_off.success_event, wall
@@ -185,14 +185,12 @@ class Main < Roby::Actions::Interface
         forward buoy.success_event, success_event
     end
 
-    
-
     #TODO KOPIE wegen Benennung
     describe("buoy wall")
     state_machine "wall_buoy" do
         search = state wall_and_buoy
         #buoy = state wall_buoy_survey_def 
-        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -10)
         start search
         transition(search.success_event, buoy)
         forward buoy.success_event, success_event
@@ -201,7 +199,7 @@ class Main < Roby::Actions::Interface
 
     describe("dive_and_localize")
     state_machine "dive_and_localize" do
-        control = state simple_move_def(:heading => 0, :depth => -5, :timeout => 15)
+        control = state simple_move_def(:heading => 0, :depth => 10, :timeout => 15)
         localization = state localization_def
         control.depends_on localization, :role => "detector"
         start(control)
@@ -244,8 +242,8 @@ class Main < Roby::Actions::Interface
 
     describe("to_window")
     state_machine "to_window" do
-        s1 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -5.5, :delta_timeout => 10, :x => 7, :y => 6.5)
-        s2 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => -5.5, :delta_timeout => 120, :x => 8, :y => 6.5)
+        s1 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => 10, :delta_timeout => 10, :x => 7, :y => 6.5)
+        s2 = state target_move_def(:finish_when_reached => true, :heading => 0, :depth => 10, :delta_timeout => 120, :x => 8, :y => 6.5)
         start(s1)
 
         transition s1.success_event, s2
@@ -265,7 +263,7 @@ class Main < Roby::Actions::Interface
     state_machine "search_blackbox" do
       
       time = 4
-      depth = -1
+      depth = -10
       speed = 3
       
       
@@ -293,9 +291,9 @@ class Main < Roby::Actions::Interface
     
     describe("Explore map")
     state_machine "explore_map" do
-      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -30, :y => 10.0)
-      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :heading => Math::PI*0.5, :x => -30, :y => 40.0)
-      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -1.0, :delta_timeout => 1, :x => -10, :y => 40.0)
+      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 1, :x => -30, :y => 10.0)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 1, :heading => Math::PI*0.5, :x => -30, :y => 40.0)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 1, :x => -10, :y => 40.0)
       
       start(explore1)
       
@@ -306,35 +304,10 @@ class Main < Roby::Actions::Interface
       
     end    
     
-    describe("inspect structure")
-    state_machine "inspect_structure" do
-      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => Math::PI, :timeout => 30)
-      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI, :timeout => 30)
-      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
-      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
-      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => 0, :timeout => 30)
-      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => 0, :timeout => 30)
-      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
-      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
-      
-      start(explore1)
-      
-      transition(explore1.success_event, explore2)
-      transition(explore2.success_event, explore3)
-      transition(explore3.success_event, explore4)
-      transition(explore4.success_event, explore5)
-      transition(explore5.success_event, explore6)
-      transition(explore6.success_event, explore7)
-      transition(explore7.success_event, explore8)
-      
-      forward explore8.success_event, success_event
-      
-    end    
-
     describe("Find_pipe_with_localization").
         optional_arg("check_pipe_angle",false)
     action_state_machine "find_pipe_with_localization" do
-        find_pipe_back = state target_move_def(:finish_when_reached => false , :heading => 1, :depth => -6, :x => -6.5, :y => --0.5, :timeout => 180)
+        find_pipe_back = state target_move_def(:finish_when_reached => false , :heading => 1, :depth => -10, :x => -6.5, :y => --0.5, :timeout => 180)
         pipe_detector = state pipeline_detector_def
         pipe_detector.depends_on find_pipe_back, :role => "detector"
         start(pipe_detector)

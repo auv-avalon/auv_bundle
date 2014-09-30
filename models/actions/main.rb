@@ -646,6 +646,9 @@ class Main
         back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
         search_continue = state wall_continue #wall_right_def
         search_continue2 = state wall_right_new_def(:timeout => 20)
+        asv = state modem_def
+
+        search_continue.depends_on asv
 
         start to 
         transition to.success_event, align

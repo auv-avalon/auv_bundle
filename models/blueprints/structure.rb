@@ -56,8 +56,12 @@ module Structure
         export detector_child.aligned_speed_command_port, :as => "speed_command"
         provides Base::WorldXYVelocityControllerSrv, :as => 'controller', "aligned_velocity_command" => "speed_command", "world_command" => "world_command" 
 
+        attr_reader :start_time
+
         event :servoing
         event :no_structure
+
+        argument :timeout, :default => 60
 
         on :start do |event|
             Robot.info "Starting Structure Servoing"
@@ -87,6 +91,11 @@ module Structure
                         end
                     end
                 end
+            @start_time = Time.now if @start_time.nil?
+            if @start_time.my_timeout?(self.timeout)
+                Robot.info  "Finished Simple Move because time is over! #{@start_time} #{@start_time + timeout}"
+                emit success_event 
+            end
         end
 
     end

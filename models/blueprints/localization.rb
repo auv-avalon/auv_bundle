@@ -34,6 +34,9 @@ module Localization
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
+        add_optional ::Base::GroundDistanceSrv, as: 'altimeter'
+        add GpsHelper::MapToGPS, :as => 'map_to_gps'
+        main_child.pose_samples_port.connect_to map_to_gps_child.position_samples_port
 
         if ::CONFIG_HACK == 'default'
             main_child.with_conf("nurc", "slam_testhalle")
@@ -57,6 +60,7 @@ module Localization
         end
         connect main_child.pose_samples_port => sonar_detector_child.pose_samples_port
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
+	connect altimeter_child => main_child.echosounder_samples_port 
 
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
@@ -67,10 +71,25 @@ module Localization
 
         on :start do |ev|
             @reader = main_child.pose_samples_port.reader
+            @gps_reader = map_to_gps_child.gps_position_port.reader
             @sonar_in_use = true
         end
 
         poll do 
+            if @gps_reader 
+                if sample = @gps_reader.read
+                    unless State.nil? 
+                        unless State.gps.nil?
+                            begin
+                                State.gps[:lat] = sample[0]
+                                State.gps[:lon] = sample[1]
+                            rescue => e 
+                                ::Robot.info "Warn cannot set State-gps-position because of #{e}"
+                            end
+                        end
+                    end
+                end
+            end
             if @reader 
                 if sample = @reader.read
                     unless State.nil? 

@@ -4,9 +4,9 @@ buoy_radius: 0.2
 # number of frames a buoy is not detected in order to set BUOY_LOST
 buoy_timeout: 20
 # debugging or not?
-debug: false
+debug: true
 # Sets test mode.
-debug_gui: false
+debug_gui: true
 # the time in s how long a buoy of the past is noticed by the filter.
 filter_timeout: 1.5
 # Hough threshold.

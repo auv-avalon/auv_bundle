@@ -758,6 +758,39 @@ class Main
         forward back.success_event, success_event
     end
 
+    describe("quali")
+    state_machine "leak" do
+
+        to = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :heading => Math::PI*0.75, :x_speed => 1,     :y_speed => 0,  :timeout => 15) 
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -11, :y => 12,  :delta_timeout => 5, :timeout => 60, :heading => -Math::PI/2) 
+        search_buoy2 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -17, :y => 13,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
+        search_buoy3 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -18, :y => 12,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
+        search_buoy4 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -19, :y => 16,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
+        search_buoy5 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -16, :y => 17,  :delta_timeout => 5, :timeout => 60, :heading => 0) 
+        search_buoy6 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -22, :y => 16,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
+        search_buoy7 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -22, :y => 19,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
+        search_buoy8 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -21, :y => 22,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
+        to_structure = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -19, :y => 22,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
+        structure = state inspect_structure
+
+        box_search = state buoy_detector_bottom_def 
+
+        start to
+        transition to.success_event , search_buoy1
+        transition search_buoy1.success_event, search_buoy2
+        transition search_buoy2.success_event, search_buoy3
+        transition search_buoy3.success_event, search_buoy4
+        transition search_buoy4.success_event, search_buoy5
+        transition search_buoy5.success_event, search_buoy6
+        transition search_buoy6.success_event, search_buoy7
+        transition search_buoy7.success_event, search_buoy8
+        transition search_buoy8.success_event, to_structure 
+        transition to_structure.success_event, structure
+
+        forward structure.success_event, success_event
+    end
+
+
 end
 
 

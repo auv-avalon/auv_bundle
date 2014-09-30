@@ -162,6 +162,7 @@ class Main < Roby::Actions::Interface
         detector.depends_on wall, :role => "detector"
         start(detector)
         forward detector.buoy_found_event, success_event
+        #forward detector, wall.success_event, success_event
     end
 
     describe("...")
@@ -308,14 +309,32 @@ class Main < Roby::Actions::Interface
     
     describe("inspect structure")
     state_machine "inspect_structure" do
-      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => Math::PI, :timeout => 30)
-      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI, :timeout => 30)
-      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
-      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => Math::PI/2, :timeout => 30)
-      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 23.5, :heading => 0, :timeout => 30)
-      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => 0, :timeout => 30)
-      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -24, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
-      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -18, :y => 29.5, :heading => -Math::PI/2, :timeout => 30)
+      explore1 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -15.5, :y => 26, :heading => Math::PI, :timeout => 30)
+      explore2 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -15.5, :y => 21, :heading => Math::PI, :timeout => 30)
+      explore3 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -15.5, :y => 21, :heading => Math::PI/2, :timeout => 30)
+      explore4 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20.5, :y => 21, :heading => Math::PI/2, :timeout => 30)
+      explore5 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20.5, :y => 21, :heading => 0, :timeout => 30)
+      explore6 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20.5, :y => 26, :heading => 0, :timeout => 30)
+      explore7 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20.5, :y => 26, :heading => -Math::PI/2, :timeout => 30)
+      explore8 = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -15.5, :y => 26, :heading => -Math::PI/2, :timeout => 30)
+
+      explore1b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -16, :y => 25.5, :heading => Math::PI, :timeout => 30)
+      explore2b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -16, :y => 21.5, :heading => Math::PI, :timeout => 30)
+      explore3b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -16, :y => 21.5, :heading => Math::PI/2, :timeout => 30)
+      explore4b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20, :y => 21.5, :heading => Math::PI/2, :timeout => 30)
+      explore5b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20, :y => 21.5, :heading => 0, :timeout => 30)
+      explore6b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20, :y => 25.5, :heading => 0, :timeout => 30)
+      explore7b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -20, :y => 25.5, :heading => -Math::PI/2, :timeout => 30)
+      explore8b = state target_move_new_def(:finish_when_reached => true, :depth => -3.0, :delta_timeout => 3, :x => -16, :y => 25.5, :heading => -Math::PI/2, :timeout => 30)
+
+      explore1c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -17, :y => 24, :heading => Math::PI, :timeout => 30)
+      explore2c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -17, :y => 22, :heading => Math::PI, :timeout => 30)
+      explore3c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -17, :y => 22, :heading => Math::PI/2, :timeout => 30)
+      explore4c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -19, :y => 22, :heading => Math::PI/2, :timeout => 30)
+      explore5c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -19, :y => 22, :heading => 0, :timeout => 30)
+      explore6c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -19, :y => 24, :heading => 0, :timeout => 30)
+      explore7c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -19, :y => 24, :heading => -Math::PI/2, :timeout => 30)
+      explore8c = state target_move_new_def(:finish_when_reached => true, :depth => -2.0, :delta_timeout => 3, :x => -17, :y => 24, :heading => -Math::PI/2, :timeout => 30)
       
       start(explore1)
       
@@ -326,8 +345,28 @@ class Main < Roby::Actions::Interface
       transition(explore5.success_event, explore6)
       transition(explore6.success_event, explore7)
       transition(explore7.success_event, explore8)
+
+      transition(explore8.success_event, explore1b)
+
+      transition(explore1b.success_event, explore2b)
+      transition(explore2b.success_event, explore3b)
+      transition(explore3b.success_event, explore4b)
+      transition(explore4b.success_event, explore5b)
+      transition(explore5b.success_event, explore6b)
+      transition(explore6b.success_event, explore7b)
+      transition(explore7b.success_event, explore8b)
+
+      transition(explore8b.success_event, explore1c)
       
-      forward explore8.success_event, success_event
+      transition(explore1c.success_event, explore2c)
+      transition(explore2c.success_event, explore3c)
+      transition(explore3c.success_event, explore4c)
+      transition(explore4c.success_event, explore5c)
+      transition(explore5c.success_event, explore6c)
+      transition(explore6c.success_event, explore7c)
+      transition(explore7c.success_event, explore8c)
+
+      forward explore8c.success_event, success_event
       
     end    
 

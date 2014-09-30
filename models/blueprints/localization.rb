@@ -34,8 +34,8 @@ module Localization
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
         add_optional ::Base::GroundDistanceSrv, as: 'altimeter'
-        add GpsHelper::MapToGPS, :as => 'map_to_gps'
-        main_child.pose_samples_port.connect_to map_to_gps_child.position_samples_port
+        #add GpsHelper::MapToGPS, :as => 'map_to_gps'
+        #main_child.pose_samples_port.connect_to map_to_gps_child.position_samples_port
 
         if ::CONFIG_HACK == 'default'
             main_child.with_conf("nurc", "slam_testhalle")
@@ -70,7 +70,7 @@ module Localization
 
         on :start do |ev|
             @reader = main_child.pose_samples_port.reader
-            @gps_reader = map_to_gps_child.gps_position_port.reader
+            #@gps_reader = map_to_gps_child.gps_position_port.reader
             @sonar_in_use = true
         end
 

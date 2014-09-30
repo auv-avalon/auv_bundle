@@ -168,7 +168,7 @@ class Main < Roby::Actions::Interface
     describe("...")
     state_machine "wall_continue" do
     #    back_off = state simple_move_def(:heading => 0.33, :depth => -1.5, :timeout => 5, :speed_x => 1)
-        wall = state wall_right_new_def(:timeout => 300, :corners => 1)
+        wall = state wall_right_new_def(:timeout => 30, :corners => 1)
 
         start wall 
         #transition back_off.success_event, wall

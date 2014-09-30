@@ -9,6 +9,7 @@ require "models/blueprints/localization"
 require "models/blueprints/auv_cont"
 require "models/blueprints/auv_control"
 require "models/blueprints/modem"
+require "models/blueprints/gps_helper"
 
 
 using_task_library 'controldev'
@@ -40,12 +41,21 @@ module DFKI
             tag 'dvl', ::Base::DVLSrv
             tag 'thruster_feedback',  ::Base::JointsStatusSrv
 	    tag 'altimeter', ::Base::GroundDistanceSrv
+            tag 'gps', ::Base::PositionSrv
             
             define 'pose_estimator_blind', PoseAuv::PoseEstimatorBlindCmp.use(
                 'depth' => depth_tag,
                 'ori' => orientation_tag,
                 'model' => motion_model_tag,
                 'dvl' => dvl_tag
+            )
+
+            define 'pose_estimator_gps', PoseAuv::PoseEstimatorCmp.use(
+                'depth' => depth_tag,
+                'ori' => orientation_tag,
+                'model' => motion_model_tag,
+                'dvl' => dvl_tag,
+                'localization' => gps_tag
             )
             
             
@@ -89,13 +99,13 @@ module DFKI
             tag 'down_looking_camera',  ::Base::ImageProviderSrv
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
+            tag 'gps', ::Base::PositionSrv
 
             use AuvCont::ConstantCommandGroundAvoidanceCmp.use(
                 'altimeter' => altimeter_tag,
                 'depth' => pose_blind_tag
             )
 
-            
             ############### DEPRICATED ##########################
             # Define old ControlLoops
             define 'base_loop', Base::ControlLoop.use(
@@ -380,6 +390,17 @@ module DFKI
                 'controller' => sonar_feature_detector_def,
                 'joint' => thruster_tag
             
+            )
+
+            define 'gps_controller', GPSHelper::GPSWaypointsCmp.use(
+                'pose' => pose_tag,
+                'gps' => gps_tag
+            )
+
+            define 'gps_waypoints', AuvCont::WorldPositionCmp.use(
+                'pose' => pose_tag,
+                'controller' => gps_controller_def,
+                'joint' => thruster_tag
             )
 
             define 'shout_asv', AuvCont::MoveCmp

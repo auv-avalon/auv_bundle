@@ -48,6 +48,8 @@ module PoseAuv
 
         export ori_in_map_child.orientation_in_map_port, :as => 'orientation_samples'
         provides Base::OrientationSrv, :as => "orientation"
+        export estimator_child.heading_correction_port, :as => "heading_offset"
+        provides Base::OrientationToCorrectSrv, :as => "orientation_to_correct"
 
         event :INITIAL_NORTH_SEEKING
         event :INITIAL_ALIGNMENT
@@ -149,7 +151,7 @@ module PoseAuv
     end
     
     class PoseEstimatorCmp < Syskit::Composition 
-        add_optional Base::PoseSrv, :as => 'localization'
+        add_optional Base::PositionSrv, :as => 'localization'
         argument :reset, :default => false
 
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
@@ -182,7 +184,7 @@ module PoseAuv
         end
 
         event :MISSING_TRANSFORMATION
-        connect localization_child.pose_samples_port => pose_estimator_child.xy_position_samples_port
+        connect localization_child.position_samples_port => pose_estimator_child.xy_position_samples_port
     end
 
 #    class DagonOrientationEstimatorCmp < Syskit::Composition

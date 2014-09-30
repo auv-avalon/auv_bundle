@@ -85,18 +85,18 @@ class Main
 
     describe("Do the minimal demo once")
     state_machine "minimal_demo_once" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -4, :delta_timeout => 5, :timeout => 15)
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 5, :timeout => 15)
 
         s1 = state find_pipe_with_localization
         #pipeline1 = state intelligent_follow_pipe(:initial_heading => 0, :precision => 10, :turn_dir => 1)
-        pipeline1 = state pipeline_def(:depth => -5.5, :heading => 0, :speed_x => 0.5, :turn_dir=> 1, :timeout => 180)
-        align_to_wall = state simple_move_def(:finish_when_reached => true, :heading => 3.14, :depth => -5, :delta_timeout => 5, :timeout => 15)
-        rescue_move = state target_move_def(:finish_when_reached => true, :heading => Math::PI, :depth => -5, :delta_timeout => 5, :x => 0.5, :y => 5.5)
+        pipeline1 = state pipeline_def(:depth => -10, :heading => 0, :speed_x => 0.5, :turn_dir=> 1, :timeout => 180)
+        align_to_wall = state simple_move_def(:finish_when_reached => true, :heading => 3.14, :depth => -10, :delta_timeout => 5, :timeout => 15)
+        rescue_move = state target_move_def(:finish_when_reached => true, :heading => Math::PI, :depth => -10, :delta_timeout => 5, :x => 0.5, :y => 5.5)
         #Doing wall-servoing
         wall1 = state wall_right_def(:max_corners => 1)
         wall2 = state wall_right_def(:timeout => 20)
 
-        surface = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => 1, :speed_x => 0.1, :delta_timeout => 5, :timeout => 30)
+        surface = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => 10, :speed_x => 0.1, :delta_timeout => 5, :timeout => 30)
 
         start(init)
         transition(init.success_event, s1)
@@ -116,13 +116,13 @@ class Main
 
     describe("Do the minimal demo for the halleneroeffnung, means pipeline, then do wall-following and back to pipe-origin")
     state_machine "minimal_demo" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -7, :delta_timeout => 5, :timeout => 15, :speed_x => 0)
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -10, :delta_timeout => 5, :timeout => 15, :speed_x => 0)
         s1 = state find_pipe_with_localization(:check_pipe_angle => true)
 #        detector = state pipeline_detector_def
 #        detector.depends_on s1
 
         #Follow pipeline to right end
-        pipeline1 = state pipeline_def(:depth=> -7.1, :heading => 0, :speed_x => 0.5, :turn_dir=> 1, :timeout => 120)
+        pipeline1 = state pipeline_def(:depth=> -10, :heading => 0, :speed_x => 0.5, :turn_dir=> 1, :timeout => 120)
         #pipeline1 = state intelligent_follow_pipe(:precision => 5, :initial_heading => 0, :turn_dir=> 1)
         #pipeline1 = state intelligent_follow_pipe(:initial_heading => 0, :precision => 10, :turn_dir => 1)
 #        align_to_wall = state simple_move_def(:finish_when_reached => true, :heading => 3.14, :depth => -6, :delta_timeout => 5, :timeout => 15)
@@ -313,7 +313,7 @@ class Main
 
     describe("search for structure and align on it")
     state_machine "search_structure" do
-        to_structure = state target_move_new_def(:timeout => 300, :depth => -7, :x => -45.0, :y=> 25, :heading => Math::PI/2)
+        to_structure = state target_move_new_def(:timeout => 300, :depth => -10, :x => -45.0, :y=> 25, :heading => Math::PI/2)
         searching_structure = state structure_align_detector_def
         aligner = state structure_alignment_def
 
@@ -331,7 +331,7 @@ class Main
       
       #create multiple waypoints to explore the environment
       explore = state explore_map
-      surface = state target_move_new_def(:finish_when_reached => true, :depth => 0.0, :delta_timeout => 5)
+      surface = state target_move_new_def(:finish_when_reached => true, :depth => 10.0, :delta_timeout => 5)
       map_fix = state fix_map_hack
       map_reset = state fix_map_hack
       search = state search_blackbox
@@ -373,10 +373,10 @@ class Main
     
     describe("Passing validation-gate without localization")
     state_machine "gate_without_localization" do
-        dive = state simple_move_new_def(:finish_when_reached => true, :depth => -7, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
+        dive = state simple_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :timeout => 60)
         s_search_structure = state search_structure
         #TODO Avalon does not seems to pass the gate
-        gate_passing = state blind_forward_and_back(:time => 20, :speed => 1.0, :heading => -Math::PI, :depth => -4)
+        gate_passing = state blind_forward_and_back(:time => 20, :speed => 1.0, :heading => -Math::PI, :depth => -10)
 
         start(dive)
         transition(dive.success_event, s_search_structure)
@@ -390,7 +390,7 @@ class Main
     describe("Moving to wall and start wall_servoing")
     state_machine "wall_with_localization" do
         #TODO not working here, input missing on controlchain
-        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2, :depth => -1.5, :delta_timeout => 2, :x => -3, :y => 26.5)#, :delta_xy => 3 ) 
+        to_wall = state target_move_new_def(:finish_when_reached => true,  :heading => Math::PI/2, :depth => -10, :delta_timeout => 2, :x => -3, :y => 26.5)#, :delta_xy => 3 ) 
         wall  = state buoy_wall
 
         start(to_wall)
@@ -401,8 +401,8 @@ class Main
 
     describe("Structure_inspection_dummy")
     state_machine "structure_inspection" do
-        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -9, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
-        move = state target_move_new_def(:x => -22.5, :y => 25, :delta_timeout => 5, :timeout => 120, :depth => -2)
+        back_off = state simple_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15, :timeout => 20) 
+        move = state target_move_new_def(:x => -22.5, :y => 25, :delta_timeout => 5, :timeout => 120, :depth => -10)
         inspection = state structure_inspection_def(:timeout => 60)
 
         find = state structure_detector_def
@@ -427,10 +427,10 @@ class Main
     
     describe("Blind Localizaton based qualifyiing")
     state_machine "blind_quali" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2, :depth => -2, :x_speed => 1, :timeout => 10)
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
-        align = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
-        gate = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #
+        init = state simple_move_def(:finish_when_reached => true, :heading => Math::PI/2, :depth => -10, :timeout => 8)
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22, :y => 25,  :timeout => 150) 
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0, :x => -22, :y => 25,  :timeout => 30) 
+        gate = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60) #
         #wall = state wall_right_new_def(:timeout => 150)
 
         start init 
@@ -443,12 +443,12 @@ class Main
     describe("quali")
     state_machine "target_wall_buoy_wall" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
-        align = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
         #buoy = state wall_buoy_survey_def 
-        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -10)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -10 :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
         search_continue = state wall_continue #wall_right_def
         search_continue2 = state wall_right_new_def(:timeout => 20)
 
@@ -470,7 +470,7 @@ class Main
         #gate = state gate_with_localization
         gate = state blind_quali
 
-        structure = state inspect_structure
+        structure = state structure_inspection
 
         wall = state target_wall_buoy_wall
 
@@ -496,7 +496,7 @@ class Main
 
     describe("We win the SAUC-E")
     state_machine "WandBojeJudge" do
-        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -2, :timeout => 8)
+        init = state simple_move_def(:finish_when_reached => true, :heading => 0, :depth => -10,:timeout => 8)
 
         wall = state wall_with_localization
 
@@ -514,7 +514,7 @@ class Main
 
         wall = state wall_with_localization
 
-        move = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 40, :heading => -Math::PI*0.7, :x => -22, :y => 25,  :timeout => 3)
+        move = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 40, :heading => -Math::PI*0.7, :x => -22, :y => 25,  :timeout => 3)
 
         start gate
         transition gate.success_event, wall
@@ -610,9 +610,9 @@ class Main
     describe("quali mit targetmove")
     state_machine "target_wall" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.33, :x => -5, :y => 26.5,  :timeout => 60)
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0.33, :x => -5, :y => 26.5,  :timeout => 60)
         wall = state wall_right_new_def(:timeout => 300, :corners => 1)
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0 + Math::PI, :x => -22,     :y => 25,  :timeout => 150) 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0 + Math::PI, :x => -22,     :y => 25,  :timeout => 150) 
 
         start to
         transition to.success_event, wall
@@ -623,11 +623,11 @@ class Main
 
     describe("buoy wall")
     state_machine "target_wall_buoy" do
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
         #buoy = state wall_buoy_survey_def 
-        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -10)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
         start to 
         transition to.success_event, search
         transition(search.success_event, buoy)
@@ -638,17 +638,14 @@ class Main
     describe("quali")
     state_machine "target_wall_buoy_wall" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
-        align = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 0.22, :x => -5, :y => 26.5,  :timeout => 60)
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => 1.57, :x => -5, :y => 26.5,  :timeout => 60)
         search = state wall_and_buoy
         #buoy = state wall_buoy_survey_def 
-        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+        buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -10)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
         search_continue = state wall_continue #wall_right_def
         search_continue2 = state wall_right_new_def(:timeout => 20)
-        asv = state modem_def
-
-        search_continue.depends_on asv
 
         start to 
         transition to.success_event, align
@@ -716,9 +713,9 @@ class Main
     describe("quali")
     state_machine "structure" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 150) 
         structure = state structure_inspection_def
-        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
 
         start to
         transition to.success_event, structure
@@ -736,9 +733,9 @@ class Main
     describe("quali")
     state_machine "box" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
-        back = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
-        box_found = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
+        back = state simple_move_new_def(:finish_when_reached => true, :depth => -10, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
+        box_found = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -22,     :y => 25,  :timeout => 5) 
 
         start to
         transition to.success_event, box_found
@@ -750,8 +747,8 @@ class Main
     describe("quali")
     state_machine "box_search" do
 
-        to = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
-        back = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -10, :delta_timeout => 5, :heading => Math::PI/2.0, :x => -15,     :y => 35,  :timeout => 150) 
+        back = state simple_move_new_def(:finish_when_reached => true, :depth => -10, :delta_x => -22,     :delta_y => 25,  :timeout => 5) 
         box_search = state buoy_detector_bottom_def 
 
         start to
@@ -759,121 +756,6 @@ class Main
         transition box_search.success_event, back
 
         forward back.success_event, success_event
-    end
-
-    describe("quali")
-    state_machine "leak" do
-
-        to = state simple_move_new_def(:finish_when_reached => true, :depth => -2, :heading => Math::PI*0.75, :x_speed => 1,     :y_speed => 0,  :timeout => 15) 
-        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -11, :y => 12,  :delta_timeout => 5, :timeout => 60, :heading => -Math::PI/2) 
-        search_buoy2 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -17, :y => 13,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
-        search_buoy3 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -18, :y => 12,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
-        search_buoy4 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -19, :y => 16,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
-        search_buoy5 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -16, :y => 17,  :delta_timeout => 5, :timeout => 60, :heading => 0) 
-        search_buoy6 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -22, :y => 16,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI) 
-        search_buoy7 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -22, :y => 19,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
-        search_buoy8 = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -21, :y => 22,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
-        to_structure = state target_move_new_def(:finish_when_reached => true, :depth => -2, :x => -19, :y => 22,  :delta_timeout => 5, :timeout => 60, :heading => Math::PI/2) 
-        structure = state inspect_structure
-
-        box_search = state buoy_detector_bottom_def 
-
-        start to
-        transition to.success_event , search_buoy1
-        transition search_buoy1.success_event, search_buoy2
-        transition search_buoy2.success_event, search_buoy3
-        transition search_buoy3.success_event, search_buoy4
-        transition search_buoy4.success_event, search_buoy5
-        transition search_buoy5.success_event, search_buoy6
-        transition search_buoy6.success_event, search_buoy7
-        transition search_buoy7.success_event, search_buoy8
-        transition search_buoy8.success_event, to_structure 
-        transition to_structure.success_event, structure
-
-        forward structure.success_event, success_event
-    end
-
-    WAYPOINTS = [{:x => 1, :y => 2}, {:x => 3, :y => 4}, {:x => 5, :y => 6}, {:x => 7, :y => 8}, {:x => 9, :y => 10}]
-    waypoints_gps = [9.86307609309587,44.09549659601309,0,9.858986854993077,44.09438744752904,0,9.859562696265362,44.09326653728764,0,9.862565387611168,44.09410998907941,0,9.863056185133631,44.09545574769171,0]
-
-    describe("Long range navigation")
-    state_machine("longrange") do
-    to_start = state target_move_new_def(:x => WAYPOINTS[0][:x], :y => WAYPOINTS[0][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 480 )
-    surface_start = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp1 = state target_move_new_def(:x => WAYPOINTS[1][:x], :y => WAYPOINTS[1][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 900)
-    surface_wp1 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp2 = state target_move_new_def(:x => WAYPOINTS[2][:x], :y => WAYPOINTS[2][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => -Math::PI/2, :timeout => 480)
-    surface_wp2 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp3 = state target_move_new_def(:x => WAYPOINTS[3][:x], :y => WAYPOINTS[3][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => 0, :timeout => 900)
-    surface_wp3 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp4 = state target_move_new_def(:x => WAYPOINTS[4][:x], :y => WAYPOINTS[4][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI/4, :timeout => 480)
-    surface_wp4 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-
-    start to_start
-    transition to_start.success_event, surface_start
-    transition surface_start.success_event, to_wp1
-    transition to_wp1.success_event, surface_wp1
-    transition surface_wp1.success_event, to_wp2
-    transition to_wp2.success_event, surface_wp2
-    transition surface_wp2.success_event, to_wp3
-    transition to_wp3.success_event, surface_wp3
-    transition surface_wp3.success_event, to_wp4
-    transition to_wp4.success_event, surface_wp4
-    forward surface_wp4.success_event, success_event
-    end
-
-    describe("Long range navigation")
-    state_machine("longrangei_failsafe") do
-    to_start = state target_move_new_def(:x => WAYPOINTS[0][:x], :y => WAYPOINTS[0][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 480 )
-    surface_start = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp1 = state target_move_new_def(:x => WAYPOINTS[1][:x], :y => WAYPOINTS[1][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 900)
-    surface_wp1 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp2 = state target_move_new_def(:x => WAYPOINTS[2][:x], :y => WAYPOINTS[2][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => -Math::PI/2, :timeout => 480)
-    surface_wp2 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp3 = state target_move_new_def(:x => WAYPOINTS[3][:x], :y => WAYPOINTS[3][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => 0, :timeout => 900)
-    surface_wp3 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp4 = state target_move_new_def(:x => WAYPOINTS[4][:x], :y => WAYPOINTS[4][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI/4, :timeout => 480)
-    surface_wp4 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-
-    start to_start
-    transition to_start.success_event, surface_start
-    transition surface_start.success_event, to_wp1
-    transition to_wp1.success_event, surface_wp1
-    transition surface_wp1.success_event, to_wp2
-    transition to_wp2.success_event, surface_wp2
-    transition surface_wp2.success_event, to_wp3
-    transition to_wp3.success_event, surface_wp3
-    transition surface_wp3.success_event, to_wp4
-    transition to_wp4.success_event, surface_wp4
-    forward surface_wp4.success_event, success_event
-    end
-
-    WAYPOINTS_test = [{:x => -170, :y => 25}, {:x => -170, :y => 10}, {:x => -200, :y => 10}, {:x => -200, :y => 40}, {:x => -170, :y => 40}]
-
-    describe("Long range navigation")
-    state_machine("longrangei_test") do
-    to_start = state target_move_new_def(:x => WAYPOINTS_test[0][:x], :y => WAYPOINTS_test[0][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 480 )
-    surface_start = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp1 = state target_move_new_def(:x => WAYPOINTS_test[1][:x], :y => WAYPOINTS_test[1][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI, :timeout => 900)
-    surface_wp1 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp2 = state target_move_new_def(:x => WAYPOINTS_test[2][:x], :y => WAYPOINTS_test[2][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => -Math::PI/2, :timeout => 480)
-    surface_wp2 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp3 = state target_move_new_def(:x => WAYPOINTS_test[3][:x], :y => WAYPOINTS_test[3][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => 0, :timeout => 900)
-    surface_wp3 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-    to_wp4 = state target_move_new_def(:x => WAYPOINTS_test[4][:x], :y => WAYPOINTS_test[4][:y], :depth => 2.5, :delta_x => 4, :delta_y => 4, :delta_timeout => 5, :finished_when_reached => true, :heading => Math::PI/4, :timeout => 480)
-    surface_wp4 = state simple_move_new_def(:depth => 0.5, :timeout => 15)
-
-    start to_start
-    transition to_start.success_event, surface_start
-    transition surface_start.success_event, to_wp1
-    transition to_wp1.success_event, surface_wp1
-    transition surface_wp1.success_event, to_wp2
-    transition to_wp2.success_event, surface_wp2
-    transition surface_wp2.success_event, to_wp3
-    transition to_wp3.success_event, surface_wp3
-    transition surface_wp3.success_event, to_wp4
-    transition to_wp4.success_event, surface_wp4
-    forward surface_wp4.success_event, success_event
     end
 
 end

@@ -8,7 +8,7 @@ using_task_library 'auv_control'
 module AuvCont
 
     DELTA_YAW = 0.1
-    DELTA_Z = 0.2
+    DELTA_Z = 100
     DELTA_XY = 2
     DELTA_TIMEOUT = 2
 

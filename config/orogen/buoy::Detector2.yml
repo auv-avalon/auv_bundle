@@ -4,9 +4,9 @@ buoy_radius: 0.2
 # number of frames a buoy is not detected in order to set BUOY_LOST
 buoy_timeout: 20
 # debugging or not?
-debug: true
+debug: false
 # Sets test mode.
-debug_gui: true
+debug_gui: false
 # the time in s how long a buoy of the past is noticed by the filter.
 filter_timeout: 1.5
 # Hough threshold.
@@ -162,7 +162,7 @@ hHoughEdgeThreshold: 30
 # no documentation available for this property
 hSmooth: 75
 # Buoy hue value.
-hValueMax: 35
+hValueMax: 50
 # Buoy hue value.
 hValueMin: 10 
 # Buoy saturation value.
@@ -200,13 +200,13 @@ sSmooth: 75
 # Buoy saturation value.
 sValueMax: 255
 # Buoy saturation value.
-sValueMin: 70
+sValueMin: 30
 # no documentation available for this property
 use_h: true
 # no documentation available for this property
 use_s: true
 # no documentation available for this property
-use_v: true
+use_v: false
 # Hough threshold.
 vHoughAccumulatorThreshold: 19
 # Hough threshold.
@@ -271,13 +271,13 @@ sHoughAccumulatorThreshold: 40
 # Hough threshold.
 sHoughEdgeThreshold: 30
 # no documentation available for this property
-sSmooth: 75
+sSmooth: 41
 # Buoy saturation value.
 sValueMax: 255
 # Buoy saturation value.
-sValueMin: 30
+sValueMin: 50
 # no documentation available for this property
-use_h: true
+use_h: false
 # no documentation available for this property
 use_s: true
 # no documentation available for this property
@@ -287,10 +287,10 @@ vHoughAccumulatorThreshold: 19
 # Hough threshold.
 vHoughEdgeThreshold: 19
 # no documentation available for this property
-vSmooth: 40
+vSmooth: 41
 # Buoy hue value.
 vValueMax: 255
 # Buoy hue value.
-vValueMin: 220
+vValueMin: 210
 # Color of the Buoy
 buoy_color: :WHITE

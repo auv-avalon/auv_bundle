@@ -19,7 +19,7 @@ State.current_state = ["Initializing"]
 #State.navigation_mode = ["drive_simple_def","buoy_def", "pipeline_def", "wall_right_def"]
 
 #State.navigation_mode = [nil,"drive_simple_def","minimal_demo", "minimal_demo_once","target_move_def","buoy_def", "pipeline_def", "wall_right_def", "target_move_def", "pipe_ping_pong","ping_pong_pipe_wall_back_to_pipe","rocking"]
-State.navigation_mode = [nil,"win","drive_simple_new_def"]
+State.navigation_mode = [nil,"leak","win","drive_simple_new_def"]
 
 def check_for_switch
     new_state = State.navigation_mode[State.lowlevel_substate]
@@ -32,17 +32,19 @@ def check_for_switch
         hb_running = false
         begin
             t = nil
-            if ::CONFIG_HACK == 'avalon'
+            #if ::CONFIG_HACK == 'avalon'
                 t = Orocos::TaskContext.get "hbridge_writer"
-            else
-                t = Orocos::TaskContext.get "dagon_motors_left"
-            end
+            #else
+            #    t = Orocos::TaskContext.get "dagon_motors_left"
+            #end
 
             hb_running = t.running?
         end
         if State.localization_task.nil? and hb_running
             nm, _ = Robot.send("localization_def!")
             State.localization_task = nm.as_service
+        end
+        if State.lowlevel_state == 5
         end
     else
         if State.localization_task
@@ -58,6 +60,14 @@ def check_for_switch
         if State.current_mode.nil?
             #Check if the submode is a valid one
             if(new_state)
+                # Reset Heading
+                t = Orocos::TaskContext.get('orientation_estimator')
+                t.resetHeading(0.31) if t.running? #TODO Halle
+                t = Orocos::TaskContext.get('base_orientation_estimator')
+                t.resetHeading(0.31) if t.running? #TODO halle
+
+                # reset deüth
+                Orocos::TaskContext.get('depth').resetPressure
                 Robot.info "starting navigation mode #{new_state}, we are currently at #{State.current_mode}"
                 State.current_submode = State.lowlevel_substate
                 nm, _ = Robot.send("#{new_state}!")

@@ -1,6 +1,7 @@
 require "rock/models/blueprints/control"
 require "rock/models/blueprints/pose"
 using_task_library 'base'
+using_task_library 'buoy'
 
 module Auv 
     Base::ControlLoop.declare 'AUVMotion', '/base/AUVMotionCommand'
@@ -19,7 +20,13 @@ module Auv
     data_service_type 'StructuredLightPairSrv' do
         output_port 'images', ro_ptr('/base/samples/frame/FramePair')
     end
+end
+module Base
 
+    data_service_type 'MapSrv' do
+        input_port 'buoy_samples_orange', "/avalon/feature/Buoy"
+        input_port 'buoy_samples_white', "/avalon/feature/Buoy"
+    end
 end
 
 

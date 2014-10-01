@@ -619,6 +619,8 @@ module AuvCont
     class StructureCmp < WorldXYVelocityCmp 
         event :aligned
         event :aligning
+        event :servoing
+        event :no_structure
 
         add_main Base::WorldXYVelocityControllerSrv, as: 'main'
         overload 'controller', main_child
@@ -641,13 +643,15 @@ module AuvCont
         on :start do |ev|
                 @start_time = Time.now
                 Robot.info "Starting structure moving #{self}"
+                controller_child.servoing_event.forward_to servoing_event
+                controller_child.no_structure_event.forward_to no_structure_event
         end
         
         poll do
             @start_time = Time.now if @start_time.nil?
             if @start_time.my_timeout?(self.timeout)
-                Robot.info  "Finished Simple Move because time is over! #{@start_time} #{@start_time + timeout}"
-                emit success_event 
+                Robot.info  "Finished Structure_inspection because time is over! #{@start_time} #{@start_time + timeout}"
+                emit :success
             end
 
         end

@@ -46,6 +46,7 @@ module Localization
         end
 
 
+
         connect sonar_child => sonar_estimator_child
         connect ori_child => sonar_estimator_child.orientation_sample_port
         connect ori_child => main_child.orientation_samples_port
@@ -61,8 +62,13 @@ module Localization
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
 	connect altimeter_child => main_child.echosounder_samples_port 
 
+        export main_child.buoy_samples_white_port
+        export main_child.buoy_samples_orange_port
+        provides Base::MapSrv, :as => 'map'
+
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
+
         export main_child.dead_reckoning_samples_port, as: 'velocity_samples'
         provides Base::VelocitySrv, :as => 'velocity'
         #export sonar_detector_child.next_target_port

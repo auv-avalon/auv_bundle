@@ -64,7 +64,7 @@ module DFKI
                 'dvl' => dvl_tag
             )
 
-            define 'localization', Localization::ParticleDetector.use(
+            define 'localization',Localization::ParticleDetector.use(
                 dvl_tag,
                 Base::OrientationWithZSrv => orientation_tag,
                 'hough' => hough_detector_def,
@@ -100,6 +100,7 @@ module DFKI
             tag 'forward_looking_camera',  ::Base::ImageProviderSrv
             tag 'motion_model', ::Base::VelocitySrv
             tag 'gps', ::Base::PositionSrv
+            tag 'map', ::Base::MapSrv
 
             use AuvCont::ConstantCommandGroundAvoidanceCmp.use(
                 'altimeter' => altimeter_tag,
@@ -232,6 +233,22 @@ module DFKI
                 'camera' => down_looking_camera_tag, 
                 'orientation_with_z' => orientation_with_z_tag
             )           
+
+            define 'white_buoy_detector_bottom', Buoy::DetectorCmp2.use(
+                'camera' => down_looking_camera_tag, 
+                'orientation_with_z' => orientation_with_z_tag
+            )           
+
+            define 'orange_buoy_detector_bottom', Buoy::DetectorCmp.use(
+                'camera' => down_looking_camera_tag, 
+                'orientation_with_z' => orientation_with_z_tag
+            )           
+
+            define 'double_buoy', Buoy::DoubleBuoyCmp.use(
+                'main' => map_tag,
+                'white' => white_buoy_detector_bottom_def,
+                'orange' => orange_buoy_detector_bottom_def
+            )
 
             ###     New Stuff now integrated #######################
             define 'simple_move_new', AuvCont::MoveCmp.use(

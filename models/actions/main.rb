@@ -888,6 +888,34 @@ class Main
     forward surface_wp4.success_event, success_event
     end
 
+
+    describe("euRathlon Anomaly")
+    state_machine "anomaly" do
+
+        to = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 0.22, :x => -5.5, :y => 26.5,  :timeout => 60)
+        align = state target_move_new_def(:finish_when_reached => true, :depth => -1.5, :delta_timeout => 5, :heading => 1.57, :x => -5.5, :y => 26.5,  :timeout => 60)
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        #buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        stop = state simple_move_new_def(:timeout => 5, :depth => -2, :heading => Math::PI/2, :x_speed => 0, :y_speed => 0)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+        search_continue = state wall_continue #wall_right_def
+        search_continue2 = state wall_right_new_def(:timeout => 20)
+        #asv = state modem_def
+
+        #search_continue.depends_on asv
+
+        start to 
+        transition to.success_event, align
+        transition align.success_event, search
+        transition search.success_event, stop 
+        transition stop.success_event, buoy
+        transition buoy.success_event, search_continue
+        transition search_continue.success_event, search_continue2
+        transition search_continue2.success_event, back
+
+        forward back.success_event, success_event
+    end
 end
 
 

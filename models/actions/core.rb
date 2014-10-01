@@ -162,7 +162,7 @@ class Main < Roby::Actions::Interface
         detector.depends_on wall, :role => "detector"
         start(detector)
         forward detector.buoy_found_event, success_event
-        #forward detector, wall.success_event, success_event
+        forward detector, wall.success_event, success_event
     end
 
     describe("...")

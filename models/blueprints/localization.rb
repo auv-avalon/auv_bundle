@@ -29,8 +29,7 @@ module Localization
         add SonarFeatureEstimator::Task, :as => 'sonar_estimator'
         add ::Base::OrientationWithZSrv, :as => 'ori'
         #add Dev::Sensors::Hbridge, :as => 'hb'
-        add Base::JointsStatusSrv, :as => 'hb'
-        add  
+        add Base::JointsStatusSrv, :as => 'hb' 
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'

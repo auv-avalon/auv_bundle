@@ -59,7 +59,7 @@ def sauce_log
 #    ::Robot.info State.position
 #    ::Robot.info State.current_state
     begin
-    "(#{State.time}, #{State.gps[:lat]}, #{State.gps[:lon]}, #{State.position[:z]}, #{sanitize(State.current_state[0])})\n"
+        "(#{State.time}, #{State.gps[:lat]}, #{State.gps[:lon]}, #{State.position[:z]}, #{sanitize(State.current_state[0])}#{if (!State.log_hack.nil?) then State.log_hack else '' end})\n"
     rescue Exception => e
         ::Robot.info "Got here #{e}"
         return e

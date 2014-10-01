@@ -32,6 +32,10 @@ module Buoy
         #export servoing_child.relative_position_port, :as => 'relative_position_command'
         export detector_child.buoy_port, :as => 'orange_buoy'
         #provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
+
+        on :buoy_detected do |e|
+            State.log_hack = "Buoy_found"
+        end
     end
 
     class DetectorCmp2 < ::Syskit::Composition

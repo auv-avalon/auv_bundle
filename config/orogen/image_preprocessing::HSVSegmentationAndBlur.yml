@@ -34,11 +34,11 @@ vMin: 134
 #vMin: 30
 --- name:structure
 steps_per_frame:  0
-hMin: 40 
-hMax: 107
-sMin: 0
-sMax: 133
-vMin: 134
+hMin:  70 
+hMax: 103
+sMin: 40
+sMax: 126
+vMin: -1
 vMax: 256
 blur: 42
 --- name:structure_simulation

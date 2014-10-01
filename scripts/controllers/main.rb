@@ -150,7 +150,7 @@ Roby.every(1, :on_error => :disable) do
         if buoy_on_wall.running?
             sonar_conf = ['default']
         else
-            sonar_conf = ['default','wall_right']
+            sonar_conf = ['default','wall_left']
         end
     else
         sonar_conf = ['default']
@@ -165,7 +165,7 @@ Roby.every(1, :on_error => :disable) do
             end
             if CONFIG_HACK != 'simulation'
                 #Sainity check 
-                if sonar_conf.include?('wall_right')
+                if sonar_conf.include?('wall_left')
                     if sonar.config.continous == true
                         ::Robot.warn "Sonar seems to be configured invalid even hack is active, reforcing"
                         State.current_sonar_conf = nil #Try to configure again

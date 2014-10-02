@@ -18,7 +18,7 @@ minimal_wall_distance: 0.75
 # set distance for the y axis, witch will result in a certain speed
 servoing_speed: 0.0
 # reference distance to wall
-wall_distance: 6.00 
+wall_distance: 4.4 
 # minimum count inliers of the point cloud in percent to be a valid model
 #wall_estimation_ransac_min_inliers: 0.85 ##Not a eroperty????
 # maximal inlier distance to the model
@@ -31,6 +31,7 @@ right_opening_angle: 0.785
 wait_until_start: 3.0
 right_front_angle: 0.0
 left_front_angle: 0.0
+use_front_distance: false
 --- name:simulation
 # fading out factor for the features in center wall estimator
 fading_out_factor: 0.01
@@ -55,7 +56,7 @@ right_opening_angle: 1.01
 --- name:wall_left
 servoing_wall_direction: 1.57
 initial_wall_direction: 1.57
-servoing_speed: -0.25
+servoing_speed: -0.8
 left_opening_angle: 1.1
 right_opening_angle: 1.57
 --- name:wall_right

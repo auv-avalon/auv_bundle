@@ -48,8 +48,8 @@ module PoseAuv
 
         export ori_in_map_child.orientation_in_map_port, :as => 'orientation_samples'
         provides Base::OrientationSrv, :as => "orientation"
-        #export estimator_child.heading_correction_port, :as => "heading_offset"
-        #provides Base::OrientationToCorrectSrv, :as => "orientation_to_correct"
+        export estimator_child.heading_correction_port, :as => "heading_offset"
+        provides Base::OrientationToCorrectSrv, :as => "orientation_to_correct"
 
         event :INITIAL_NORTH_SEEKING
         event :INITIAL_ALIGNMENT

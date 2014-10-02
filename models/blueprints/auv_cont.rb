@@ -105,7 +105,10 @@ module AuvCont
         event :servoing_finished
         event :not_enough_targets
 
-        on :start do |event|
+        argument :timeout, :default => nil
+
+        on :start do |ev|
+                @start_time = Time.now
             if controller_child.respond_to? 'reached_target_event'
                 controller_child.reached_target_event.forward_to reached_target_event
             end
@@ -118,6 +121,15 @@ module AuvCont
               controller_child.not_enough_targets_event.forward_to not_enough_targets_event
             end
             
+        end
+
+        poll do
+            @last_invalid_pose = Time.new if @last_invalid_pose.nil?
+            @start_time = Time.now if @start_time.nil?
+            if @start_time.my_timeout?(timeout)
+                Robot.info  "Finished Pos Mover because time is over! #{@start_time} #{@start_time + timeout}"
+                emit event_on_timeout 
+            end
         end
 
     end

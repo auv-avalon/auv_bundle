@@ -5,15 +5,15 @@ using_task_library "gps_helper"
 module GPSHelper
 
     class GPSWaypointsCmp < Syskit::Composition
-        add_main GpsHelper::WaypointNavigation.use_conf("short_range_nav"), as: 'main'
+        add_main GpsHelper::WaypointNavigation.use_conf("avalon_nav_test"), as: 'main'
         add ::Base::PositionSrv, as: 'gps'
         add ::Base::PoseSrv, as: 'pose'
-        add ::Base::OrientationToCorrectSrv, as: 'ori'
+       # add ::Base::OrientationToCorrectSrv, as: 'ori'
         
 
         connect gps_child => main_child.gps_position_samples_port
         connect pose_child => main_child.pose_samples_port
-        connect main_child => ori_child
+        #connect main_child => ori_child
 
         export main_child.target_waypoint_port, as: 'world_wommand'
         provides Base::WorldXYZRollPitchYawControllerSrv, :as => "controller"

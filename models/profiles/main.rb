@@ -101,6 +101,7 @@ module DFKI
             tag 'motion_model', ::Base::VelocitySrv
             tag 'gps', ::Base::PositionSrv
             tag 'map', ::Base::MapSrv
+            tag 'orientation_to_correct', ::Base::OrientationToCorrectSrv
 
             use AuvCont::ConstantCommandGroundAvoidanceCmp.use(
                 'altimeter' => altimeter_tag,
@@ -410,6 +411,7 @@ module DFKI
             )
 
             define 'gps_controller', GPSHelper::GPSWaypointsCmp.use(
+                #'ori' => orientation_to_correct_tag,
                 'pose' => pose_tag,
                 'gps' => gps_tag
             )

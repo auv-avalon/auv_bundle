@@ -158,6 +158,7 @@ class Main < Roby::Actions::Interface
     describe("This is a workaaround for the monitor usage")
     state_machine "wall_and_buoy" do
         wall = state wall_left_new_def(:timeout => 300, :corners => 1)
+        wall2 = state wall_left_new_def(:timeout => 300, :corners => 1)
         detector = state wall_buoy_detector_def 
         wall.depends_on detector, :role => "detector"
         wall2.depends_on detector, :role => "detector"

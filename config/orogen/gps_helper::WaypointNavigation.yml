@@ -68,7 +68,7 @@ waypoints:
   - -0.0
 waypoint_radius: 2.0
 
---- name: eurathlon_final
+--- name:eurathlon_final
 waypoints:
 - data:
   - -253.73852352052927

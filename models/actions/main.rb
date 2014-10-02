@@ -1165,7 +1165,7 @@ class Main
 
         #transition back.success_event, search_buoy1
 
-        start search
+        start search_buoy1
         transition search_buoy1.success_event, search_buoy1a
         transition search_buoy1a.success_event, search_buoy1b
         transition search_buoy1b.success_event, search_buoy2

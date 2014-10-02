@@ -159,10 +159,14 @@ class Main < Roby::Actions::Interface
     state_machine "wall_and_buoy" do
         wall = state wall_left_new_def(:timeout => 300, :corners => 1)
         detector = state wall_buoy_detector_def 
-        detector.depends_on wall, :role => "detector"
-        start(detector)
-        forward detector.buoy_found_event, success_event
-        forward detector, wall.success_event, success_event
+        wall.depends_on detector, :role => "detector"
+        wall2.depends_on detector, :role => "detector"
+
+        start(wall)
+        forward wall, detector.buoy_found_event, success_event
+        transition wall.success_event, wall2
+        forward wall2, detector.buoy_found_event, success_event
+        forward wall2.success_event, success_event
     end
 
     describe("...")

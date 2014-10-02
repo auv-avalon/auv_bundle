@@ -30,6 +30,7 @@ module Localization
         add ::Base::OrientationWithZSrv, :as => 'ori'
         #add Dev::Sensors::Hbridge, :as => 'hb'
         add Base::JointsStatusSrv, :as => 'hb'
+        add  
         add_optional SonarFeatureDetector::Task, :as => 'sonar_detector'
         #add Base::JointsControllerSrv, :as => 'hb'
         add_optional ::Localization::HoughSrv, as: 'hough'
@@ -44,6 +45,7 @@ module Localization
         elsif ::CONFIG_HACK == 'dagon'
             main_child.with_conf("nurc_dagon", 'slam_testhalle') #TODO sauce_dagon erstellen!
         end
+
 
 
         connect sonar_child => sonar_estimator_child
@@ -61,8 +63,13 @@ module Localization
         connect main_child.grid_map_port => sonar_detector_child.grid_maps_port
 	connect altimeter_child => main_child.echosounder_samples_port 
 
+        export main_child.buoy_samples_white_port
+        export main_child.buoy_samples_orange_port
+        provides Base::MapSrv, :as => 'map'
+
         export main_child.pose_samples_port
         provides Base::PoseSrv, :as => 'pose'
+
         export main_child.dead_reckoning_samples_port, as: 'velocity_samples'
         provides Base::VelocitySrv, :as => 'velocity'
         #export sonar_detector_child.next_target_port

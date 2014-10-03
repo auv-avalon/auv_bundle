@@ -4,9 +4,9 @@ buoy_radius: 0.2
 # number of frames a buoy is not detected in order to set BUOY_LOST
 buoy_timeout: 20
 # debugging or not?
-debug: false
+debug: true
 # Sets test mode.
-debug_gui: false
+debug_gui: true
 # the time in s how long a buoy of the past is noticed by the filter.
 filter_timeout: 1.5
 # Hough threshold.
@@ -150,9 +150,9 @@ buoy_radius: 0.2
 # number of frames a buoy is not detected in order to set BUOY_LOST
 buoy_timeout: 20
 # debugging or not?
-debug: true
+debug: false
 # Sets test mode.
-debug_gui: true
+debug_gui: false
 # the time in s how long a buoy of the past is noticed by the filter.
 filter_timeout: 1.5
 # Hough threshold.
@@ -160,15 +160,15 @@ hHoughAccumulatorThreshold: 40
 # Hough threshold.
 hHoughEdgeThreshold: 30
 # no documentation available for this property
-hSmooth: 75
+hSmooth: 40
 # Buoy hue value.
-hValueMax: 50
+hValueMax: 70
 # Buoy hue value.
-hValueMin: 10 
+hValueMin: 1 
 # Buoy saturation value.
 houghMaxCircle: 150
 # Buoy hue value.
-houghMinCircle: 30
+houghMinCircle: 15
 # no documentation available for this property
 hough_debug_h: false
 # no documentation available for this property
@@ -204,7 +204,7 @@ sValueMin: 30
 # no documentation available for this property
 use_h: true
 # no documentation available for this property
-use_s: true
+use_s: false
 # no documentation available for this property
 use_v: false
 # Hough threshold.

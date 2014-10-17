@@ -20,9 +20,9 @@ hValueMax: 255
 # Buoy hue value.
 hValueMin: 25 
 # Buoy saturation value.
-houghMaxCircle: 130
+houghMaxCircle: 150
 # Buoy hue value.
-houghMinCircle: 40
+houghMinCircle: 20
 # no documentation available for this property
 hough_debug_h: false
 # no documentation available for this property
@@ -60,7 +60,7 @@ use_h: true
 # no documentation available for this property
 use_s: true
 # no documentation available for this property
-use_v: true
+use_v: false
 # Hough threshold.
 vHoughAccumulatorThreshold: 19
 # Hough threshold.

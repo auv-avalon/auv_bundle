@@ -45,8 +45,8 @@ max_time_delta: 2.0
 initial_state:
   position:
     data:
-      - -50
-      - 10
+      - -10
+      - 22
       - 0
 
 --- name:avalon

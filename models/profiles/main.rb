@@ -101,6 +101,8 @@ module DFKI
             tag 'motion_model', ::Base::VelocitySrv
             tag 'gps', ::Base::PositionSrv
             tag 'map', ::Base::MapSrv
+            tag 'orientation_to_correct', ::Base::OrientationToCorrectSrv
+            tag 'pose_gps', ::Base::PoseSrv
 
             use AuvCont::ConstantCommandGroundAvoidanceCmp.use(
                 'altimeter' => altimeter_tag,
@@ -204,7 +206,7 @@ module DFKI
                 'pose_blind' => pose_blind_tag,
             ).use_frames(
                 'body' => 'body',
-                'odometry' => 'map_sauce',
+                'odometry' => 'map_halle',
                 'sonar' => 'sonar'
             )
 
@@ -229,7 +231,7 @@ module DFKI
                 'orientation_with_z' => orientation_with_z_tag
             )
 
-            define 'buoy_detector_bottom', Buoy::DetectorCmp.use(
+            define 'buoy_detector_bottom', Buoy::DetectorCmp2.use(
                 'camera' => down_looking_camera_tag, 
                 'orientation_with_z' => orientation_with_z_tag
             )           
@@ -307,7 +309,7 @@ module DFKI
                 'bottom_camera' => down_looking_camera_tag
             ).use_frames(
                 'body' => 'body',
-                'world' => 'map_sauce',
+                'world' => 'map_halle',
                 'front_camera' => 'front_camera',
                 'bottom_camera' => 'bottom_camera'
             )
@@ -410,12 +412,13 @@ module DFKI
             )
 
             define 'gps_controller', GPSHelper::GPSWaypointsCmp.use(
-                'pose' => pose_tag,
+                #'ori' => orientation_to_correct_tag,
+                'pose' => pose_gps_tag,
                 'gps' => gps_tag
             )
 
             define 'gps_waypoints', AuvCont::WorldPositionCmp.use(
-                'pose' => pose_tag,
+                'pose' => pose_gps_tag,
                 'controller' => gps_controller_def,
                 'joint' => thruster_tag
             )

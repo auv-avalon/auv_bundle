@@ -888,6 +888,323 @@ class Main
     forward surface_wp4.success_event, success_event
     end
 
+
+    describe("euRathlon Anomaly")
+    state_machine "anomaly" do
+
+        # get a working localization
+        #out = state simple_move_new_def(:depth => -1.5, :heading => -Math::PI, :x_speed => 1, :y_speed => 0,  :timeout => 20)
+        # drive to wall and survey
+        #to_wall = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => -2, :heading => Math::PI, :timeout => 90)
+        #align = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => -2, :heading => 0, :timeout => 90)
+
+#        search = state wall_and_buoy
+        search  = state wall_left_new_def(:timeout => 300, :corner => 1)
+        buoy = state wall_buoy_survey_def 
+        #buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        stop = state simple_move_new_def(:timeout => 5, :depth => -2, :heading => Math::PI/2, :x_speed => 0, :y_speed => 0)
+        search_continue = state wall_continue
+        search_continue2 = state wall_left_new_def(:timeout => 20)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+
+        # start minefield search
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10, :y => 37, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 37.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 36.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy2 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14, :y => 37, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy2a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14.5, :y => 37.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy2b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -13.5, :y => 36.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy3 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22, :y => 38, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy3a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22.5, :y => 38.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy3b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -21.5, :y => 37.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy4 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12, :y => 37, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy4a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12.5, :y => 37.5, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy4b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -11.5, :y => 36.5, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+
+        search_buoy5 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14, :y => 42, :depth => -1.5, :heading => 0, :timeout => 90)
+        search_buoy5a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14.5, :y => 42.5, :depth => -1.5, :heading => 0, :timeout => 90)
+        search_buoy5b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -13.5, :y => 41.5, :depth => -1.5, :heading => 0, :timeout => 90)
+
+        buoy_detector = state buoy_detector_bottom_def
+
+        search_buoy1.depends_on buoy_detector
+
+
+        start search 
+        #transition out.success_event, to_wall
+        #transition to_wall.success_event, align
+        #transition align.success_event, search
+        transition search.success_event, search_continue 
+        #transition stop.success_event, buoy
+        #transition buoy.success_event, search_continue
+        transition search_continue.success_event, search_buoy1
+        #transition search_continue2.success_event, back
+
+        #transition back.success_event, search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+        transition search_buoy1b.success_event, search_buoy2
+        transition search_buoy2.success_event, search_buoy2a
+        transition search_buoy2a.success_event, search_buoy2b
+        transition search_buoy2b.success_event, search_buoy3
+        transition search_buoy3.success_event, search_buoy3a
+        transition search_buoy3a.success_event, search_buoy3b
+        transition search_buoy3b.success_event, search_buoy4
+        transition search_buoy4.success_event, search_buoy4a
+        transition search_buoy4a.success_event, search_buoy4b
+        transition search_buoy4b.success_event, search_buoy5
+        transition search_buoy5.success_event, search_buoy5a
+        transition search_buoy5a.success_event, search_buoy5b
+
+
+        forward search_buoy5b.success_event, success_event
+    end
+
+    describe("")
+    state_machine "search_buoy1_machine" do
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10, :y => 37, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 37.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 36.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        buoy_detector = state buoy_detector_bottom_def
+        search_buoy1.depends_on buoy_detector
+
+        start search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+
+        forward search_buoy1b.success_event, success_event
+        forward search_buoy1b, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1a, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1, buoy_detector.buoy_detected_event, success_event
+
+    end
+    describe("")
+    state_machine "search_buoy2_machine" do
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -15, :y => 35, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -15.5, :y => 35.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14.5, :y => 34.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        buoy_detector = state buoy_detector_bottom_def
+        search_buoy1.depends_on buoy_detector
+        start search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+
+        forward search_buoy1b.success_event, success_event
+        forward search_buoy1b, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1a, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1, buoy_detector.buoy_detected_event, success_event
+
+    end
+    describe("")
+    state_machine "search_buoy3_machine" do
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22, :y => 38, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22.5, :y => 38.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -21.5, :y => 37.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
+        buoy_detector = state buoy_detector_bottom_def
+        search_buoy1.depends_on buoy_detector
+        start search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+
+        forward search_buoy1b.success_event, success_event
+        forward search_buoy1b, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1a, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1, buoy_detector.buoy_detected_event, success_event
+
+    end
+    describe("")
+    state_machine "search_buoy4_machine" do
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12, :y => 37, :depth => 1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12.5, :y => 37.5, :depth => 1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -11.5, :y => 36.5, :depth => 1.5, :heading => Math::PI/2, :timeout => 90)
+        buoy_detector = state buoy_detector_bottom_def
+        search_buoy1.depends_on buoy_detector
+        start search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+
+        forward search_buoy1b.success_event, success_event
+        forward search_buoy1b, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1a, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1, buoy_detector.buoy_detected_event, success_event
+
+    end
+    describe("")
+    state_machine "search_buoy5_machine" do
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10, :y => 39, :depth => 1.5, :heading => 0, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 39.5, :depth => 1.5, :heading => 0, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 38.5, :depth => 1.5, :heading => 0, :timeout => 90)
+        buoy_detector = state buoy_detector_bottom_def
+        search_buoy1.depends_on buoy_detector
+        start search_buoy1
+
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+
+        forward search_buoy1b.success_event, success_event
+        forward search_buoy1b, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1a, buoy_detector.buoy_detected_event, success_event
+        forward search_buoy1, buoy_detector.buoy_detected_event, success_event
+
+    end
+
+    describe("euRathlon Anomaly")
+    state_machine "anomaly_intelly" do
+
+        # get a working localization
+        out = state simple_move_new_def(:depth => -1.5, :heading => -Math::PI, :x_speed => 1, :y_speed => 0,  :timeout => 20)
+        # drive to wall and survey
+        to_wall = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => 2, :heading => Math::PI, :timeout => 90)
+        align = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => 2, :heading => 0, :timeout => 90)
+
+        search = state wall_and_buoy
+        buoy = state wall_buoy_survey_def 
+        #buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        stop = state simple_move_new_def(:timeout => 5, :depth => -2, :heading => Math::PI/2, :x_speed => 0, :y_speed => 0)
+        search_continue = state wall_continue
+        search_continue2 = state wall_left_new_def(:timeout => 20)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+
+        # start minefield search
+        search_buoy1 = state search_buoy1_machine
+
+        search_buoy2 = state search_buoy2_machine
+
+        search_buoy3 = state search_buoy3_machine
+
+        search_buoy4 = state search_buoy4_machine
+
+        search_buoy5 = state search_buoy5_machine
+
+        buoy_detector = state buoy_detector_bottom_def
+
+        search_buoy1.depends_on buoy_detector
+
+
+        start out 
+        transition out.success_event, to_wall
+        transition to_wall.success_event, align
+        transition align.success_event, search
+        transition search.success_event, stop 
+        transition stop.success_event, buoy
+        transition buoy.success_event, search_continue
+        transition search_continue.success_event, search_continue2
+        transition search_continue2.success_event, back
+
+        transition back.success_event, search_buoy1
+
+        transition search_buoy1.success_event, search_buoy2
+        transition search_buoy2.success_event, search_buoy3
+        transition search_buoy3.success_event, search_buoy4
+        transition search_buoy4.success_event, search_buoy5
+
+
+        forward search_buoy5.success_event, success_event
+    end
+    describe("euRathlon combined short")
+    state_machine "combined" do
+
+        # get a working localization
+        #out = state simple_move_new_def(:depth => -1.5, :heading => -Math::PI, :x_speed => 1, :y_speed => 0,  :timeout => 20)
+        # drive to wall and survey
+        dive = state simple_move_def(:timeout => 20, :depth => -2, :x_speed => 0, :y_speed => 0 )
+        dive2 = state simple_move_def(:timeout => 20, :depth => -2, :x_speed => 0, :y_speed => 0 )
+        up = state simple_move_def(:timeout => 15, :depth => 2, :x_speed => 0, :y_speed => 0 )
+
+
+        #
+        to_wall = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => -2, :heading => Math::PI* 0.5, :timeout => 90)
+        align = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 5, :x => -22, :y => 44, :depth => -2, :heading => 0, :timeout => 90)
+
+        search = state wall_and_buoy
+        #search  = state wall_left_new_def(:timeout => 300, :corner => 1)
+        buoy = state wall_buoy_survey_def 
+        #buoy = state simple_move_def(:x_speed => 0, :y_speed => 0, :timeout => 5, :heading => Math::PI/2, :depth => -1.5)
+        stop = state simple_move_new_def(:timeout => 5, :depth => -2, :heading => -Math::PI/2, :x_speed => 0, :y_speed => 0)
+        search_continue = state wall_continue
+        search_continue2 = state wall_left_new_def(:timeout => 20)
+        back = state target_move_new_def(:finish_when_reached => true, :depth => -2, :delta_timeout => 5, :heading => -Math::PI * 0.75, :x => -22,     :y => 25,  :timeout => 150) 
+
+        # start minefield search
+        search_buoy1 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10, :y => 37, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 37.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 36.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy2 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -15, :y => 35, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy2a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -15.5, :y => 35.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy2b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14.5, :y => 34.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy3 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22, :y => 38, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy3a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22.5, :y => 38.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+        search_buoy3b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -21.5, :y => 37.5, :depth => -1.5, :heading => Math::PI, :timeout => 90)
+
+        search_buoy4 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12, :y => 37, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy4a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12.5, :y => 37.5, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+        search_buoy4b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -11.5, :y => 36.5, :depth => -1.5, :heading => Math::PI/2, :timeout => 90)
+
+        search_buoy5 = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10, :y => 39, :depth => -1.5, :heading => 0, :timeout => 90)
+        search_buoy5a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 39.5, :depth => -1.5, :heading => 0, :timeout => 90)
+        search_buoy5b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 38.5, :depth => -1.5, :heading => 0, :timeout => 90)
+
+        buoy_detector = state buoy_detector_bottom_def
+
+        teleoperation = state drive_simple_def
+
+        search_buoy1.depends_on buoy_detector
+
+
+        #start search
+        #transition out.success_event, to_wall
+        #transition to_wall.success_event, align
+        #transition align.success_event, search
+        #transition search.success_event, search_continue 
+        #transition stop.success_event, buoy
+        #transition buoy.success_event, search_continue
+        #transition search_continue.success_event, search_buoy1
+        #transition search_continue2.success_event, back
+
+        #transition back.success_event, search_buoy1
+
+       # start search_buoy1
+        start dive
+        transition dive.success_event, search_buoy1
+        transition search_buoy1.success_event, search_buoy1a
+        transition search_buoy1a.success_event, search_buoy1b
+        transition search_buoy1b.success_event, search_buoy2
+        transition search_buoy2.success_event, search_buoy2a
+        transition search_buoy2a.success_event, search_buoy2b
+        transition search_buoy2b.success_event, search_buoy3
+        transition search_buoy3.success_event, search_buoy3a
+        transition search_buoy3a.success_event, search_buoy3b
+        transition search_buoy3b.success_event, search_buoy4
+        transition search_buoy4.success_event, search_buoy4a
+        transition search_buoy4a.success_event, search_buoy4b
+        transition search_buoy4b.success_event, search_buoy5
+        transition search_buoy5.success_event, search_buoy5a
+        transition search_buoy5a.success_event, search_buoy5b
+
+        transition search_buoy5b.success_event, dive2
+        transition dive2.success_event, to_wall
+        transition to_wall.success_event, align
+        transition align.success_event, search
+
+
+        transition search.success_event, stop
+       # transition stop.success_event, buoy
+
+        transition stop.success_event, up
+        transition up.success_event, teleoperation
+        forward teleoperation.success_event, success_event
+        #forward buoy.success_event, success_event
+    end
 end
 
 

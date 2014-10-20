@@ -8,7 +8,7 @@ fading_out_factor: 0.01 #0.028
 # epsilon in one meter distance of dbscan algorithm. epsilon will be increased linear by the distance of the features
 #dbscan_epsilon: 0.15 #Not a property????
 # reference depth
-fixed_depth: -1.35
+fixed_depth: -1.45
 # the wall will be in this direction if the wall servoing is performed, default is 0 than the wall is in front
 servoing_wall_direction: 0.0
 # the inital heading of avalon to the wall, default is 0 than the wall is in front
@@ -18,7 +18,7 @@ minimal_wall_distance: 0.75
 # set distance for the y axis, witch will result in a certain speed
 servoing_speed: 0.0
 # reference distance to wall
-wall_distance: 4.50 
+wall_distance: 4.4 
 # minimum count inliers of the point cloud in percent to be a valid model
 #wall_estimation_ransac_min_inliers: 0.85 ##Not a eroperty????
 # maximal inlier distance to the model
@@ -31,6 +31,7 @@ right_opening_angle: 0.785
 wait_until_start: 3.0
 right_front_angle: 0.0
 left_front_angle: 0.0
+use_front_distance: false
 --- name:simulation
 # fading out factor for the features in center wall estimator
 fading_out_factor: 0.01
@@ -55,13 +56,13 @@ right_opening_angle: 1.01
 --- name:wall_left
 servoing_wall_direction: 1.57
 initial_wall_direction: 1.57
-servoing_speed: -0.25
+servoing_speed: -0.8
 left_opening_angle: 1.1
 right_opening_angle: 1.57
 --- name:wall_right
 servoing_wall_direction: -1.57
 initial_wall_direction: -1.57
-servoing_speed: 1.0
+servoing_speed: 0.4
 left_opening_angle: 1.57
 right_opening_angle: 1.1
 --- name:hold_wall_right

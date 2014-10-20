@@ -17,7 +17,7 @@ module Buoy
 
         add Base::ImageProviderSrv, :as => 'camera'
         add Base::OrientationWithZSrv, :as => "orientation_with_z"
-        add Buoy::Detector.use_conf("bottom_orange"), :as => 'detector'
+        add Buoy::Detector, :as => 'detector'
         #add_main Buoy::Survey, :as => 'servoing'
         #TODO Reintegrate modem
         #add Srv::ModemConnection, :as => 'modem'
@@ -32,6 +32,10 @@ module Buoy
         #export servoing_child.relative_position_port, :as => 'relative_position_command'
         export detector_child.buoy_port, :as => 'orange_buoy'
         #provides Base::AUVRelativeMotionControllerSrv, :as => 'controller'
+
+        #on :buoy_detected do |e|
+        #    State.log_hack = "Buoy_found"
+        #end
     end
 
     class DetectorCmp2 < ::Syskit::Composition

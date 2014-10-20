@@ -42,6 +42,12 @@ filter_type: :EKF
 # no documentation available for this property
 max_time_delta: 2.0
 
+initial_state:
+  position:
+    data:
+      - -10
+      - 22
+      - 0
 
 --- name:avalon
 lbl_frame: body

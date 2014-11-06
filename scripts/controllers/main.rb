@@ -1,5 +1,5 @@
 require 'highline'
-require 'gdal-ruby/ogr'
+#require 'gdal-ruby/ogr'
 CONSOLE = HighLine.new
 def color(string, *args)
     CONSOLE.color(string, *args)

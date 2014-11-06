@@ -82,7 +82,6 @@ trajectory:
     - 0.0
     - -1.0
 --- name:circle
-speed: 10 
 deny_reverse: true
 final_heading: .nan
 geometrical_resolution: 0.1

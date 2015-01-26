@@ -24,7 +24,7 @@ class Main
         #hold_wall = state wall_right_hold_pos_def
         init_wall.depends_on detector, :role => "foo"
         heading_estimator = state initial_orientation_estimator_def
-        heading_estimator.depends_on init_wall #hold_wall, :role => "fasel"
+        heading_estimator.depends_on init_wall, :role => 'fasel'  #hold_wall, :role => "fasel"
 
         start(init_wall)
         transition(init_wall, detector.wall_servoing_event, heading_estimator)
@@ -340,13 +340,13 @@ class Main
       localization = state localization_def
       sonar_target_move = state sonar_target_move_def, :role => "sonar_detector"
       
-      search.depends_on localization
-      search.depends_on buoy_detector
-      sonar_target_move.depends_on buoy_detector      
-      explore.depends_on localization
-      map_fix.depends_on localization
-      map_reset.depends_on localization
-      sonar_target_move.depends_on localization      
+      search.depends_on localization, :role => "local"
+      search.depends_on buoy_detector, :role => "detector"
+      sonar_target_move.depends_on buoy_detector, :role => "foo5" 
+      explore.depends_on localization, :role => "foo1"
+      map_fix.depends_on localization, :role => "foo2"
+      map_reset.depends_on localization, :role => "foo3"
+      sonar_target_move.depends_on localization, :role => "foo4"
       
       start explore
       
@@ -407,7 +407,7 @@ class Main
 
         find = state structure_detector_def
 
-        move.depends_on find
+        move.depends_on find, :role => "foo1"
 
         #inspection.monitor(
         #    'round',
@@ -648,7 +648,7 @@ class Main
         search_continue2 = state wall_right_new_def(:timeout => 20)
         asv = state modem_def
 
-        search_continue.depends_on asv
+        search_continue.depends_on asv, :role => "foo"
 
         start to 
         transition to.success_event, align
@@ -782,13 +782,13 @@ class Main
 
         double_buoy = state double_buoy_def
 
-        to.depends_on double_buoy
+        to.depends_on double_buoy, :role => "foo1"
 
         box_search = state buoy_detector_bottom_def 
 
         start to
         transition to.success_event, search_buoy1
-            transition search_buoy1.success_event, search_buoy2
+        transition search_buoy1.success_event, search_buoy2
         transition search_buoy2.success_event, search_buoy3
         transition search_buoy3.success_event, search_buoy4
         transition search_buoy4.success_event, search_buoy5
@@ -930,7 +930,7 @@ class Main
 
         buoy_detector = state buoy_detector_bottom_def
 
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
 
 
         start search 
@@ -970,7 +970,7 @@ class Main
         search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 37.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 36.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         buoy_detector = state buoy_detector_bottom_def
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
 
         start search_buoy1
 
@@ -989,7 +989,7 @@ class Main
         search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -15.5, :y => 35.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -14.5, :y => 34.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         buoy_detector = state buoy_detector_bottom_def
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
         start search_buoy1
 
         transition search_buoy1.success_event, search_buoy1a
@@ -1007,7 +1007,7 @@ class Main
         search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -22.5, :y => 38.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -21.5, :y => 37.5, :depth => 1.5, :heading => Math::PI, :timeout => 90)
         buoy_detector = state buoy_detector_bottom_def
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
         start search_buoy1
 
         transition search_buoy1.success_event, search_buoy1a
@@ -1025,7 +1025,7 @@ class Main
         search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -12.5, :y => 37.5, :depth => 1.5, :heading => Math::PI/2, :timeout => 90)
         search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -11.5, :y => 36.5, :depth => 1.5, :heading => Math::PI/2, :timeout => 90)
         buoy_detector = state buoy_detector_bottom_def
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
         start search_buoy1
 
         transition search_buoy1.success_event, search_buoy1a
@@ -1043,7 +1043,7 @@ class Main
         search_buoy1a = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -10.5, :y => 39.5, :depth => 1.5, :heading => 0, :timeout => 90)
         search_buoy1b = state target_move_new_def(:finish_when_reached => true, :delta_timeout => 2, :x => -9.5, :y => 38.5, :depth => 1.5, :heading => 0, :timeout => 90)
         buoy_detector = state buoy_detector_bottom_def
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
         start search_buoy1
 
         transition search_buoy1.success_event, search_buoy1a
@@ -1086,7 +1086,7 @@ class Main
 
         buoy_detector = state buoy_detector_bottom_def
 
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
 
 
         start out 
@@ -1158,7 +1158,7 @@ class Main
 
         teleoperation = state drive_simple_def
 
-        search_buoy1.depends_on buoy_detector
+        search_buoy1.depends_on buoy_detector, :role => "foo1"
 
 
         #start search

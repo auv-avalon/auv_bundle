@@ -22,6 +22,9 @@ module Auv
     end
 end
 module Base
+    data_service_type 'OrientationToCorrectSrv' do
+       input_port 'heading_offset', '/base/Angle'
+    end
 
     data_service_type 'MapSrv' do
         input_port 'buoy_samples_orange', "/avalon/feature/Buoy"

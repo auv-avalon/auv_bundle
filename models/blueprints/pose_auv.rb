@@ -7,9 +7,9 @@ using_task_library 'pose_estimation'
 using_task_library 'wall_orientation_correction'
 #using_task_library 'gps_helper'
 
-
+require "rock/models/blueprints/sensors"
 require "rock/models/blueprints/pose"
-require "models/blueprints/auv.rb"
+require "models/blueprints/auv"
 
 module PoseAuv
 

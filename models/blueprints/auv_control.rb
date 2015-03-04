@@ -9,7 +9,6 @@ using_task_library "auv_control"
 using_task_library "auv_helper"
 using_task_library "controldev"
 using_task_library "raw_control_command_converter"
-    
 class Float 
     def angle_in_range(target_angle, allowed_delta)
         diff = (self-target_angle)

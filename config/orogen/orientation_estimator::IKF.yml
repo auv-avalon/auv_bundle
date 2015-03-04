@@ -237,9 +237,9 @@ inertial_noise_fog:
     - 0.0
   gyrorw:
     data:
-    - 3.78e-06 #rad/s/sqrt(Hz)
-    - 3.78e-06
-    - 3.78e-06
+    - 4.37e-06 #rad/s/sqrt(Hz)
+    - 3.34e-06
+    - 6.03e-06
   gyrorrw:
     data:
     - 0.0
@@ -247,19 +247,19 @@ inertial_noise_fog:
     - 0.0
   gbiasins:
     data:
-    - 2.42e-07 #9.6e-06 #value computed by javier
-    - 2.42e-07
-    - 2.42e-07
+    - 5.28e-07
+    - 1.18e-06
+    - 6.03e-07
   abiasoff:
     data:
-    - 0.0 #-0.0027
+    - 0.0
     - 0.0 
-    - 0.0 #0.0055
+    - 0.0
   accrw:
     data:
-    - 3.302e-04 #javier: 1.32e-03
-    - 3.302e-04
-    - 3.302e-04
+    - 0.001032452
+    - 0.001339378
+    - 0.000973999
   accrrw:
     data:
     - 0.0
@@ -267,9 +267,9 @@ inertial_noise_fog:
     - 0.0
   abiasins:
     data:
-    - 4.905e-04 
-    - 4.905e-04 
-    - 4.905e-04 
+    - 0.0006094821 
+    - 0.0006335726 
+    - 0.0006150693
   accresolut:
     data:
     - 5.886e-03

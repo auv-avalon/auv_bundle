@@ -37,10 +37,10 @@ module Pipeline
 
         
     class Detector_new < Syskit::Composition 
-        argument :heading, :default => nil
-        argument :depth, :default => nil
-        argument :speed_x, :default => nil
-        argument :turn_dir, :default => nil
+        argument :heading, :default => nil, :type => :double
+        argument :depth, :default => nil, :type => :double
+        argument :speed_x, :default => nil, :type => :double
+        argument :turn_dir, :default => nil, :type => :int
 
         event :check_candidate
         event :follow_pipe
@@ -114,10 +114,10 @@ module Pipeline
     end
 
     class Detector < Syskit::Composition 
-        argument :heading, :default => nil
-        argument :depth, :default => nil
-        argument :speed_x, :default => nil
-        argument :turn_dir, :default => nil
+        argument :heading, :default => nil, :type => :double
+        argument :depth, :default => nil, :type => :double
+        argument :speed_x, :default => nil, :type => :double
+        argument :turn_dir, :default => nil, :type => :int
 
         event :check_candidate
         event :follow_pipe
@@ -206,11 +206,11 @@ module Pipeline
         #add_optional AvalonControl::PositionControlTask, :as => "workaround"
         #connect controller_local_child.pipeline_port => workaround_child
 
-        argument :turn_dir, :default => nil
-        argument :heading, :default => nil
-        argument :depth, :default => nil
-        argument :speed_x, :default => nil
-        argument :timeout, :default => nil
+        argument :turn_dir, :default => nil, :type => :int
+        argument :heading, :default => nil, :type => :double
+        argument :depth, :default => nil, :type => :double
+        argument :speed_x, :default => nil, :type => :double
+        argument :timeout, :default => nil, :type => :double
 
         event :check_candidate
         event :follow_pipe

@@ -35,7 +35,7 @@ module Buoy
   end
 
   class ControllerNewCmp < Syskit::Composition
-      argument :timeout, :default => 5
+      argument :timeout, :default => 5, :type => :double
       add_main Buoy::ServoingOnWall, as: 'main'
       add WallServoing::WallOrientationSrv, as: 'wall'
       add Base::OrientationSrv, as: 'pose'

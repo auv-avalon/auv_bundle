@@ -52,10 +52,10 @@ class Main < Roby::Actions::Interface
     end
 
     describe("Blind forward move , turn, wait and back, useful for gate-passing").
-	required_arg('time', 'The time for blind forward move').
-	required_arg('speed', 'The time for blind forward move').
-	required_arg('heading', 'The angle for gate passing').
-	required_arg('depth', 'The depth for gate passing')
+	required_arg('time', :double, 'The time for blind forward move').
+	required_arg('speed', :double,  'The time for blind forward move').
+	required_arg('heading', :double ,'The angle for gate passing').
+	required_arg('depth', :double , 'The depth for gate passing')
     state_machine "blind_forward_and_back" do
 
         throught_gate = state simple_move_new_def(:timeout => time, :heading => heading, :speed_x => speed, :depth => depth)
@@ -71,9 +71,9 @@ class Main < Roby::Actions::Interface
     end
 
     describe("intelligend follow-pipe, only emitting weak_signal if heading is correkt").
-	optional_arg('turn_dir', 'the turn direction').
-	required_arg('initial_heading', 'the heading for the pipe to follow').
-        required_arg('precision', 'precision the heading need to be')
+	optional_arg('turn_dir', :int, 'the turn direction').
+	required_arg('initial_heading',:double, 'the heading for the pipe to follow').
+        required_arg('precision',:double, 'precision the heading need to be')
     action_script "intelligent_follow_pipe" do
         follow = task pipeline_def(:heading => initial_heading,         :speed_x => PIPE_SPEED, :turn_dir=> turn_dir, :timeout => 120)
         execute follow
@@ -98,9 +98,9 @@ class Main < Roby::Actions::Interface
     end
 
     describe("follow-pipe-a-turn-at-e-of-pipe").
-	optional_arg('turn_dir', 'the turn direction').
-	required_arg('initial_heading', 'the heading for the pipe to follow').
-	required_arg('post_heading', 'the heading for the pipe to follow')
+	optional_arg('turn_dir', :int, 'the turn direction').
+	required_arg('initial_heading',:double, 'the heading for the pipe to follow').
+	required_arg('post_heading',:double, 'the heading for the pipe to follow')
     state_machine "follow_pipe_a_turn_at_e_of_pipe" do
        #follow = state pipeline_def(:heading => initial_heading, 	:speed_x => PIPE_SPEED, :turn_dir=> turn_dir)
         follow = state intelligent_follow_pipe(initial_heading: initial_heading, precision: 0.5, turn_dir: turn_dir)
@@ -117,7 +117,7 @@ class Main < Roby::Actions::Interface
 
 
     describe("Ping and Pong (once) on an pipeline").
-	optional_arg('post_heading', 'The final heading of the AUV, after pipeline tracking',3.13)
+	optional_arg('post_heading',:double, 'The final heading of the AUV, after pipeline tracking',3.13)
     state_machine "pipe_ping_pong" do
         pipeline = state follow_pipe_a_turn_at_e_of_pipe(:initial_heading => 0,:post_heading => 3.13, :turn_dir => 1)
         pipeline2 = state follow_pipe_a_turn_at_e_of_pipe(:initial_heading => 3.13, :post_heading => post_heading, :turn_dir => 1)
@@ -379,7 +379,7 @@ class Main < Roby::Actions::Interface
     end    
 
     describe("Find_pipe_with_localization").
-        optional_arg("check_pipe_angle",false)
+        optional_arg("check_pipe_angle",:bool ,false)
     action_state_machine "find_pipe_with_localization" do
         find_pipe_back = state target_move_def(:finish_when_reached => false , :heading => 1, :depth => -6, :x => -6.5, :y => --0.5, :timeout => 180)
         pipe_detector = state pipeline_detector_def

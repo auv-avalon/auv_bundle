@@ -37,7 +37,7 @@ module Structure
 
 
     class Detector < Syskit::Composition
-        argument :rounds, :default => 0.1
+        argument :rounds, :default => 0.1, :type => :double
 
         add_main StructureServoing::Task, :as => 'detector'
         add HsvMosaicing::Task, :as => "mosaic" 
@@ -61,7 +61,7 @@ module Structure
         event :servoing
         event :no_structure
 
-        argument :timeout, :default => 60
+        argument :timeout, :default => 60, :type => :double
 
         on :start do |event|
             Robot.info "Starting Structure Servoing"

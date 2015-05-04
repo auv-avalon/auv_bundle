@@ -17,6 +17,11 @@ MISSION = "TESTBED"
 
 class Main
     describe("align on wall to estimate the initial heading")
+    pddl do
+        @precondition = "something"
+        @postcondition = "post-condition"
+    end
+
     state_machine "reset_heading_on_wall" do
         
         detector = state wall_detector_new_def#.with_conf('hold_wall_right') ##TODO URGEND

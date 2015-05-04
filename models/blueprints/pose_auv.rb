@@ -97,7 +97,7 @@ module PoseAuv
     end
 
     class PoseEstimatorBlindCmp < Syskit::Composition
-        argument :reset, :default => false
+        argument :reset, :default => false, :type => :bool
 
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add Base::OrientationSrv, :as => 'ori'
@@ -152,7 +152,7 @@ module PoseAuv
     
     class PoseEstimatorCmp < Syskit::Composition 
         add_optional Base::PositionSrv, :as => 'localization'
-        argument :reset, :default => false
+        argument :reset, :default => false, :type => :bool
 
         add_main PoseEstimation::UWPoseEstimator, :as => 'pose_estimator'
         add Base::OrientationSrv, :as => 'ori'

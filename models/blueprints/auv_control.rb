@@ -59,23 +59,43 @@ module AuvControl
     DELTA_XY = 2
     DELTA_TIMEOUT = 2
 
-    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::PositionControlTask do
+    #    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::PositionControlTask do
+#        add ::Base::PoseSrv, :as => "pose"
+#        pose_child.connect_to controller_child
+#    end
+#    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AuvRelPosController::Task do
+#        add ::Base::OrientationWithZSrv, :as => "orientation_with_z"
+#        orientation_with_z_child.connect_to controller_child
+#    end
+#    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::MotionControlTask do
+#        add ::Base::OrientationWithZSrv, :as => 'pose'
+#        add ::Base::GroundDistanceSrv, :as => 'dist'
+#        connect pose_child.orientation_z_samples_port => controller_child.pose_samples_port
+#        connect dist_child.distance_port => controller_child.ground_distance_port
+#    end
+
+
+    
+    class PositionControlCmp < ::Base::ControlLoop
+        overload 'controller', AvalonControl::PositionControlTask
         add ::Base::PoseSrv, :as => "pose"
         pose_child.connect_to controller_child
     end
-    
-    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AuvRelPosController::Task do
+
+    class RelPosControlCmp < ::Base::ControlLoop
+        overload 'controller', AuvRelPosController::Task
         add ::Base::OrientationWithZSrv, :as => "orientation_with_z"
         orientation_with_z_child.connect_to controller_child
     end
-
-    ::Base::ControlLoop.specialize ::Base::ControlLoop.controller_child => AvalonControl::MotionControlTask do
+    
+    class MotionControlCmp < ::Base::ControlLoop
+        overload 'controller', AvalonControl::MotionControlTask 
         add ::Base::OrientationWithZSrv, :as => 'pose'
         add ::Base::GroundDistanceSrv, :as => 'dist'
         connect pose_child.orientation_z_samples_port => controller_child.pose_samples_port
         connect dist_child.distance_port => controller_child.ground_distance_port
     end
-
+    
     #Other way to realize error forwarding
     #using_task_library 'hbridge'
     #Base::ControlLoop.specialize Base::ControlLoop.controlled_system_child => Hbridge::Task do
@@ -116,20 +136,30 @@ module AuvControl
     class SimpleMove < ::Base::ControlLoop
         overload 'controller', AvalonControl::FakeWriter 
         
-        argument :heading, :default => nil
-        argument :depth, :default => nil
-        argument :speed_x, :default => 0
-        argument :speed_y, :default => 0 
-        argument :timeout, :default => nil
-        argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
-        argument :event_on_timeout, :default => :success
-        argument :delta_z, :default => DELTA_Z 
-        argument :delta_yaw, :default => DELTA_YAW
-        argument :delta_timeout, :default => DELTA_TIMEOUT 
+        argument :heading, :default => nil, :type => :double
+        argument :depth, :default => nil, :type => :double
+        argument :speed_x, :default => 0, :type => :double
+        argument :speed_y, :default => 0 , :type => :double
+        argument :timeout, :default => nil, :type => :double
+        argument :finish_when_reached, :default => nil, :type => :bool #true when it should success, if nil then this composition never stops based on the position
+        argument :event_on_timeout, :default => :success, :type => :string
+        argument :delta_z, :default => DELTA_Z , :type => :double
+        argument :delta_yaw, :default => DELTA_YAW, :type => :double
+        argument :delta_timeout, :default => DELTA_TIMEOUT , :type => :double
 
         attr_reader :start_time
         add ::Base::OrientationWithZSrv, :as => "reading"
 
+        @argument_forwards = [
+            ['controller_child',
+             #{
+                "heading" => "heading",
+                "depth" => "depth",
+                "speed_x" => "speed_x",
+                "speed_y" => "speed_y"
+             #}
+            ]
+        ]
         on :start do |ev|
                 begin 
                 @start_time = Time.now
@@ -182,17 +212,17 @@ module AuvControl
     class SimplePosMove < ::Base::ControlLoop
         overload 'controller', AvalonControl::RelFakeWriter
 
-        argument :heading, :default => 0
-        argument :depth, :default => -6
-        argument :x, :default => 0
-        argument :y, :default => 0
-        argument :timeout, :default => nil
-        argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
-        argument :event_on_timeout, :default => :success
-        argument :delta_xy, :default => DELTA_XY
-        argument :delta_z, :default => DELTA_Z
-        argument :delta_yaw, :default => DELTA_YAW
-        argument :delta_timeout, :default => DELTA_TIMEOUT
+        argument :heading, :default => 0, :type => :double
+        argument :depth, :default => -6, :type => :double
+        argument :x, :default => 0, :type => :double
+        argument :y, :default => 0, :type => :double
+        argument :timeout, :default => nil, :type => :double
+        argument :finish_when_reached, :default => nil, :type => :bool  #true when it should success, if nil then this composition never stops based on the position
+        argument :event_on_timeout, :default => :success, :type => :string
+        argument :delta_xy, :default => DELTA_XY, :type => :double
+        argument :delta_z, :default => DELTA_Z, :type => :double
+        argument :delta_yaw, :default => DELTA_YAW, :type => :double
+        argument :delta_timeout, :default => DELTA_TIMEOUT, :type => :double
     
         attr_reader :start_time
 
@@ -258,8 +288,8 @@ module AuvControl
         add_main AvalonControl::TrajectoryFollower.with_conf('default','hall_cool'), :as => "foo"
         
         overload 'controller', foo_child
-        argument :timeout, :default => nil
-        argument :event_on_timeout, :default => :success
+        argument :timeout, :default => nil, :type => :double
+        argument :event_on_timeout, :default => :success, :type => :string
    
         event :reached_end
         event :align_at_end

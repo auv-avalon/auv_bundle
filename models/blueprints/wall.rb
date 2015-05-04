@@ -118,8 +118,8 @@ module Wall
         event :lost_all
         event :origin_alignment
         event :alignment_complete
-        argument :timeout, :default => nil
-        argument :max_corners, :default => nil
+        argument :timeout, :default => nil, :type => :double
+        argument :max_corners, :default => nil, :type => :int
 
         attr_accessor :num_corners
 
@@ -205,8 +205,8 @@ module Wall
         add_main Detector, :as => "controller_local"
         overload 'controller', Detector
 
-        argument :timeout, :default => nil
-        argument :max_corners, :default => nil
+        argument :timeout, :default => nil, :type => :double
+        argument :max_corners, :default => nil, :type => :int
 
         def num_corners
             controller_child.num_corners

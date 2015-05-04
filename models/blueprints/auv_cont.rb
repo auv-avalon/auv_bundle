@@ -105,7 +105,7 @@ module AuvCont
         event :servoing_finished
         event :not_enough_targets
 
-        argument :timeout, :default => nil
+        argument :timeout, :default => nil, :type => :double
 
         on :start do |ev|
                 @start_time = Time.now
@@ -268,8 +268,8 @@ module AuvCont
 
 #        command_child.connect_to world_to_aligned_child.cmd_in_port
         
-        argument :timeout, :default => nil
-        argument :corners, :default => nil
+        argument :timeout, :default => nil, :type => :double
+        argument :corners, :default => nil, :type => :int
 
 
         #connect controller_child.world_command_port => world_to_aligned_child.cmd_in_port
@@ -492,7 +492,7 @@ module AuvCont
     end
    
     class Trajectory < WorldPositionCmp 
-        argument :reset, :default => false
+        argument :reset, :default => false, :type => :bool
 
         add_main  AvalonControl::TrajectoryFollower, :as => "main"
         overload 'controller', main_child
@@ -508,17 +508,17 @@ module AuvCont
         command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
-        argument :heading, :default => 0
-        argument :depth, :default => -4 
-        argument :x, :default => 0
-        argument :y, :default => 0
-        argument :timeout, :default => nil
-        argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
-        argument :event_on_timeout, :default => :success
-        argument :delta_xy, :default => DELTA_XY
-        argument :delta_z, :default => DELTA_Z
-        argument :delta_yaw, :default => DELTA_YAW
-        argument :delta_timeout, :default => DELTA_TIMEOUT
+        argument :heading, :default => 0, :type => :double
+        argument :depth, :default => -4, :type => :double
+        argument :x, :default => 0, :type => :double
+        argument :y, :default => 0, :type => :double
+        argument :timeout, :default => nil, :type => :double
+        argument :finish_when_reached, :default => nil, :type => :bool #true when it should success, if nil then this composition never stops based on the position
+        argument :event_on_timeout, :default => :success, :type => :string
+        argument :delta_xy, :default => DELTA_XY, :type => :double
+        argument :delta_z, :default => DELTA_Z, :type => :double
+        argument :delta_yaw, :default => DELTA_YAW, :type => :double
+        argument :delta_timeout, :default => DELTA_TIMEOUT, :type => :double
     
         attr_reader :start_time
 
@@ -581,17 +581,17 @@ module AuvCont
 #        command_child.prefer_deployed_tasks("constant_command")
         overload 'controller', command_child
         
-        argument :heading, :default => 0
-        argument :depth, :default => -4 
-        argument :speed_x, :default => 0
-        argument :speed_y, :default => 0
-        argument :timeout, :default => nil
-        argument :finish_when_reached, :default => nil #true when it should success, if nil then this composition never stops based on the position
-        argument :event_on_timeout, :default => :success
-        argument :delta_xy, :default => DELTA_XY
-        argument :delta_z, :default => DELTA_Z
-        argument :delta_yaw, :default => DELTA_YAW
-        argument :delta_timeout, :default => DELTA_TIMEOUT
+        argument :heading, :default => 0, :type => :double
+        argument :depth, :default => -4 , :type => :double
+        argument :speed_x, :default => 0, :type => :double
+        argument :speed_y, :default => 0, :type => :double
+        argument :timeout, :default => nil, :type => :double
+        argument :finish_when_reached, :default => nil, :type => :bool #true when it should success, if nil then this composition never stops based on the position
+        argument :event_on_timeout, :default => :success, :type => :string
+        argument :delta_xy, :default => DELTA_XY, :type => :double
+        argument :delta_z, :default => DELTA_Z, :type => :double
+        argument :delta_yaw, :default => DELTA_YAW, :type => :double
+        argument :delta_timeout, :default => DELTA_TIMEOUT, :type => :double
     
         attr_reader :start_time
 
@@ -648,7 +648,7 @@ module AuvCont
 #            e
 #        end
 
-        argument :timeout, :default => 60
+        argument :timeout, :default => 60, :type => :double
 
         attr_reader :start_time
 

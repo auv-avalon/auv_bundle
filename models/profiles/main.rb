@@ -111,18 +111,18 @@ module DFKI
 
             ############### DEPRICATED ##########################
             # Define old ControlLoops
-            define 'base_loop', Base::ControlLoop.use(
+            define 'base_loop', ::AuvControl::MotionControlCmp.use(
                 Base::OrientationWithZSrv => orientation_with_z_tag,
                 'dist' => altimeter_tag,
                 'controller' => AvalonControl::MotionControlTask,
                 'controlled_system' => thruster_tag
             )
-            define 'relative_control_loop', ::Base::ControlLoop.use(
+            define 'relative_control_loop', ::AuvControl::RelPosControlCmp.use(
                 'controller' => AuvRelPosController::Task, 
                 'controlled_system' => base_loop_def
             )
 
-            define 'relative_heading_loop', ::Base::ControlLoop.use(
+            define 'relative_heading_loop', ::AuvControl::RelPosControlCmp.use(
                 'controlled_system' => base_loop_def,
                 'orientation_with_z' => orientation_with_z_tag,
                 'controller' => AuvRelPosController::Task.with_conf('default','relative_heading')
@@ -135,13 +135,13 @@ module DFKI
             )
 
 
-            define 'relative_loop', Base::ControlLoop.use(
+            define 'relative_loop', relative_heading_loop_def.use(
                     'orientation_with_z' => orientation_with_z_tag,
                     'controlled_system' => base_loop_def, 
                     'controller' => AuvRelPosController::Task.with_conf('default','relative_heading')
             )
 
-            define 'absolute_loop', Base::ControlLoop.use(
+            define 'absolute_loop', relative_heading_loop_def.use(
                     'orientation_with_z' => orientation_with_z_tag,
                     'controlled_system' => base_loop_def, 
                     'controller' => AuvRelPosController::Task.with_conf('default','absolute_heading')
@@ -151,7 +151,7 @@ module DFKI
                 'controlled_system' => absolute_loop_def
             )
 
-            define('drive_simple', ::Base::ControlLoop).use(
+            define('drive_simple', ::AuvControl::MotionControlCmp).use(
                 AuvControl::JoystickCommandCmp.use(
                     "orientation_with_z" => orientation_with_z_tag,
                     "dist" => altimeter_tag
@@ -164,9 +164,9 @@ module DFKI
 
 
 
-            define 'position_control_loop', ::Base::ControlLoop.use(
+            define 'position_control_loop', ::AuvControl::PositionControlCmp.use(
                 'controller' =>  AvalonControl::PositionControlTask, 
-                'controlled_system' => base_loop_def,
+#                'controlled_system' => base_loop_def,
                 'pose' => pose_tag
             )
 

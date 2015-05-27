@@ -31,12 +31,6 @@ hough_debug_s: false
 hough_debug_v: false
 # no documentation available for this property
 hsv_gray: 0
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # for light detection: retion of interrest height
 roi_height: 3.0
 # for light detection: retion of interrest width
@@ -104,12 +98,6 @@ hough_debug_s: false
 hough_debug_v: false
 # no documentation available for this property
 hsv_gray: 0
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # for light detection: retion of interrest height
 roi_height: 3.0
 # for light detection: retion of interrest width
@@ -177,12 +165,6 @@ hough_debug_s: false
 hough_debug_v: false
 # no documentation available for this property
 hsv_gray: 0
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # for light detection: retion of interrest height
 roi_height: 3.0
 # for light detection: retion of interrest width
@@ -252,12 +234,6 @@ hough_debug_s: false
 hough_debug_v: false
 # no documentation available for this property
 hsv_gray: 0
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # for light detection: retion of interrest height
 roi_height: 3.0
 # for light detection: retion of interrest width

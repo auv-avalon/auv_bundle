@@ -46,12 +46,6 @@ laser_width_bottom: 7.0
 laser_width_top: 1.0
 # min y distance between two parallel laser line segments [pixel]
 max_gap_length: 5.0
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # min length of a laser line segment [pixel]
 min_segment_length: 40
 # min distance between two laser line candiates [pixel] of the same col/row

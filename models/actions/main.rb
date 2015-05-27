@@ -17,10 +17,11 @@ MISSION = "TESTBED"
 
 class Main
     describe("align on wall to estimate the initial heading")
-    pddl do
-        @precondition = "something"
-        @postcondition = "post-condition"
-    end
+    #
+    #pddl do
+    #    @precondition = "something"
+    #    @postcondition = "post-condition"
+    #end
 
     state_machine "reset_heading_on_wall" do
         

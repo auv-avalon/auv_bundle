@@ -54,12 +54,6 @@ filterThreshold: 50
 gain: 10
 # Number of bins of the sonar
 maxDistance: 500
-# no documentation available for this property
-metadata:
-  metadata: []
-  properties: []
-  input_ports: []
-  output_ports: []
 # Minimum distance for sonar to filter out the auv itself
 minDistance: 1.0
 # Factor for sonar peaks; lines must have at least that many votes to be detected as lines

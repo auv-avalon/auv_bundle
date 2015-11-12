@@ -149,17 +149,22 @@ module AuvControl
 
         attr_reader :start_time
         add ::Base::OrientationWithZSrv, :as => "reading"
+        
+        def self.emits
+            ['success']
+        end
 
-        @argument_forwards = [
-            ['controller_child',
-             #{
+        def self.argument_forwards 
+            {'controller' => 
+                {
                 "heading" => "heading",
-                "depth" => "depth",
+                "depth" => "Z",
                 "speed_x" => "speed_x",
                 "speed_y" => "speed_y"
-             #}
-            ]
-        ]
+                }
+            }
+        end
+
         on :start do |ev|
                 begin 
                 @start_time = Time.now
@@ -228,6 +233,21 @@ module AuvControl
 
         add ::Base::PoseSrv, :as => 'pose'
         
+        def self.emits
+            ['success']
+        end
+        
+        def self.argument_forwards 
+            {'controller' => 
+                {
+                "heading" => "heading",
+                "depth" => "z",
+                "x" => "x",
+                "y" => "y"
+                }
+            }
+        end
+        
         on :start do |ev|
                 reader_port = nil
                 if pose_child.has_port?('pose_samples')
@@ -294,6 +314,9 @@ module AuvControl
         event :reached_end
         event :align_at_end
 
+        def self.emits
+            ['reached_end', 'align_at_end']
+        end
 
         attr_reader :start_time
 

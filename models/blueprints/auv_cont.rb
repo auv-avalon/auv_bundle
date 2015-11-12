@@ -106,6 +106,10 @@ module AuvCont
         event :not_enough_targets
 
         argument :timeout, :default => nil, :type => :double
+        
+        def self.emits
+            ['reached_target', 'servoing_finished', 'not_enough_targets']
+        end
 
         on :start do |ev|
                 @start_time = Time.now
@@ -296,6 +300,10 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+        
+        def self.emits
+            ['success']
+        end
 
         event :detected_corner
 #
@@ -403,6 +411,10 @@ module AuvCont
     #    provides ::Base::XYVelocityControlledSystemSrv, :as => "velocity_in_s", "command_in" => "world_in"
         #provides ::WorldXYZRollPitchYawControlledSystemSrv, :as => 'controlled_system'
         provides ::Base::JointsCommandSrv, :as => "command_out"
+        
+        def self.emits
+            ['success']
+        end
 
         on :start do |event|
             controller_child.success_event.forward_to success_event
@@ -500,6 +512,9 @@ module AuvCont
         connect pose_child => controller_child 
         event :reached_end
         event :align_at_end
+        def self.emits
+            ['reached_end', 'align_at_end']
+        end
         
     end
 
@@ -521,6 +536,10 @@ module AuvCont
         argument :delta_timeout, :default => DELTA_TIMEOUT, :type => :double
     
         attr_reader :start_time
+        
+        def self.emits
+            ['failed', 'success']
+        end
 
         on :start do |ev|
                 reader_port = nil
@@ -594,6 +613,10 @@ module AuvCont
         argument :delta_timeout, :default => DELTA_TIMEOUT, :type => :double
     
         attr_reader :start_time
+        
+        def self.emits
+            ['failed', 'success']
+        end
 
         on :start do |ev|
                 reader_port = nil
@@ -651,6 +674,10 @@ module AuvCont
         argument :timeout, :default => 60, :type => :double
 
         attr_reader :start_time
+        
+        def self.emits
+            ['failed', 'success',"servoing","no_structure","aligned","no_structure"]
+        end
 
         on :start do |ev|
                 @start_time = Time.now
@@ -676,6 +703,7 @@ module AuvCont
 
         add_main Base::WorldXYZPositionControllerSrv, as: 'main'
         overload 'controller', main_child
+        
 
 
         on :aligned do |e|

@@ -74,12 +74,15 @@ class Main < Roby::Actions::Interface
 	optional_arg('turn_dir', :int, 'the turn direction').
 	required_arg('initial_heading',:double, 'the heading for the pipe to follow').
         required_arg('precision',:double, 'precision the heading need to be')
-    action_script "intelligent_follow_pipe" do
-        follow = task pipeline_def(:heading => initial_heading,         :speed_x => PIPE_SPEED, :turn_dir=> turn_dir, :timeout => 120)
-        execute follow
+    #action_script "intelligent_follow_pipe" do
+    state_machine "intelligent_follow_pipe" do
+        follow = state pipeline_def(:heading => initial_heading,         :speed_x => PIPE_SPEED, :turn_dir=> turn_dir, :timeout => 120)
+        start(follow)
+        forward follow.end_of_pipe_event, success_event
+        #execute follow
         #wait follow.weak_signal_event
-        wait follow.end_of_pipe_event
-        emit success_event
+#        wait follow.end_of_pipe_event
+#        emit success_event
 #        Robot.info "EndOfPipeEvent empfangen"
 #        yaw = [:pose, :orientation].inject(State) do |value, field_name|
 #            if value.respond_to?(field_name)
@@ -259,12 +262,10 @@ class Main < Roby::Actions::Interface
     end
 
     describe("hack")
-    action_script "fix_map_hack" do
-      
-      map_fix = fix_map_def()
-      execute map_fix
-      
-      emit success_event
+    state_machine "fix_map_hack" do
+        s1 = state fix_map_def
+        start s1
+        forward s1.success_event, success_event
     end
     
     describe("search blackbox")
